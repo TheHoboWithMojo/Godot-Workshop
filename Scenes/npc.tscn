@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://15uoupcpxi20"]
+
+[ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://Scripts/npc_manager.gd" id="1_xxsvc"]
+[ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://Assets/Textures/Godot_icon.png" id="2_xxsvc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xxsvc"]
+radius = 53.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xxsvc"]
+size = Vector2(128, 128)
+
+[node name="NPC" type="StaticBody2D" node_paths=PackedStringArray("interaction_bubble", "collision", "sprite")]
+script = ExtResource("1_xxsvc")
+interaction_bubble = NodePath("Interaction Bubble")
+collision = NodePath("Collision")
+sprite = NodePath("Sprite2D")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CircleShape2D_xxsvc")
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -1
+scale = Vector2(0.0620324, 0.0620324)
+texture = ExtResource("2_xxsvc")
+
+[node name="Interaction Bubble" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Interaction Bubble"]
+visible = false
+shape = SubResource("RectangleShape2D_xxsvc")
+
+[connection signal="body_entered" from="Interaction Bubble" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Interaction Bubble" to="." method="_on_area_2d_body_exited"]
