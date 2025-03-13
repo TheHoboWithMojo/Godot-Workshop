@@ -1,2 +1,0 @@
-sbr (string, byte, row)
-string holds the value in string form, byte holds the byte position (in .csv), row holds the row number (table)

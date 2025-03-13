@@ -4,6 +4,9 @@ extends Node2D
 @onready var player = $"/root/Game/Player"
 @onready var frames: int = 0
 
+@onready var traits = Data.load_json_file("res://data/traits_data.json")
+@onready var perks = Data.load_json_file("res://data/perks_data.json")
+
 # Private variables for stats
 var _stats: Dictionary = {
 	"crit_chance": 0.01,
@@ -21,17 +24,6 @@ var _max_stat_values: Dictionary = {
 
 var _min_stat_values: Dictionary = {
 	"speed_mult": 1.0    # Minimum speed multiplier 100% (regular speed can enforce 0)
-}
-
-# Player Traits Dictionary
-var _player_traits: Dictionary = {
-	"war hero": {"has": false, "description": "You've been through hell and back, unlocks gruff dialogue options.", "buff1": "health * 1.05"},
-	"scholar": {"has": false, "description": "The library is your true home, unlocks informed dialogue options."}
-}
-
-# Player Perks Dictionary
-var _player_perks: Dictionary = {
-	"heavy handed": {"has": false, "description": "You punch twice as hard! +3 to Strength.", "buff1": "crit_chance + 0.05", "buff2": "health_regen / 2"}
 }
 
 # Timelines Dictionary
@@ -106,48 +98,43 @@ func player_change_stat(buff_str: String):
 # --- Player Traits & Perks Methods ---
 func print_player_perks():
 	print("Available Perks:\n")
-	for perk in _player_perks.keys():
-		print(perk, ": ", _player_perks[perk]["description"], "\n")
+	for perk in perks.perks:
+		var _name = perk[0][1]  # Get name from first field
+		var description = perk[2][1]  # Get description from third field
+		print(_name, ": ", description, "\n")
 
 func print_player_traits():
 	print("Available Traits:\n")
-	for _trait in _player_traits.keys():
-		print(_trait, ": ", _player_traits[_trait]["description"], "\n")
+	for _trait in traits.traits:
+		var _name = _trait[0][1]
+		var description = _trait[2][1]
+		print(_name, ": ", description, "\n")
 
 func player_add_trait(trait_name: String):
-	if trait_name in _player_traits and not _player_traits[trait_name]["has"]:
-		_player_traits[trait_name]["has"] = true
-		print(trait_name, " trait added!")
-		_parse_buffs(_player_traits, trait_name) 
-	else:
-		print("Trait does not exist or already added!")
+	for _trait in traits.traits:
+		if _trait[0][1] == trait_name and _trait[1][1] == "FALSE":
+			_trait[1][1] = "TRUE"  # Set Has to TRUE
+			print(trait_name, " trait added!")
+			_parse_buffs_from_json(_trait[3][1])  # Parse Buffs field
+			return
+	print("Trait does not exist or already added!")
 
 func player_add_perk(perk_name: String):
-	if perk_name in _player_perks and not _player_perks[perk_name]["has"]:
-		_player_perks[perk_name]["has"] = true
-		print(perk_name, " perk added!")
-		_parse_buffs(_player_perks, perk_name) 
-	else:
-		print("Perk does not exist or already added!")
-
-# --- Buff Parsing Method ---
-func _parse_buffs(buff_dict: Dictionary, buff_name: String = ""):
-	# If a specific buff name is given, only apply that buff
-	if buff_name and buff_name in buff_dict:
-		var buff_data = buff_dict[buff_name]
-		if not buff_data.get("has", false):
+	for perk in perks.perks:
+		if perk[0][1] == perk_name and perk[1][1] == "FALSE":
+			perk[1][1] = "TRUE"  # Set Has to TRUE
+			print(perk_name, " perk added!")
+			_parse_buffs_from_json(perk[3][1])  # Parse Buffs field
 			return
-		for buff_key in buff_data:
-			if buff_key.begins_with("buff"):
-				player_change_stat(buff_data[buff_key])
-		return
-	
-	# If no buff name is given, apply all buffs
-	for _buff_name in buff_dict.keys():
-		if buff_dict[_buff_name].get("has", false):
-			for buff_key in buff_dict[_buff_name]:
-				if buff_key.begins_with("buff"):
-					player_change_stat(buff_dict[_buff_name][buff_key])
+	print("Perk does not exist or already added!")
+
+# New method to parse buff strings from JSON format
+func _parse_buffs_from_json(buff_string: String):
+	# Remove brackets and split buffs
+	var buffs = buff_string.trim_prefix("[").trim_suffix("]").split(";")
+	for buff in buffs:
+		if buff != "":
+			player_change_stat(buff)
 
 # --- Timeline Methods ---
 func _is_timeline_completed(timeline: String) -> bool:
@@ -206,3 +193,6 @@ func _ready() -> void:
 	frames += 1
 	if frames >= 100:
 		frames = 0
+	player_add_perk("heavy handed")
+	player_add_perk("heavy handed")
+	print(_stats)

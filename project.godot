@@ -18,7 +18,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 Global="*res://Scripts/singletons/global.gd"
-Data="*res://Scripts/resources/data.gd"
+Data="*res://Scripts/singletons/data.gd"
 
 [dialogic]
 

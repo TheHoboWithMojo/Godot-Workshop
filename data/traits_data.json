@@ -1,0 +1,46 @@
+{
+	"properties": [
+		"Name",
+		"Has",
+		"Description",
+		"Buffs"
+	],
+	"traits": [
+		[
+			[
+				"Name",
+				"scholar"
+			],
+			[
+				"Has",
+				"FALSE"
+			],
+			[
+				"Description",
+				"The library is your true home, unlocks informed dialogue options."
+			],
+			[
+				"Buffs",
+				"[intelligence + 5]"
+			]
+		],
+		[
+			[
+				"Name",
+				"war hero"
+			],
+			[
+				"Has",
+				"FALSE"
+			],
+			[
+				"Description",
+				"You've been through hell and back, unlocks gruff dialogue options."
+			],
+			[
+				"Buffs",
+				"[health * 1.05;speed_mul + 0.01]"
+			]
+		]
+	]
+}

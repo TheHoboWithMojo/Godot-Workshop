@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://ckmkhqqqnhrgc"]
 
-[ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://Scripts/player_manager.gd" id="1_cvnsp"]
+[ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://Scripts/nodemanagers/player_manager.gd" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://Assets/Textures/Godot_icon.png" id="2_cvnsp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cvnsp"]

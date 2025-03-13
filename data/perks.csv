@@ -1,0 +1,3 @@
+Name,Has,Description,Buffs,
+dead eye,FALSE,You gotta keen eye,[speed + 5],
+heavy handed,FALSE,You punch twice as hard! +3 to Strength.,[crit_chance + 0.05;health_regen + 0.01],health_regen / 2

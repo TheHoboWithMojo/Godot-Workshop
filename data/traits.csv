@@ -1,0 +1,3 @@
+Name,Has,Description,Buffs
+scholar,FALSE,"The library is your true home, unlocks informed dialogue options.",[intelligence + 5]
+war hero,FALSE,"You've been through hell and back, unlocks gruff dialogue options.",[health * 1.05;speed_mul + 0.01]

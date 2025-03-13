@@ -1,12 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://Scenes/player.tscn" id="1_ebmjs"]
-[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://Scripts/game_manager.gd" id="1_wrm1d"]
+[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://Scripts/nodemanagers/game_manager.gd" id="1_wrm1d"]
 [ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://Scenes/npc.tscn" id="2_qxrlw"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
-sync_csvs = true
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 
