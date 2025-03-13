@@ -17,8 +17,8 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 [autoload]
 
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
-Global="*res://Scripts/global.gd"
-Data="*res://data.gd"
+Global="*res://Scripts/singletons/global.gd"
+Data="*res://Scripts/resources/data.gd"
 
 [dialogic]
 
@@ -30,7 +30,7 @@ directories/dtl_directory={
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogic/plugin.cfg", "res://addons/sync_spreadsheets/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogic/plugin.cfg")
 
 [input]
 

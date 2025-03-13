@@ -1,5 +1,5 @@
-Item,Type,Value,Weight
-Gun,Weapon,10,5
-Melon,Food,23,3
-Sword,Weapon,100,15
-Tin Can,Misc,15,2
+Name,Type,Value,Weight,Has
+Gun,Weapon,10,5,FALSE
+Melon,Food,23,3,FALSE
+Sword,Weapon,100,15,FALSE
+Tin Can,Misc,15,2,FALSE
