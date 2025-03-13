@@ -4,6 +4,31 @@ extends Node2D
 @onready var player = $"/root/Game/Player"
 @onready var frames: int = 0
 
+var item_keys = "res://data/item_positions.json"
+
+func binary_search_items(search_term: String, keys_file_path) -> int:
+	var file = FileAccess.open(keys_file_path, FileAccess.READ)
+	var items = JSON.parse_string(file.get_as_text())
+	file.close()
+	
+	var left = 0
+	var right = items.size() - 1
+	
+	while left <= right:
+		var mid = (left + right) / 2
+		var item_name = items[mid][0]
+		
+		# Compare the strings
+		if item_name == search_term:
+			return items[mid][1] # Return the byte position
+		elif item_name < search_term:
+			left = mid + 1
+		else:
+			right = mid - 1
+	
+	print("Error: Binary Search ", search_term, " not found in ", keys_file_path)
+	return -1 # Item not found
+
 # Private variables for stats
 var _stats: Dictionary = {
 	"crit_chance": 0.01,

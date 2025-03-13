@@ -1,0 +1,105 @@
+extends Node2D
+
+@onready var file_syncer: HTTPRequest = $"File Syncer"
+@export var sync_csvs = false
+
+# Need to expand these to be more dynamic
+var spreadsheet_id = "1gLbKH8qPuMIA-s8Hr9qaiteuf-wpcvgvN3pkfZ--5nQ"
+var spreadsheet_name = ""
+var items_file_path = "res://data/items.csv"
+
+func _load_first_column(file_path):
+	var key_byte_pair = []
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	var byte_pos = 0
+	
+	while !file.eof_reached():
+		byte_pos = file.get_position()
+		var line = file.get_csv_line()
+		if line.size() > 0:
+			key_byte_pair.append([line[0], byte_pos])
+			
+	file.close()
+	return key_byte_pair  # Return the array!
+
+func save_to_json(parent_file_path: String, json_file_name: String):
+	var file_array = _load_first_column(parent_file_path)  # Use the actual path variable
+	var json_string = JSON.stringify(file_array)
+	var file = FileAccess.open("res://data/" + json_file_name + ".json", FileAccess.WRITE)
+	file.store_string(json_string)
+	file.close()
+	print(json_file_name + " saved successfully!")
+
+func _ready() -> void:
+	# Load A Timeline To Avoid Lag
+	Dialogic.start("boot")
+	# Declare dialogic timeline signals
+	Dialogic.timeline_started.connect(_on_dialogue_start)
+	Dialogic.timeline_ended.connect(_on_dialogue_end)
+	
+	if sync_csvs == true:
+		start_download()
+
+func start_download():
+	# First get the metadata to get the name
+	var metadata_url = "https://docs.google.com/spreadsheets/d/%s/edit" % spreadsheet_id
+	make_initial_request(metadata_url, true)
+
+func make_initial_request(url: String, is_metadata: bool = false) -> void:
+	file_syncer.use_threads = true
+	file_syncer.accept_gzip = true
+	file_syncer.max_redirects = 0
+	
+	var headers = [
+		"User-Agent: Mozilla/5.0",
+		"Accept: text/csv,application/json",
+		"Accept-Encoding: gzip, deflate",
+		"Connection: keep-alive"
+	]
+	
+	file_syncer.set_meta("is_metadata", is_metadata)
+	file_syncer.request(url, headers)
+
+func _on_http_request_request_completed(_result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	var is_metadata = file_syncer.get_meta("is_metadata", false)
+	
+	if response_code == 307:
+		var redirect_url = ""
+		for header in headers:
+			if header.begins_with("Location:"):
+				redirect_url = header.substr(10).strip_edges()
+				break
+		
+		if redirect_url != "":
+			make_initial_request(redirect_url, is_metadata)
+	elif response_code == 200:
+		if is_metadata:
+			# Extract title from the HTML response
+			var html_content = body.get_string_from_utf8()
+			var title_start = html_content.find("<title>") + 7
+			var title_end = html_content.find(" - Google Sheets")
+			spreadsheet_name = html_content.substr(title_start, title_end - title_start)
+			
+			# Now get the actual CSV
+			var csv_url = "https://docs.google.com/spreadsheets/d/%s/export?format=csv" % spreadsheet_id
+			make_initial_request(csv_url, false)
+		else:
+			# Save the CSV with the extracted name
+			var safe_name = spreadsheet_name.to_lower().replace(" ", "_")
+			var file = FileAccess.open("res://data/%s.csv" % safe_name, FileAccess.WRITE)
+			file.store_string(body.get_string_from_utf8())
+			print("CSV file saved as: %s.csv" % safe_name)
+			# Only generate JSON after CSV is saved successfully
+			save_to_json(items_file_path, "item_positions")
+	else:
+		print("Request failed with response code: ", response_code)
+		print("Headers: ", headers)
+	
+
+# Run when dialogue starts
+func _on_dialogue_start() -> void:
+	Global.player.speed = 0.0
+
+# Run when dialogue ends
+func _on_dialogue_end() -> void:
+	Global.player.speed = 300.0

@@ -7,7 +7,6 @@ extends StaticBody2D
 @onready var is_touching_player: bool = false
 
 func _ready() -> void:
-	Global.debug()
 	pass
 
 func _process(_delta: float) -> void:
