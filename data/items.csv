@@ -1,5 +1,5 @@
-Name,Type,Value,Weight,Has
-Gun,Weapon,10,5,FALSE
-Melon,Food,23,3,FALSE
-Sword,Weapon,100,15,FALSE
-Tin Can,Misc,15,2,FALSE
+name,description,has,type,weight,value
+ball,issa ball,false,misc,0.5,1
+gun,issa gun,false,weapon,3.0,100
+melon,issa melon,false,food,5.0,50
+stick,issa stick,false,weapon,1.0,5

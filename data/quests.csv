@@ -1,4 +1,2 @@
-Name,Description,Completed,Exp,Rewards
-Climb Everest,Dont be scared,FALSE,120,"balls + 5, sword add"
-Kill Bill,Like the movies,FALSE,300,"fear - 10, lamp add"
-Tutorial,Shoot bottles,FALSE,100,"bored + 5, rifle add"
+name,description,completed,rewards
+kill bill,make him die,false,[balls + 5;sword add;exp + 500]

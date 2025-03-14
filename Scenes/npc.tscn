@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://15uoupcpxi20"]
 
-[ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://Scripts/nodemanagers/npc_manager.gd" id="1_xxsvc"]
-[ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://Assets/Textures/Godot_icon.png" id="2_xxsvc"]
+[ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://scripts/node_managers/npc_manager.gd" id="1_xxsvc"]
+[ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://assets/Textures/Godot_icon.png" id="2_xxsvc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xxsvc"]
 radius = 53.0

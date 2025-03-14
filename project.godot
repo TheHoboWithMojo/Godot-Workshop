@@ -17,15 +17,15 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 [autoload]
 
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
-Global="*res://Scripts/singletons/global.gd"
-Data="*res://Scripts/singletons/data.gd"
+Global="*res://scripts/singletons/global.gd"
+Data="*res://scripts/singletons/data.gd"
 
 [dialogic]
 
 directories/dch_directory={}
 directories/dtl_directory={
-"boot": "res://Dialogic/Timelines/boot.dtl",
-"npc": "res://Dialogic/Timelines/npc.dtl"
+"boot": "res://dialogic/timelines/boot.dtl",
+"npc": "res://dialogic/timelines/npc.dtl"
 }
 
 [editor_plugins]
