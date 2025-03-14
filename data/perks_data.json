@@ -1,1 +1,1 @@
-{"properties":["name","description","has","buffs"],"perks":[[["name","dead eye"],["description","wohoo"],["has","false"],["buffs","[speed + 5]"]],[["name","heavy handed"],["description","gooshee"],["has","false"],["buffs","[crit_chance + 0.01]"]]]}
+{"perks":{"dead eye":{"description":"wohoo","has":"false","buffs":"speed + 5"},"heavy handed":{"description":"gooshee","has":"false","buffs":"health + 0.01"}}}

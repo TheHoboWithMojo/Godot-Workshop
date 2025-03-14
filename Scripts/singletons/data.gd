@@ -28,13 +28,14 @@ var spreadsheet_configs = {
 }
 
 signal data_loaded
+
 var is_data_loaded = false
 
 # ----- Initialization -----
 func _ready():
 	_load_game_data()
 
-func _load_game_data():
+func _load_game_data(): # loads all jsons into memory for manipulation
 	print("Loading game data...")
 	for csv_name in spreadsheet_configs:
 		var file = FileAccess.open(spreadsheet_configs[csv_name].data_path, FileAccess.READ)
@@ -62,21 +63,28 @@ func save_to_json(csv_path: String, data_path: String):
 	print("Data saved to: %s" % data_path)
 	
 func _load_all_columns(csv_path: String) -> Dictionary:
-	var data = {}
 	var file = FileAccess.open(csv_path, FileAccess.READ)
 	var master_name = csv_path.get_file().trim_suffix(".csv")
-	
 	var properties = file.get_csv_line()
-	data["properties"] = properties
-	data[master_name] = []
+	var data = {}
+	data[master_name] = {}
 	
 	while !file.eof_reached():
 		var line = file.get_csv_line()
 		if line.size() > 0:
-			var row_data = []
+			var entry_dict = {}
+			var entry_name = ""
+			
+			# Create dictionary for this entry
 			for i in range(line.size()):
-				row_data.append([properties[i], line[i]])
-			data[master_name].append(row_data)
+				if properties[i] == "name":
+					entry_name = line[i]
+				else:
+					entry_dict[properties[i]] = line[i]
+			
+			# Add entry to main dictionary using name as key
+			if entry_name:
+				data[master_name][entry_name] = entry_dict
 	
 	file.close()
 	return data
@@ -86,6 +94,16 @@ func get_json_properties(instanced_json: Dictionary) -> Array:
 	for i in instanced_json.properties:
 		headers.append(i)
 	return headers
+	
+# Convert an array of key-value pairs to a dictionary for easier access i.e. ["name"] instead of [0]
+func key_val_array_to_dict(array: Array) -> Dictionary:
+	var result: Dictionary = {}
+	for pair in array:
+		if pair.size() == 2:
+			result[pair[0]] = pair[1]
+		else:
+			Debug.throw_error(self, "Invalid array format", array)
+	return result
 
 # ----- Data Querying -----
 func print_info(csv_name: String, key: String) -> void:
@@ -97,6 +115,7 @@ func print_info(csv_name: String, key: String) -> void:
 		print("\n=== %s Info ===" % display_name)
 		pretty_print_rows([data[0]], csv_name)
 
+# co means call with await
 func get_filtered_rows_co(csv_name: String, property: String, key: String) -> Array:
 	if not is_data_loaded:
 		await data_loaded
