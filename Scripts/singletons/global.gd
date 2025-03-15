@@ -216,7 +216,7 @@ func start_dialog(timeline: String) -> void:
 
 	if timeline in Timelines:
 		if _is_timeline_completed(timeline) and not _is_timeline_repeatable(timeline):
-			Debug.throw_error(self, "The timeline " + timeline + " has been played and is not repeatable.")
+			Debug.throw_error(self, "The timeline " + timeline + " has been played and is not repeatable")
 			return
 		
 		Timelines[timeline]["completed"] = true

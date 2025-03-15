@@ -1,0 +1,273 @@
+class_name Being
+extends Node2D
+
+var _nomen: String = "Unnamed"
+var _health: float = 100.0
+var _alive: bool = true
+var _hostile: bool = false
+var _sprite: AnimatedSprite2D = null
+var _collision: CollisionShape2D = null
+var _area: Area2D = null
+var _animation_player: AnimationPlayer = null
+var _caller_path: String = ""
+var _missing_components: Dictionary = {}
+var _debug_mode: bool = false
+
+# Function reference lists by component type
+const SPRITE_FUNCTIONS = {
+	"show_damage_effect": "Display visual effects when taking damage",
+	"show_healing_effect": "Display visual effects when healing",
+	"set_sprite_visible": "Show or hide the being's sprite",
+	"flip_sprite": "Flip the sprite horizontally"
+}
+
+const COLLISION_FUNCTIONS = {
+	"move_to": "Move the being to a specific position",
+	"detect_collisions": "Check for collisions with other objects",
+	"set_collision_enabled": "Enable or disable collision detection"
+}
+
+const AREA_FUNCTIONS = {
+	"setup_interaction_area": "Configure the interaction area",
+	"set_area_monitoring": "Enable or disable area monitoring",
+	"get_overlapping_bodies": "Get list of bodies overlapping with this being"
+}
+
+const ANIMATOR_FUNCTIONS = {
+	"play_animation": "Play a specific animation",
+	"stop_animation": "Stop the current animation",
+	"is_playing_animation": "Check if an animation is currently playing",
+	"get_current_animation": "Get the name of the current animation"
+}
+
+var health: float:
+	get:
+		return _health
+	set(value):
+		if _debug_mode:
+			print("[Being] Setting Health: %s" % value)
+		if value <= 0 and _alive:
+			_health = 0
+			print("[Being] " + _caller_path + " - " + _nomen + " died!")
+			_alive = false
+		elif value > 0:
+			_health = value
+
+# Use a dictionary for optional parameters
+func _init(params: Dictionary = {}):
+	if _debug_mode:
+		print("[Being] Constructor called")
+	
+	# Set properties from params with defaults
+	_nomen = params.get("nomen", "Unnamed")
+	_hostile = params.get("hostile", false)
+	_caller_path = params.get("caller_path", "")
+	
+	# Set components and track missing ones
+	_sprite = params.get("sprite")
+	if not _sprite:
+		_missing_components["sprite"] = SPRITE_FUNCTIONS
+		
+	_collision = params.get("collision")
+	if not _collision:
+		_missing_components["collision"] = COLLISION_FUNCTIONS
+		
+	_area = params.get("area")
+	if not _area:
+		_missing_components["area"] = AREA_FUNCTIONS
+		
+	_animation_player = params.get("animator")
+	if not _animation_player:
+		_missing_components["animator"] = ANIMATOR_FUNCTIONS
+		
+	_debug_mode = params.get("debug_mode", false)
+	
+	# Set health last to ensure alive state is properly managed
+	_alive = true
+	health = params.get("base_health", 100.0)
+	if _debug_mode:
+		print("[Being] Initialized: Name = %s, Health = %s" % [_nomen, _health])
+		
+	print_missing_components()
+func print_missing_components() -> void:
+	if _missing_components.size() > 0:
+		print("[Being] Warning: Missing components:")
+		for component in _missing_components:
+			print("  - %s component missing. Unavailable functions:" % component)
+			for func_name in _missing_components[component]:
+				print("    • %s: %s" % [func_name, _missing_components[component][func_name]])
+
+func require_component(component: String, function_name: String) -> bool:
+	if component in _missing_components:
+		print("[Being] Error: Cannot use %s(), missing %s component" % [function_name, component])
+		return false
+	return true
+
+# ===== Core Functions (No Component Requirements) =====
+
+func take_damage(damage: float) -> void:
+	var new_health = health - damage
+	if new_health < 0:
+		new_health = 0
+	health = new_health
+
+func heal(amount: float) -> void:
+	health += amount
+
+func kill() -> void:
+	health = 0
+
+func revive(revive_health: float = 100.0) -> void:
+	_alive = true
+	health = revive_health
+
+func is_alive() -> bool:
+	return _alive
+
+func is_hostile() -> bool:
+	return _hostile
+
+func set_hostile(value: bool) -> void:
+	_hostile = value
+
+# ===== Sprite Component Functions =====
+
+func show_damage_effect() -> bool:
+	if not require_component("sprite", "show_damage_effect"):
+		return false
+	# Visual damage effect code
+	return true
+
+func show_healing_effect() -> bool:
+	if not require_component("sprite", "show_healing_effect"):
+		return false
+	# Visual healing effect code
+	return true
+
+func set_sprite_visible(_visible: bool) -> bool:
+	if not require_component("sprite", "set_sprite_visible"):
+		return false
+	_sprite.visible = _visible
+	return true
+
+func flip_sprite(flip_h: bool) -> bool:
+	if not require_component("sprite", "flip_sprite"):
+		return false
+	_sprite.flip_h = flip_h
+	return true
+
+# ===== Collision Component Functions =====
+
+func move_to(_position: Vector2) -> bool:
+	if not require_component("collision", "move_to"):
+		return false
+	# Movement code here
+	return true
+
+func detect_collisions() -> bool:
+	if not require_component("collision", "detect_collisions"):
+		return false
+	# Collision detection code
+	return true
+
+func set_collision_enabled(enabled: bool) -> bool:
+	if not require_component("collision", "set_collision_enabled"):
+		return false
+	_collision.disabled = !enabled
+	return true
+
+# ===== Area Component Functions =====
+
+func setup_interaction_area() -> bool:
+	if not require_component("area", "setup_interaction_area"):
+		return false
+	# Interaction area setup
+	return true
+
+func set_area_monitoring(enabled: bool) -> bool:
+	if not require_component("area", "set_area_monitoring"):
+		return false
+	_area.monitoring = enabled
+	_area.monitorable = enabled
+	return true
+
+func get_overlapping_bodies() -> Array:
+	if not require_component("area", "get_overlapping_bodies"):
+		return []
+	return _area.get_overlapping_bodies()
+
+# ===== Animation Player Component Functions =====
+
+func play_animation(anim_name: String) -> bool:
+	if not require_component("animator", "play_animation"):
+		return false
+	_animation_player.play(anim_name)
+	return true
+
+func stop_animation() -> bool:
+	if not require_component("animator", "stop_animation"):
+		return false
+	_animation_player.stop()
+	return true
+
+func is_playing_animation() -> bool:
+	if not require_component("animator", "is_playing_animation"):
+		return false
+	return _animation_player.is_playing()
+	
+func get_current_animation() -> String:
+	if not require_component("animator", "get_current_animation"):
+		return ""
+	return _animation_player.current_animation
+
+# ===== Static Functions =====
+
+static func create_being(self_node: Node) -> Being:
+	var params = {}
+	var caller_path = self_node.get_path()
+	params["caller_path"] = caller_path
+	
+	# Add available components to params
+	var sprite = self_node.get("sprite")
+	if sprite:
+		params["sprite"] = sprite
+		
+	var collision = self_node.get("collision")
+	if collision:
+		params["collision"] = collision
+		
+	var area = self_node.get("area")
+	if area:
+		params["area"] = area
+		
+	var animator = self_node.get("animator")
+	if animator:
+		params["animator"] = animator
+	
+	var base_health = self_node.get("base_health")
+	if base_health != null:
+		params["base_health"] = base_health
+		
+	var nomen = self_node.get("nomen")
+	if nomen != null:
+		params["nomen"] = nomen
+		
+	var hostile = self_node.get("hostile")
+	if hostile != null:
+		params["hostile"] = hostile
+		
+	var debug_mode = self_node.get("debug_mode")
+	if debug_mode != null:
+		params["debug_mode"] = debug_mode
+	
+	return Being.new(params)
+
+static func print_reqs() -> void:
+	print("# Optional export variables for Being:")
+	print("@export var base_health: float = 100.0")
+	print("@export var nomen: String = \"Unnamed\"")
+	print("@export var hostile: bool = false")
+	print("@export var sprite: AnimatedSprite2D")
+	print("@export var collision: CollisionShape2D")
+	print("@export var area: Area2D")
+	print("@export var animator: AnimationPlayer")

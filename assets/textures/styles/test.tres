@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DialogicStyle" load_steps=4 format=3 uid="uid://82ssmf7xt183"]
+
+[ext_resource type="Script" uid="uid://ccmbjb6a301yo" path="res://addons/dialogic/Resources/dialogic_style_layer.gd" id="1_hc1jb"]
+[ext_resource type="Script" uid="uid://dfikvf7en2e65" path="res://addons/dialogic/Resources/dialogic_style.gd" id="2_pnx42"]
+
+[sub_resource type="Resource" id="Resource_lv8de"]
+script = ExtResource("1_hc1jb")
+overrides = {
+"global_font": "\"res://assets/fonts/KaushanScript-Regular.ttf\""
+}
+
+[resource]
+script = ExtResource("2_pnx42")
+name = "test"
+layer_list = Array[String]([])
+layer_info = {
+"": SubResource("Resource_lv8de")
+}
+base_overrides = {}
+layers = Array[ExtResource("1_hc1jb")]([])
+metadata/_latest_layer = ""

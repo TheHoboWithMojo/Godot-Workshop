@@ -1,7 +1,6 @@
 extends Node
 
 # Holds advanced printing functions
-		
 func throw_error(self_node: Node, reason: String, input: Variant = null):
 		
 	var file_name: String = self_node.get_script().resource_path.get_file()
