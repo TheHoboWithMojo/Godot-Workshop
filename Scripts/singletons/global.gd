@@ -3,12 +3,14 @@ extends Node2D
 # Constants
 const FLOAT_LIMIT: float = 2147483647.0
 
+@export var count_frames: bool = false
+
 # --- Member Variables ---
 @onready var player: CharacterBody2D = $"/root/Game/Player"
 @onready var frames: int = 0
 
-# Stats dictionary
-var _stats_dict: Dictionary = {
+# Not used. Save as json when updated
+var player_stats_template: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
 		"speed": 50
@@ -22,12 +24,12 @@ var _stats_dict: Dictionary = {
 		"crit_mult": 2.0
 	},
 	"personality": {
-			"recklessness": 5,
-			"bravery": 5,
-			"intelligence": 5,
-			"snarkiness": 5,
-			"charisma": 5,
-		}
+		"recklessness": 5,
+		"bravery": 5,
+		"intelligence": 5,
+		"snarkiness": 5,
+		"charisma": 5,
+	}
 }
 
 # Stat Constraints
@@ -54,6 +56,17 @@ var Timelines: Dictionary = {
 	}
 }
 
+func _ready() -> void:
+	# Initialize game data with our template if not already present
+	if not "player stats" in Data.game_data:
+		Data.game_data["player stats"] = player_stats_template.duplicate(true)
+
+func _process(_delta: float) -> void:
+	if count_frames:
+		frames += 1
+		if frames >= 100:
+			frames = 0
+
 func _is_valid_buff_string(string: String) -> bool:
 	var buffs: Array = _split_buff_string(string)
 	
@@ -72,7 +85,7 @@ func _is_valid_buff_string(string: String) -> bool:
 	return true
 
 func _is_valid_stat(stat: String) -> bool:
-	for stat_category in _stats_dict.values():
+	for stat_category in Data.game_data["player stats"].values():
 		if stat in stat_category:
 			return true
 	return false
@@ -98,7 +111,7 @@ func _parse_buff_string(buff_string: String) -> Array:
 
 func player_get_stat(stat: String) -> float:
 	var stat_category: String = _get_stat_category(stat)
-	return _stats_dict[stat_category][stat] if stat_category else 0.0
+	return Data.game_data["player stats"][stat_category][stat] if stat_category else 0.0
 
 func player_change_stat(buff_string: String) -> void:
 	var buffs: Array = _parse_buff_string(buff_string)
@@ -111,7 +124,7 @@ func player_change_stat(buff_string: String) -> void:
 		if stat_category.is_empty():
 			continue
 			
-		var original_stat_value: float = _stats_dict[stat_category][stat]
+		var original_stat_value: float = Data.game_data["player stats"][stat_category][stat]
 		var new_stat_value: float = _get_updated_stat(stat_category, stat, operator, value)
 		_print_stat_change(stat, original_stat_value, new_stat_value)
 		
@@ -122,8 +135,8 @@ func _print_stat_change(stat: String, original_stat_value: float, new_stat_value
 	])
 
 func _get_stat_category(stat: String) -> String:
-	for stat_category in _stats_dict.keys():
-		if stat in _stats_dict[stat_category]:
+	for stat_category in Data.game_data["player stats"].keys():
+		if stat in Data.game_data["player stats"][stat_category]:
 			return stat_category
 	return ""
 
@@ -132,7 +145,7 @@ func _get_stat_constraints(stat_category: String, stat: String) -> Dictionary:
 	return category_constraints.get(stat, { "min": 0.0, "max": FLOAT_LIMIT })
 
 func _get_updated_stat(stat_category: String, stat: String, operator: String, value: float) -> float:
-	var current_value: float = _stats_dict[stat_category][stat]
+	var current_value: float = Data.game_data["player stats"][stat_category][stat]
 	match operator:
 		"*": current_value *= value
 		"-": current_value -= value
@@ -144,7 +157,8 @@ func _get_updated_stat(stat_category: String, stat: String, operator: String, va
 				Debug.throw_error(self, "Cannot divide by 0", str(value))
 	var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
 	var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
-	_stats_dict[stat_category][stat] = constrained_value
+	Data.game_data["player stats"][stat_category][stat] = constrained_value
+	
 	return constrained_value
 
 func print_player_perks():
@@ -202,6 +216,7 @@ func _update_toggle_buff(buff_name: String, buff_data: Dictionary) -> bool:
 	return true
 
 # --- Timeline Methods ---
+
 func _is_timeline_completed(timeline: String) -> bool:
 	return Timelines[timeline]["completed"] == true
 
@@ -226,6 +241,7 @@ func start_dialog(timeline: String) -> void:
 		Debug.throw_error(self, "The timeline " + timeline + " does not exist.")
 
 # --- Vector and Debug Methods ---
+
 func get_vector_to_player(self_node: Node2D) -> Vector2:
 	if player:
 		return player.global_position - self_node.global_position
@@ -244,8 +260,3 @@ func _process(_delta: float) -> void:
 	vector_to_player = get_vector_to_player(self)
 	queue_redraw()
 """)
-
-func _ready() -> void:
-	frames += 1
-	if frames >= 100:
-		frames = 0

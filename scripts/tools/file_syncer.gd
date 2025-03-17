@@ -1,10 +1,11 @@
+# This scene syncs all csvs and automatically updates their respective _ref jsons
+
 extends Node2D
 
 @export var sync_sheets: bool = false
-@export var override_json: bool = false
 @onready var http_request: HTTPRequest = $"/root/FileSyncer/HTTPRequest"
 
-signal sheet_completed(csv_name: String)
+signal sheet_completed(sheet_name: String)
 
 var current_sync = null
 var spreadsheet_name = ""
@@ -15,16 +16,17 @@ func _ready():
 
 func sync_all_sheets():
 	print("Starting sync of all sheets...")
-	for csv_name in Data.spreadsheet_dict.keys():
-		print("Processing sheet: ", csv_name)
-		await _sync_csv(csv_name)
-		await sheet_completed
+	for sheet_name in Data.spreadsheet_dict.keys():
+		if Data.spreadsheet_dict[sheet_name]["id"] != "":
+			print("Processing sheet: ", sheet_name)
+			await _sync_csv(sheet_name)
+			await sheet_completed
 	print("All sheets processed!")
 
-func _sync_csv(csv_name: String):
-	if Data.spreadsheet_dict.has(csv_name):
-		current_sync = csv_name
-		var metadata_url = "https://docs.google.com/spreadsheets/d/%s/edit" % Data.spreadsheet_dict[csv_name].id
+func _sync_csv(sheet_name: String):
+	if Data.spreadsheet_dict.has(sheet_name):
+		current_sync = sheet_name
+		var metadata_url = "https://docs.google.com/spreadsheets/d/%s/edit" % Data.spreadsheet_dict[sheet_name].id
 		await _make_initial_request(metadata_url, true)
 
 func _make_initial_request(url: String, is_metadata: bool = false) -> void:

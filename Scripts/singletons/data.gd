@@ -30,7 +30,19 @@ var spreadsheet_dict: Dictionary = {
 		"sheet_path": "res://data/traits.csv",
 		"data_path": "res://data/traits_data_ref.json",
 		"static": false
-	}
+	},
+	"factions": {
+		"id": "",
+		"sheet_path": "",
+		"data_path": "res://data/factions_data_ref.json",
+		"static": false
+	},
+	"player stats": {
+		"id": "",
+		"sheet_path": "",
+		"data_path": "res://data/player_stats_data_ref.json",
+		"static": false
+	},
 }
 
 # ----- Signals -----
@@ -143,7 +155,7 @@ func print_info(sheet_name: String, key: String) -> void:
 		row.insert(0, ["id", key])
 		
 		print("\n=== %s Info ===" % display_name)
-		Debug.print_pretty_rows([row], sheet_name.capitalize())
+		Debug.print_array([row])
 	else:
 		print("\n=== %s with ID '%s' not found ===" % [display_name, key])
 
@@ -156,20 +168,39 @@ func get_filtered_rows_co(sheet_name: String, property: String, key: String) -> 
 		var items_dict: Dictionary = game_data[sheet_name]
 		
 		var filtered_rows: Array = []
-		for item_id: String in items_dict:
-			var item: Dictionary = items_dict[item_id]
+		for item_name: String in items_dict:
+			var item: Dictionary = items_dict[item_name]
 			if item.has(property) and item[property] == key:
 				var row: Array = []
 				for prop: String in item:
 					row.append([prop, item[prop]])
-				row.insert(0, ["id", item_id])
+				row.insert(0, ["name", item_name])
 				filtered_rows.append(row)
 		
-		print("\n=== Filtered %s ===" % display_name)
-		Debug.print_pretty_rows(filtered_rows, display_name)
+		_print_filtered_rows(filtered_rows, "Filtered " + display_name)
 		
 		return filtered_rows
 	return []
+	
+	# Special function for the specific data structure returned by get_filtered_rows_co
+func _print_filtered_rows(rows_data: Array, title: String = "Filtered Items") -> void:
+	print("\n=== " + title + " ===\n")
+	
+	for item_index in range(rows_data.size()):
+		var item = rows_data[item_index]
+		print("Item #" + str(item_index + 1) + ":")
+		
+		var item_dict = {}
+		# Convert the array of field pairs into a dictionary for easier reading
+		for field_pair in item:
+			if field_pair.size() >= 2:
+				item_dict[field_pair[0]] = field_pair[1]
+		
+		# Print each field with proper indentation
+		for key in item_dict:
+			print("\t" + key + ": " + Debug.format_value(item_dict[key]))
+		
+		print("")
 
 # ----- Utility Functions -----
 

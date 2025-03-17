@@ -1,6 +1,7 @@
 extends Node
 
-var factions_dict = {
+# Not used, save as json if updated
+var factions_template = {
 	"New California Republic": {
 		"rep": 50,
 		"decisions": []
@@ -79,20 +80,34 @@ var factions_dict = {
 	}
 }
 
+# Wrapper function to update any faction data
+func update_faction_data(faction: String, property: String, value) -> void:
+	if Data.game_data["factions"].has(faction):
+		if property in Data.game_data["factions"][faction]:
+			Data.game_data["factions"][faction][property] = value
+		else:
+			Data.throw_error(self, "Property " + property + " not found in faction " + faction)
+	else:
+		Data.throw_error(self, "Faction " + faction + " not found!")
+
 func change_rep(faction: String, rep_change: int) -> void:
-	if factions_dict.has(faction):
-		factions_dict[faction]["rep"] += rep_change
+	if Data.game_data["factions"].has(faction):
+		var new_rep = Data.game_data["factions"][faction]["rep"] + rep_change
+		update_faction_data(faction, "rep", new_rep)
 	else:
 		Data.throw_error(self, "Faction " + faction + " not found!")
 
 func log_decision(faction: String, decision: String, rep_change: int) -> void:
-	if factions_dict.has(faction):
+	if Data.game_data["factions"].has(faction):
 		# Update reputation
 		change_rep(faction, rep_change)
 		
+		# Get current decisions
+		var decisions = Data.game_data["factions"][faction]["decisions"]
+		
 		# Check if decision already exists
 		var found = false
-		for entry in factions_dict[faction]["decisions"]:
+		for entry in decisions:
 			if entry[0] == decision:
 				entry[1] += rep_change  # Update reputation impact
 				entry[2] += 1  # Increment count
@@ -101,13 +116,16 @@ func log_decision(faction: String, decision: String, rep_change: int) -> void:
 		
 		# If decision not found, add a new entry
 		if not found:
-			factions_dict[faction]["decisions"].append([decision, rep_change, 1])
+			decisions.append([decision, rep_change, 1])
+		
+		# Update decisions using the wrapper
+		update_faction_data(faction, "decisions", decisions)
 	else:
 		Data.throw_error(self, "Faction " + faction + " not found!")
 		
 func get_rep_status(faction: String) -> String:
-	if factions_dict.has(faction):
-		var rep = factions_dict[faction]["rep"]
+	if Data.game_data["factions"].has(faction):
+		var rep = Data.game_data["factions"][faction]["rep"]
 		if rep < 0:
 			return "Hostile"
 		elif rep < 25:
@@ -123,26 +141,23 @@ func get_rep_status(faction: String) -> String:
 		return "Faction not found!"
 
 func reset_faction(faction: String) -> void:
-	if factions_dict.has(faction):
-		factions_dict[faction]["rep"] = 50
-		factions_dict[faction]["decisions"] = []
+	if Data.game_data["factions"].has(faction):
+		update_faction_data(faction, "rep", 50.0)
+		update_faction_data(faction, "decisions", [])
 	else:
 		Data.throw_error(self, "Faction " + faction + " not found!")
 		
 func print_faction_status(faction: String) -> void:
-	if factions_dict.has(faction):
-		var rep = factions_dict[faction]["rep"]
+	if Data.game_data["factions"].has(faction):
+		var rep = Data.game_data["factions"][faction]["rep"]
 		var status = get_rep_status(faction)
 		var header = "| %-25s | %-10s (%3d) |" % [faction, status, rep]
 		var divider = "-" .repeat(header.length())
-
 		print(divider)
 		print(header)
 		print(divider)
-
-		for entry in factions_dict[faction]["decisions"]:
+		for entry in Data.game_data["factions"][faction]["decisions"]:
 			print("x" + str(entry[2]) + " " + entry[0] + " (" + str(entry[1]) + ")")
-
 		print(divider)
 	else:
 		Data.throw_error(self, "Faction " + faction + " not found!")
