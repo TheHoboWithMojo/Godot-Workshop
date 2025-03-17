@@ -1,1 +1,0 @@
-{"traits":{"apple":{"description":"munch","has":"false","buffs":"health + 2"},"claustrophobic":{"description":"dont like tight spaces","has":"false","buffs":"speed * 0.25"},"pyromaniac":{"description":"likes fire","has":"false","buffs":"fire_damage_mult + 0.05"}}}

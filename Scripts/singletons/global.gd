@@ -6,14 +6,12 @@ const FLOAT_LIMIT: float = 2147483647.0
 # --- Member Variables ---
 @onready var player: CharacterBody2D = $"/root/Game/Player"
 @onready var frames: int = 0
-@onready var traits: Dictionary = Data.load_json_file("res://data/traits_data.json")
-@onready var perks: Dictionary = Data.load_json_file("res://data/perks_data.json")
 
 # Stats dictionary
 var _stats_dict: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
-		"speed_base": 50
+		"speed": 50
 	},
 	"health": {
 		"health": 100.0,
@@ -22,7 +20,14 @@ var _stats_dict: Dictionary = {
 	"crit": {
 		"crit_chance": 0.01,
 		"crit_mult": 2.0
-	}
+	},
+	"personality": {
+			"recklessness": 5,
+			"bravery": 5,
+			"intelligence": 5,
+			"snarkiness": 5,
+			"charisma": 5,
+		}
 }
 
 # Stat Constraints
@@ -128,7 +133,6 @@ func _get_stat_constraints(stat_category: String, stat: String) -> Dictionary:
 
 func _get_updated_stat(stat_category: String, stat: String, operator: String, value: float) -> float:
 	var current_value: float = _stats_dict[stat_category][stat]
-
 	match operator:
 		"*": current_value *= value
 		"-": current_value -= value
@@ -138,7 +142,6 @@ func _get_updated_stat(stat_category: String, stat: String, operator: String, va
 				current_value /= value
 			else:
 				Debug.throw_error(self, "Cannot divide by 0", str(value))
-
 	var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
 	var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
 	_stats_dict[stat_category][stat] = constrained_value
@@ -146,38 +149,38 @@ func _get_updated_stat(stat_category: String, stat: String, operator: String, va
 
 func print_player_perks():
 	print("=== All Perks ===")
-	for perk_name in perks.perks:
-		var perk = perks.perks[perk_name]
+	for perk_name in Data.game_data["perks"]:
+		var perk = Data.game_data["perks"][perk_name]
 		print("\nPerk: ", perk_name)
 		for property in perk:
 			print("  %s: %s" % [property, perk[property]])
 
 func print_player_traits():
 	print("=== All Traits ===")
-	for trait_name in traits.traits:
-		var _trait = traits.traits[trait_name]
+	for trait_name in Data.game_data["traits"]:
+		var _trait = Data.game_data["traits"][trait_name]
 		print("\nTrait: ", trait_name)
 		for property in _trait:
 			print("  %s: %s" % [property, _trait[property]])
 
 func player_add_perk(perk_name: String) -> void:
-	if not perks.perks.has(perk_name):
+	if not Data.game_data["perks"].has(perk_name):
 		print("Could not find '", perk_name, "' in perks data")
 		print_player_perks()
 		return
 		
-	if _update_toggle_buff(perk_name, perks.perks):
+	if _update_toggle_buff(perk_name, Data.game_data["perks"]):
 		print(perk_name, " boolean buff was added!")
 	else:
 		print(perk_name, " boolean buff is already active.")
 
 func player_add_trait(trait_name: String) -> void:
-	if not traits.traits.has(trait_name):
+	if not Data.game_data["traits"].has(trait_name):
 		Debug.throw_error(self, trait_name + " not found in traits.")
 		print_player_traits()
 		return
 		
-	if _update_toggle_buff(trait_name, traits.traits):
+	if _update_toggle_buff(trait_name, Data.game_data["traits"]):
 		print(trait_name, " boolean buff was added!")
 	else:
 		print(trait_name, " boolean buff is already active.")
@@ -194,7 +197,6 @@ func _update_toggle_buff(buff_name: String, buff_data: Dictionary) -> bool:
 	if _is_toggle_buff_active(buff):
 		return false
 	
-	# If the buff exists and is unactive, activate it and parse it then return success
 	buff["has"] = "true"
 	player_change_stat(buff.get("buffs", ""))
 	return true
@@ -213,7 +215,6 @@ func start_dialog(timeline: String) -> void:
 	if _is_timeline_running():
 		Debug.throw_error(self, "A timeline is already running! Cannot start a new one.")
 		return
-
 	if timeline in Timelines:
 		if _is_timeline_completed(timeline) and not _is_timeline_repeatable(timeline):
 			Debug.throw_error(self, "The timeline " + timeline + " has been played and is not repeatable")

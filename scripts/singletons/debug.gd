@@ -10,3 +10,10 @@ func throw_error(self_node: Node, reason: String, input: Variant = null):
 		return
 	
 	print("Error: in %s, %s(). %s. Input: %s" % [file_name, function_name, reason, input])
+	
+func print_pretty_rows(rows: Array, title: String) -> void: # Prints an array beautifully
+	for row: Array in rows:
+		print("\n%s:" % title)
+		for field: Array in row:
+			print("  %s: %s" % [field[0], field[1]])
+		print("\n---------------")

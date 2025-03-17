@@ -1,0 +1,17 @@
+We’ve been developing a system for adjusting in-game stats, 
+including Strength, Perception, Endurance, Charisma, Intelligence, Agility, Luck, Kindness, and Cruelty. 
+
+Each stat has a base value and is influenced by other stats via range-based constants. 
+The relationships between stats are controlled using piecewise functions, 
+allowing for adjustable coefficients for each interaction.
+
+We also implemented an exponential system for Cruelty, 
+where the higher the stat, the easier it becomes to increase it, 
+represented by an exponential growth function. 
+This makes cruelty easier to improve as it increases, 
+using constants to control the rate of this effect.
+
+The goal is to create a system that’s highly configurable, 
+allowing constants to be tweaked and dynamic relationships to be established. 
+These adjustments influence the stats in meaningful ways, 
+enabling complex interactions between them, such as Cruelty and Kindness counteracting each other.

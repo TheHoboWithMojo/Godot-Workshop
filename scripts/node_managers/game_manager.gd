@@ -1,6 +1,7 @@
 extends Node2D
 
 func _ready() -> void:
+	Data.load_game_data()
 	Dialogic.start("boot") # Boot a blank timeline to load Dialogic
 	
 	# Connect dialogic signals

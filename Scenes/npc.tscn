@@ -32,7 +32,6 @@ sprite = NodePath("AnimatedSprite2D")
 collision = NodePath("Collision")
 area = NodePath("Interaction Bubble")
 animator = NodePath("AnimationPlayer")
-debug_mode = true
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, 5)

@@ -1,5 +1,5 @@
-name,description,has,type,weight,value
-ball,issa ball,false,misc,0.5,1
-gun,issa gun,false,weapon,3.0,100
-melon,issa melon,false,food,5.0,50
-stick,issa stick,false,weapon,1.0,5
+name,description,type,weight,value
+ball,issa ball,misc,0.5,1
+gun,issa gun,weapon,3.0,100
+melon,issa melon,food,5.0,50
+stick,issa stick,weapon,1.0,5
