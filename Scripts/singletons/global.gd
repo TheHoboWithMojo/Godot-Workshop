@@ -3,10 +3,11 @@ extends Node2D
 # Constants
 const FLOAT_LIMIT: float = 2147483647.0
 
-@export var count_frames: bool = false
+@export var count_frames: bool = true
 
 # --- Member Variables ---
 @onready var player: CharacterBody2D = $"/root/Game/Player"
+@onready var player_camera: Camera2D = $"/root/Game/Player/SimCamera"
 @onready var frames: int = 0
 
 # Not used. Save as json when updated
@@ -113,7 +114,7 @@ func player_get_stat(stat: String) -> float:
 	var stat_category: String = _get_stat_category(stat)
 	return Data.game_data["player stats"][stat_category][stat] if stat_category else 0.0
 
-func player_change_stat(buff_string: String) -> void:
+func player_change_stat(buff_string: String, debug: bool = false) -> void:
 	var buffs: Array = _parse_buff_string(buff_string)
 	for buff in buffs:
 		var stat: String = buff[0]
@@ -126,7 +127,9 @@ func player_change_stat(buff_string: String) -> void:
 			
 		var original_stat_value: float = Data.game_data["player stats"][stat_category][stat]
 		var new_stat_value: float = _get_updated_stat(stat_category, stat, operator, value)
-		_print_stat_change(stat, original_stat_value, new_stat_value)
+		
+		if debug:
+				_print_stat_change(stat, original_stat_value, new_stat_value)
 		
 func _print_stat_change(stat: String, original_stat_value: float, new_stat_value: float) -> void:
 	var change: float = new_stat_value - original_stat_value
@@ -248,15 +251,3 @@ func get_vector_to_player(self_node: Node2D) -> Vector2:
 	else:
 		print(self, "get_vector_to_player()", "Player Path Has Changed")
 		return Vector2.ZERO
-
-func debug() -> void:
-	print("""
-Show Vectors:
-func _draw() -> void:
-	draw_line(Vector2.ZERO, vector_to_player, Color.GREEN, 2.0)
-func _ready() -> void:
-	queue_redraw()
-func _process(_delta: float) -> void:
-	vector_to_player = get_vector_to_player(self)
-	queue_redraw()
-""")

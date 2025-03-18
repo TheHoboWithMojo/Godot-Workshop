@@ -1,0 +1,2 @@
+name,health,speed,sprite,collision,animator,area,textures,sounds
+slime,10,30,animatesprite2d,collisionbody2d,animationplayer,null,[slime.jpeg],[squelch.mp3]

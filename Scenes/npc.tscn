@@ -34,7 +34,6 @@ area = NodePath("Interaction Bubble")
 animator = NodePath("AnimationPlayer")
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 5)
 shape = SubResource("CircleShape2D_xxsvc")
 disabled = true
 

@@ -7,6 +7,8 @@ func _ready() -> void:
 	Dialogic.timeline_started.connect(_on_dialogue_start)
 	Dialogic.timeline_ended.connect(_on_dialogue_end)
 	
+	Dialogic.start("boot")
+	
 	if not Data.is_data_loaded: # ESSENTIAL - DATA MUST ABSOLUTELY BE LOADED BEFORE ANYTHING ELSE
 		await Data.data_loaded # Waits for completion signal
 		

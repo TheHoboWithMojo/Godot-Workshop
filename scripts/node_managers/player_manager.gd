@@ -1,9 +1,9 @@
 extends CharacterBody2D
 
-@onready var camera: Camera2D = $"Sim Camera"
+@onready var camera: Camera2D = $"SimCamera"
 
 var speed: float = 300.0
-var camera_limit: float = 200.0  # Max distance the camera can move from the player in pixels
+var camera_limit: float = 100000.0  # Max distance the camera can move from the player in pixels
 
 func _physics_process(_delta: float) -> void:
 	# Get the Y direction
@@ -28,6 +28,9 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("test_action_q"):
+		Global.player_change_stat("health - 10")
+	
 	# Check if the "center_camera" action is pressed
 	if Input.is_action_just_pressed("center_camera"):
 		camera.position = Vector2.ZERO  # Reset camera position relative to player

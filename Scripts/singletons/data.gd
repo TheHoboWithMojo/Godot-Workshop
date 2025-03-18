@@ -26,9 +26,15 @@ var spreadsheet_dict: Dictionary = {
 		"static": false
 	},
 	"traits": {
-		"id": "1KLbQ5k6whXAKWBNl_nwSfP1Rs2-0_y9-WZuwTxaigl8",
-		"sheet_path": "res://data/traits.csv",
-		"data_path": "res://data/traits_data_ref.json",
+		"id": "1-ydtxqgvrp60mp_hDfPeCgo9gltg_JpEysfCA67aLuw",
+		"sheet_path": "res://data/entities.csv",
+		"data_path": "res://data/entities_data_ref.json",
+		"static": false
+	},
+	"beings": {
+		"id": "1YyJAqxexIt5-x0fV528fsZG9R7tNW6V0nZjoHDgejpY",
+		"sheet_path": "res://data/quests.csv",
+		"data_path": "res://data/quests_data_ref.json",
 		"static": false
 	},
 	"factions": {
