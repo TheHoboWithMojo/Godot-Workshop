@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c0qy1iqa0pyhs" path="res://scripts/tools/debug_menu.gd" id="1_1uwqr"]
 
-[node name="DebugMenu" type="Control" node_paths=PackedStringArray("pause_button", "player_data_label", "show_player_data_button", "show_frames_button", "frame_data_label")]
+[node name="DebugMenu" type="Control" node_paths=PackedStringArray("pause_button", "data_label")]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -11,12 +11,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1uwqr")
-is_active = true
 pause_button = NodePath("VBoxContainer/PauseButton")
-player_data_label = NodePath("VBoxContainer/PlayerDataLabel")
-show_player_data_button = NodePath("VBoxContainer/ShowPlayerDataButton")
-show_frames_button = NodePath("VBoxContainer/ShowFramesButton")
-frame_data_label = NodePath("VBoxContainer/FrameDataLabel")
+data_label = NodePath("VBoxContainer/DataLabel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -41,22 +37,24 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Pause Game"
 
-[node name="ShowPlayerDataButton" type="CheckButton" parent="VBoxContainer"]
+[node name="ShowPlayerStatsButton" type="CheckButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Player Data"
+text = "Player Stats"
 
 [node name="ShowFramesButton" type="CheckButton" parent="VBoxContainer"]
 layout_mode = 2
 text = "Frames Data
 "
 
-[node name="PlayerDataLabel" type="Label" parent="VBoxContainer"]
+[node name="SaveGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+text = "Save Game"
 
-[node name="FrameDataLabel" type="Label" parent="VBoxContainer"]
+[node name="DataLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 horizontal_alignment = 1
 
 [connection signal="toggled" from="VBoxContainer/PauseButton" to="." method="_on_pause_button_toggled"]
-[connection signal="toggled" from="VBoxContainer/ShowPlayerDataButton" to="." method="_on_show_data_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/ShowPlayerStatsButton" to="." method="_on_show_player_stats_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/ShowFramesButton" to="." method="_on_show_frames_button_toggled"]
+[connection signal="pressed" from="VBoxContainer/SaveGameButton" to="." method="_on_save_game_button_pressed"]

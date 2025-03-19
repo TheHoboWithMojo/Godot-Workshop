@@ -1,17 +1,24 @@
+# Stores universal reference to player and camera
+# Stores functions to manipulate player stats
+# Stores globally editable/referencable variables/constants (frames, float_limit, speed_mult, etc.)
 extends Node2D
 
 # Constants
 const FLOAT_LIMIT: float = 2147483647.0
+const PLAYER_PATH: String = "/root/Game/Player"
+const PLAYER_CAMERA_PATH: = "/root/Game/Player/PlayerCamera"
 
-@export var count_frames: bool = true
+# Signals
+signal game_reloaded # Receives this signal when game_manager's ready runs
 
-# --- Member Variables ---
-@onready var player: CharacterBody2D = $"/root/Game/Player"
-@onready var player_camera: Camera2D = $"/root/Game/Player/SimCamera"
+# Global Variables
 @onready var frames: int = 0
+@onready var speed_mult: float = 1.0
+@onready var player: CharacterBody2D
+@onready var player_camera: Camera2D
 
-# Not used. Save as json when updated
-var player_stats_template: Dictionary = {
+# HERE TO EDIT, MANUALLY SAVE AS REF AFTER EDITING USING DATA.SAVE_JSON()
+var player_stats_ref: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
 		"speed": 50
@@ -58,29 +65,28 @@ var Timelines: Dictionary = {
 }
 
 func _ready() -> void:
-	# Initialize game data with our template if not already present
+	game_reloaded.connect(_on_game_reloaded)
+	# Initialize game data with a copy of our template if not already present
 	if not "player stats" in Data.game_data:
-		Data.game_data["player stats"] = player_stats_template.duplicate(true)
-
-func _process(_delta: float) -> void:
-	if count_frames:
-		frames += 1
-		if frames >= 100:
-			frames = 0
+		Data.game_data["player stats"] = player_stats_ref.duplicate(true)
+	
+func _on_game_reloaded() -> void: # Reset assignments if scene is reset
+	player = get_node(PLAYER_PATH)
+	player_camera = get_node(PLAYER_CAMERA_PATH)
 
 func _is_valid_buff_string(string: String) -> bool:
 	var buffs: Array = _split_buff_string(string)
-	
+
 	for buff in buffs:
 		if buff.size() != 3:
-			Debug.throw_error(self, "Buff does not contain the required word amount (3).", buff)
+			Debug.throw_error(self, "_is_valid_buff_string", "Buff does not contain the required word amount (3)", buff)
 			return false
 		
 		var stat: String = buff[0]
 		var operator: String = buff[1]
 		var value: String = buff[2]
 		if not _is_valid_stat(stat) or not _is_valid_operator(operator) or not value.is_valid_float():
-			Debug.throw_error(self, "Invalid buff format", buff)
+			Debug.throw_error(self, "_is_valid_buff_string", "Invalid buff format", buff)
 			return false
 	
 	return true
@@ -92,7 +98,7 @@ func _is_valid_stat(stat: String) -> bool:
 	return false
 
 func _is_valid_operator(_char: String) -> bool:
-	return _char in ["*", "-", "+", "/"]
+	return _char in ["*", "-", "+", "/", "="]
 
 func _split_buff_string(buff_string: String) -> Array:
 	var buffs: Array = []
@@ -126,6 +132,7 @@ func player_change_stat(buff_string: String, debug: bool = false) -> void:
 			continue
 			
 		var original_stat_value: float = Data.game_data["player stats"][stat_category][stat]
+		
 		var new_stat_value: float = _get_updated_stat(stat_category, stat, operator, value)
 		
 		if debug:
@@ -153,37 +160,22 @@ func _get_updated_stat(stat_category: String, stat: String, operator: String, va
 		"*": current_value *= value
 		"-": current_value -= value
 		"+": current_value += value
+		"=": current_value = value
 		"/": 
 			if value != 0:
 				current_value /= value
 			else:
-				Debug.throw_error(self, "Cannot divide by 0", str(value))
+				Debug.throw_error(self, "_get_updated_stat", "Cannot divide by 0")
 	var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
 	var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
 	Data.game_data["player stats"][stat_category][stat] = constrained_value
 	
 	return constrained_value
 
-func print_player_perks():
-	print("=== All Perks ===")
-	for perk_name in Data.game_data["perks"]:
-		var perk = Data.game_data["perks"][perk_name]
-		print("\nPerk: ", perk_name)
-		for property in perk:
-			print("  %s: %s" % [property, perk[property]])
-
-func print_player_traits():
-	print("=== All Traits ===")
-	for trait_name in Data.game_data["traits"]:
-		var _trait = Data.game_data["traits"][trait_name]
-		print("\nTrait: ", trait_name)
-		for property in _trait:
-			print("  %s: %s" % [property, _trait[property]])
-
 func player_add_perk(perk_name: String) -> void:
 	if not Data.game_data["perks"].has(perk_name):
 		print("Could not find '", perk_name, "' in perks data")
-		print_player_perks()
+		Debug.print_player_perks()
 		return
 		
 	if _update_toggle_buff(perk_name, Data.game_data["perks"]):
@@ -193,8 +185,8 @@ func player_add_perk(perk_name: String) -> void:
 
 func player_add_trait(trait_name: String) -> void:
 	if not Data.game_data["traits"].has(trait_name):
-		Debug.throw_error(self, trait_name + " not found in traits.")
-		print_player_traits()
+		Debug.throw_error(self, "player_add_trait", trait_name + " not found in traits")
+		Debug.print_player_traits()
 		return
 		
 	if _update_toggle_buff(trait_name, Data.game_data["traits"]):
@@ -231,17 +223,17 @@ func _is_timeline_running() -> bool:
 
 func start_dialog(timeline: String) -> void:
 	if _is_timeline_running():
-		Debug.throw_error(self, "A timeline is already running! Cannot start a new one.")
+		Debug.throw_error(self, "start_dialog", "A timeline is already running! Cannot start a new one")
 		return
 	if timeline in Timelines:
 		if _is_timeline_completed(timeline) and not _is_timeline_repeatable(timeline):
-			Debug.throw_error(self, "The timeline " + timeline + " has been played and is not repeatable")
+			Debug.throw_error(self, "start_dialog", "The timeline " + timeline + " has been played and is not repeatable")
 			return
 		
 		Timelines[timeline]["completed"] = true
 		Dialogic.start(timeline)
 	else:
-		Debug.throw_error(self, "The timeline " + timeline + " does not exist.")
+		Debug.throw_error(self, "start_dialog", "The timeline " + timeline + " does not exist")
 
 # --- Vector and Debug Methods ---
 
@@ -249,5 +241,12 @@ func get_vector_to_player(self_node: Node2D) -> Vector2:
 	if player:
 		return player.global_position - self_node.global_position
 	else:
-		print(self, "get_vector_to_player()", "Player Path Has Changed")
+		Debug.throw_error(self, "get_vector_to_player", "Player path has changed")
+		return Vector2.ZERO
+		
+func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
+	if player_camera:
+		return player_camera.global_position - self_node.global_position
+	else:
+		Debug.throw_error(self, "get_vector_to_player_camera", "Player camera path has changed")
 		return Vector2.ZERO

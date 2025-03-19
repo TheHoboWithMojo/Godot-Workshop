@@ -1,22 +1,55 @@
+# Holds advanced printing functions
 extends Node
 
-# Holds advanced printing functions
-
-func throw_error(self_node: Node, reason: String, input: Variant = null):
+# Public Functions:
+func throw_error(self_node: Node, function_name: String, reason: String, input: Variant = null):
+	
 	var file_name: String = self_node.get_script().resource_path.get_file()
-	var function_name: String = get_stack()[-1].function  # Get the last function in the call stack
+	
+	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
+	
+	var caller_script_name: String = get_stack()[-1].source.get_file()
+
 	
 	if input == null:
-		print("Error: in %s, %s(). %s." % [file_name, function_name, reason])
+		print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
 		return
 	
-	print("Error: in %s, %s(). %s. Input: %s" % [file_name, function_name, reason, input])
-
-# Print functions - output to console
+	print("Error: when calling %s() (%s. Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
+	
+	
 func pretty_print_dict(dictionary: Dictionary) -> void:
-	_print_dict_internal(dictionary)
+	_pretty_print_dict(dictionary) # Recursion handled elsewhere to avoid extra argument
 
-func _print_dict_internal(dictionary: Dictionary, indent: int = 0) -> void:
+func pretty_print_array(array: Array) -> void:
+	_pretty_print_array(array) # Recursion handled elsewhere to avoid extra argument
+
+func get_dict_as_pretty_string(dictionary: Dictionary) -> String:
+	var result: String = ""
+	result += _get_dict_as_string(dictionary)
+	return result
+
+func get_array_as_pretty_string(array: Array) -> String:
+	return _get_array_as_string(array)
+	
+func print_player_perks():
+	print("=== All Perks ===")
+	for perk_name in Data.game_data["perks"]:
+		var perk = Data.game_data["perks"][perk_name]
+		print("\nPerk: ", perk_name)
+		for property in perk:
+			print("  %s: %s" % [property, perk[property]])
+
+func print_player_traits():
+	print("=== All Traits ===")
+	for trait_name in Data.game_data["traits"]:
+		var _trait = Data.game_data["traits"][trait_name]
+		print("\nTrait: ", trait_name)
+		for property in _trait:
+			print("  %s: %s" % [property, _trait[property]])
+
+# Helper Functions:
+func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str = "\t".repeat(indent)
 	
 	for key in dictionary.keys():
@@ -25,20 +58,17 @@ func _print_dict_internal(dictionary: Dictionary, indent: int = 0) -> void:
 		
 		if value is Dictionary:
 			print(indent_str + key_str + ":")
-			_print_dict_internal(value, indent + 1)
+			_pretty_print_dict(value, indent + 1)
 		elif value is Array:
 			if value.size() == 0:
 				print(indent_str + key_str + ": []")
 			else:
 				print(indent_str + key_str + ":")
-				_print_array_internal(value, indent + 1)
+				_pretty_print_array(value, indent + 1)
 		else:
-			print(indent_str + key_str + ": " + format_value(value))
+			print(indent_str + key_str + ": " + _format_value(value))
 
-func pretty_print_array(array: Array) -> void:
-	_print_array_internal(array)
-
-func _print_array_internal(array: Array, indent: int = 0) -> void:
+func _pretty_print_array(array: Array, indent: int = 0) -> void:
 	var indent_str = "\t".repeat(indent)
 	
 	if array.size() == 0:
@@ -50,22 +80,16 @@ func _print_array_internal(array: Array, indent: int = 0) -> void:
 		
 		if value is Dictionary:
 			print(indent_str + "[" + str(i) + "]:")
-			_print_dict_internal(value, indent + 1)
+			_pretty_print_dict(value, indent + 1)
 		elif value is Array:
 			if value.size() == 0:
 				print(indent_str + "[" + str(i) + "]: []")
 			else:
 				print(indent_str + "[" + str(i) + "]:")
-				_print_array_internal(value, indent + 1)
+				_pretty_print_array(value, indent + 1)
 		else:
-			print(indent_str + "[" + str(i) + "]: " + format_value(value))
-
-# String functions - return formatted strings
-func get_dict_as_pretty_string(dictionary: Dictionary) -> String:
-	var result: String = ""
-	result += _get_dict_as_string(dictionary)
-	return result
-
+			print(indent_str + "[" + str(i) + "]: " + _format_value(value))
+	
 func _get_dict_as_string(dictionary: Dictionary, indent: int = 0) -> String:
 	var result = ""
 	var indent_str = "    ".repeat(indent)  # Using spaces for better display in UI
@@ -84,12 +108,9 @@ func _get_dict_as_string(dictionary: Dictionary, indent: int = 0) -> String:
 				result += indent_str + key_str + ":\n"
 				result += _get_array_as_string(value, indent + 1)
 		else:
-			result += indent_str + key_str + ": " + format_value(value) + "\n"
+			result += indent_str + key_str + ": " + _format_value(value) + "\n"
 	
 	return result
-
-func get_array_as_pretty_string(array: Array) -> String:
-	return _get_array_as_string(array)
 
 func _get_array_as_string(array: Array, indent: int = 0) -> String:
 	var result = ""
@@ -111,25 +132,11 @@ func _get_array_as_string(array: Array, indent: int = 0) -> String:
 				result += indent_str + "[" + str(i) + "]:\n"
 				result += _get_array_as_string(value, indent + 1)
 		else:
-			result += indent_str + "[" + str(i) + "]: " + format_value(value) + "\n"
+			result += indent_str + "[" + str(i) + "]: " + _format_value(value) + "\n"
 	
 	return result
 
-func get_dict_depth(dict: Dictionary) -> int:
-	if dict.is_empty():
-		return 0
-		
-	var max_depth := 0
-	
-	for value in dict.values():
-		if value is Dictionary:
-			# Recursively check the depth of nested dictionaries
-			var nested_depth := get_dict_depth(value) + 1
-			max_depth = max(max_depth, nested_depth)
-	
-	return max_depth
-
-func format_value(value) -> String:
+func _format_value(value) -> String:
 	if value is String:
 		return "\"" + value + "\""
 	elif value is bool:

@@ -1,1 +1,0 @@
-{"slime":{"health":"10","speed":"30","sprite":"animatesprite2d","collision":"collisionbody2d","animator":"animationplayer","area":"null","textures":"[slime.jpeg]","sounds":"[squelch.mp3]"}}

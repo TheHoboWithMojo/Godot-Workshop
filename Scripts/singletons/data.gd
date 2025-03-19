@@ -26,16 +26,16 @@ var spreadsheet_dict: Dictionary = {
 		"static": false
 	},
 	"traits": {
-		"id": "1-ydtxqgvrp60mp_hDfPeCgo9gltg_JpEysfCA67aLuw",
-		"sheet_path": "res://data/entities.csv",
-		"data_path": "res://data/entities_data_ref.json",
+		"id": "1KLbQ5k6whXAKWBNl_nwSfP1Rs2-0_y9-WZuwTxaigl8",
+		"sheet_path": "res://data/traits.csv",
+		"data_path": "res://data/traits_data_ref.json",
 		"static": false
 	},
 	"beings": {
-		"id": "1YyJAqxexIt5-x0fV528fsZG9R7tNW6V0nZjoHDgejpY",
-		"sheet_path": "res://data/quests.csv",
-		"data_path": "res://data/quests_data_ref.json",
-		"static": false
+		"id": "1-ydtxqgvrp60mp_hDfPeCgo9gltg_JpEysfCA67aLuw",
+		"sheet_path": "res://data/beings.csv",
+		"data_path": "res://data/beings_data_ref.json",
+		"static": true
 	},
 	"factions": {
 		"id": "",
@@ -54,6 +54,8 @@ var spreadsheet_dict: Dictionary = {
 # ----- Signals -----
 
 signal data_loaded
+
+signal data_saved
 
 # ----- Initialization -----
 
@@ -112,8 +114,8 @@ func save_data_changes() -> void: # Safely updates and stores current and backup
 			if cleanup_dir:
 				cleanup_dir.remove(temp_data_path)
 				
-			print("Successfully saved changes for: ", sheet_name)
-	
+			#print("Successfully saved changes for: ", sheet_name)
+	data_saved.emit()
 	print("All non-static data has been saved with backups.")
 		
 func clear_data() -> void: # Resets all current and backup save data to ref
@@ -128,10 +130,9 @@ func clear_data() -> void: # Resets all current and backup save data to ref
 			save_json(ref_data, current_data_path)
 			save_json(ref_data, backup_data_path)
 			
-			print("Reset data for: ", sheet_name)
+			#print("Reset data for: ", sheet_name)
 	
 	print("All non-static data has been reset to reference values.")
-	load_game_data()
 
 # ----- Data Querying -----
 
@@ -215,7 +216,7 @@ func save_json(data: Dictionary, file_path: String) -> bool: # Quick function th
 	
 	# Check if JSON conversion was successful
 	if json_string.is_empty() and not data.is_empty():
-		Debug.throw_error(self, "Failed to convert data to JSON string", file_path)
+		Debug.throw_error(self, "save_json", "Failed to convert data to JSON string", file_path)
 		return false
 	
 	# Try to open the file
@@ -224,7 +225,7 @@ func save_json(data: Dictionary, file_path: String) -> bool: # Quick function th
 	# Check if file was opened successfully
 	if file == null:
 		var error: int = FileAccess.get_open_error()
-		Debug.throw_error(self, "Failed to open file for writing. Error code: " + str(error), file_path)
+		Debug.throw_error(self, "save_json", "Failed to open file for writing. Error code: " + str(error), file_path)
 		return false
 	
 	# Write to file and close it
@@ -233,17 +234,18 @@ func save_json(data: Dictionary, file_path: String) -> bool: # Quick function th
 	
 	# Verify file was written by checking if it exists and has content
 	if not FileAccess.file_exists(file_path):
-		Debug.throw_error(self, "File was not created successfully", file_path)
+		Debug.throw_error(self, "save_json", "File was not created successfully", file_path)
 		return false
 	
-	print("Successfully saved JSON to: " + file_path)
+	#print("Successfully saved JSON to: " + file_path)
 	return true
 
 func load_json_file(path: String) -> Dictionary: # Quick function for loading a json as a dict
 	var json_as_text: String = FileAccess.get_file_as_string(path)
+	#print(path)
 	var json_as_dict: Dictionary = JSON.parse_string(json_as_text)
 	if json_as_dict == null:
-		Debug.throw_error(self, "Could not parse input.", path)
+		Debug.throw_error(self, "load_json_file", "Could not parse input", path)
 		return {}
 	return json_as_dict
 
@@ -252,7 +254,7 @@ func load_json_file(path: String) -> Dictionary: # Quick function for loading a 
 func _sheet_exists(sheet_name: String) -> bool:
 	if sheet_name in spreadsheet_dict.keys():
 		return true
-	Debug.throw_error(self, "Sheet does not exist", sheet_name)
+	Debug.throw_error(self, "_sheet_exists", "Sheet '%s' does not exist" % [sheet_name])
 	return false
 
 func _is_static(sheet_name: String) -> bool:
@@ -260,5 +262,5 @@ func _is_static(sheet_name: String) -> bool:
 		if spreadsheet_dict[sheet_name]["static"] == true:
 			return true
 		return false
-	Debug.throw_error(self, "Input sheet name does not exist", sheet_name)
+	Debug.throw_error(self, "_is_static", "Input sheet name '%s' does not exist" % sheet_name)
 	return false

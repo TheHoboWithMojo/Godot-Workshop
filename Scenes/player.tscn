@@ -4,15 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://assets/textures/Godot_icon.png" id="2_cvnsp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cvnsp"]
-size = Vector2(128, 128)
+size = Vector2(116, 109)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("collision")]
 script = ExtResource("1_cvnsp")
+base_speed = 30000.0
+base_health = 30000.0
+collision = NodePath("CollisionShape2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.0622863, 0.0622863)
 texture = ExtResource("2_cvnsp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
+position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_cvnsp")

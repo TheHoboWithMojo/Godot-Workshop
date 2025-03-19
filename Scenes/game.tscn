@@ -1,46 +1,34 @@
-[gd_scene load_steps=7 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=6 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game_manager.gd" id="1_wrm1d"]
 [ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/npc.tscn" id="2_qxrlw"]
 [ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
-[ext_resource type="Script" uid="uid://d1ahjwl7rbabf" path="res://addons/audio_manager/audio_manager.gd" id="5_iywne"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
+track_frames = true
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 unique_name_in_owner = true
+motion_mode = 1
 
-[node name="SimCamera" type="Camera2D" parent="Player"]
+[node name="PlayerCamera" type="Camera2D" parent="Player"]
+unique_name_in_owner = true
 position_smoothing_enabled = true
 script = ExtResource("3_lbhrr")
 metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
 
 [node name="NPC" parent="." instance=ExtResource("2_qxrlw")]
 position = Vector2(-369, -137)
-scale = Vector2(0.0875843, 0.0875843)
-debug_mode = true
-
-[node name="AudioManager" type="Node" parent="."]
-script = ExtResource("5_iywne")
-metadata/_custom_type_script = "uid://d1ahjwl7rbabf"
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Game Shader" type="ColorRect" parent="CanvasLayer"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(10.2387, 9.93231)
-color = Color(0.352941, 0.184314, 1, 1)
+scale = Vector2(0.0920951, 0.0931594)
+motion_mode = 1
 
 [node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
+visible = false
 offset_left = 16.0
 offset_top = -372.0
 offset_right = 16.0
 offset_bottom = -372.0
+active = true
