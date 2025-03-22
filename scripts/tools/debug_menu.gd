@@ -10,18 +10,16 @@ extends Control
 @onready var show_frames: bool = false
 
 func _ready() -> void:
-	if not active:
-		self.queue_free() # Remove debug menu from tree if not activated
-		return
-	else:
-		self.visible = false # If active, make sure menu starts invisible
+	await Global.active_and_ready(self, active)
+	self.visible = false # If active, make sure menu starts invisible
 
-func _process(_delta: float) -> void:
-	# Get the player cameras position
+func _process(delta: float) -> void:
+	# Get the target position
 	var screen_pos = Global.player_camera.get_screen_center_position()
-	
-	# Center the debug menu on the player with optional offset
-	global_position = screen_pos - (size / 2)
+	var target_position = screen_pos - (size / 2)
+
+	# Smoothly move towards the target position
+	global_position = global_position.lerp(target_position, 10 * delta)
 	
 	# Handle menu visibility
 	if not is_menu_open:

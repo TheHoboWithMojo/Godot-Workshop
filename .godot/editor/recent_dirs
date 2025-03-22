@@ -1,7 +1,17 @@
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Death
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Death
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Run
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Idle
+res://scenes
+res://assets/textures
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Wizzard/Death
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Wizzard/Run
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Wizzard/Idle
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Run
+res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Idle
 res://dialogic/styles
 res://
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop
-res://assets/textures
 res://scripts/singletons
 res://dialogic/characters
 res://dialogic/timelines

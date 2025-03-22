@@ -1,0 +1,36 @@
+[gd_scene load_steps=7 format=3 uid="uid://dbbxc8xwqu2v7"]
+
+[ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
+[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game_manager.gd" id="1_wrm1d"]
+[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/npc.tscn" id="2_qxrlw"]
+[ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
+[ext_resource type="PackedScene" uid="uid://cp8eugxsx1ocq" path="res://scenes/fireball.tscn" id="6_u5sy4"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_wrm1d")
+track_frames = true
+
+[node name="Player" parent="." node_paths=PackedStringArray("game_manager") instance=ExtResource("1_ebmjs")]
+unique_name_in_owner = true
+scale = Vector2(1, 0.991816)
+motion_mode = 1
+camera_distance_limit = 100.0
+projectile_scene = ExtResource("6_u5sy4")
+game_manager = NodePath("..")
+
+[node name="PlayerCamera" type="Camera2D" parent="Player"]
+unique_name_in_owner = true
+zoom = Vector2(3, 3)
+position_smoothing_enabled = true
+script = ExtResource("3_lbhrr")
+metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
+
+[node name="NPC" parent="." instance=ExtResource("2_qxrlw")]
+position = Vector2(-369, -137)
+motion_mode = 1
+damage = 100.0
+
+[node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
+visible = false
+active = true

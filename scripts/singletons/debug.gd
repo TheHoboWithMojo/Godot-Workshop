@@ -48,6 +48,10 @@ func print_player_traits():
 		for property in _trait:
 			print("  %s: %s" % [property, _trait[property]])
 
+func frame_print(what_to_print: Variant, frame_delay: int):
+	if Global.frames % frame_delay == 0:
+		print(what_to_print)
+	
 # Helper Functions:
 func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str = "\t".repeat(indent)

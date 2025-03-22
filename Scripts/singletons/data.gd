@@ -6,6 +6,8 @@ var game_data: Dictionary = {}
 
 var is_data_loaded: bool = false
 
+var is_data_cleared: bool = false
+
 var spreadsheet_dict: Dictionary = {
 	"items": {
 		"id": "1J16pLFRq0sskkJiUBQhY4QvSbcZ4VGSB00Zy3yi-1Vc",
@@ -52,6 +54,7 @@ var spreadsheet_dict: Dictionary = {
 }
 
 # ----- Signals -----
+signal data_cleared
 
 signal data_loaded
 
@@ -131,9 +134,9 @@ func clear_data() -> void: # Resets all current and backup save data to ref
 			save_json(ref_data, backup_data_path)
 			
 			#print("Reset data for: ", sheet_name)
-	
 	print("All non-static data has been reset to reference values.")
-
+	is_data_cleared = true
+	data_cleared.emit()
 # ----- Data Querying -----
 
 func get_data_properties(sheet_name: String) -> Array:

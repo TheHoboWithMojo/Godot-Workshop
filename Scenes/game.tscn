@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=7 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
-[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game_manager.gd" id="1_wrm1d"]
-[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/npc.tscn" id="2_qxrlw"]
+[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
+[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/knight.tscn" id="2_qxrlw"]
 [ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
+[ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/rogue.tscn" id="6_u5sy4"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
@@ -12,23 +13,27 @@ track_frames = true
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 unique_name_in_owner = true
+scale = Vector2(1, 0.991816)
 motion_mode = 1
 
 [node name="PlayerCamera" type="Camera2D" parent="Player"]
 unique_name_in_owner = true
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 script = ExtResource("3_lbhrr")
 metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
 
-[node name="NPC" parent="." instance=ExtResource("2_qxrlw")]
+[node name="Knight" parent="." instance=ExtResource("2_qxrlw")]
 position = Vector2(-369, -137)
-scale = Vector2(0.0920951, 0.0931594)
 motion_mode = 1
+base_speed = 6000.0
+base_health = 10.0
+nomen = "Knight"
 
 [node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
 visible = false
-offset_left = 16.0
-offset_top = -372.0
-offset_right = 16.0
-offset_bottom = -372.0
 active = true
+
+[node name="Rogue" parent="." instance=ExtResource("6_u5sy4")]
+position = Vector2(244, -139)
+base_health = 10.0
