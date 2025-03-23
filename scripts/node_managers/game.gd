@@ -11,7 +11,6 @@ extends Node2D
 @export var use_save_data: bool = false
 @export var active: bool = true
 @export var spawn_enemies: bool = true
-@export var current_tile_map_layer: TileMapLayer
 
 # =========================================================================
 # CONSTANTS
@@ -33,6 +32,7 @@ extends Node2D
 @onready var start_ready: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
 @onready var spawnable_positions: Array[Vector2] = []
+@onready var current_tile_map: TileMapLayer
 
 # =========================================================================
 # SIGNALS
@@ -51,10 +51,14 @@ func _ready() -> void:
 		load_data()
 		boot_dialogic()
 		connect_signals()
+		get_current_tile_map()
 		save_spawnable_positions()
 		ready_up()
 	else:
 		queue_free()
+
+func get_current_tile_map():
+	current_tile_map = get_tree().get_nodes_in_group("levels")[0].get_node("Tiles")
 	
 func _process(_delta: float) -> void:
 	if track_frames:
@@ -97,7 +101,7 @@ func connect_signals():
 	level_changed.connect(_on_level_changed)
 
 func save_spawnable_positions():
-	spawnable_positions = Global.get_tiles_with_property(current_tile_map_layer, "spawnable")
+	spawnable_positions = Global.get_tiles_with_property(current_tile_map, "spawnable")
 	
 func ready_up():
 	start_ready = true
@@ -135,7 +139,6 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 	
 	# Check if we have spawnable positions
 	if spawnable_positions.size() == 0:
-		print("No spawnable positions available!")
 		await Global.delay(self, SECONDS_PER_SPAWN)
 		spawn_enemies = true
 		return
@@ -190,5 +193,9 @@ func _on_dialogue_end() -> void:
 	Global.speed_mult = 1.0
 	
 func _on_level_changed():
-	#CODE TO GET CURRENT TILEMAPLAYER
+	spawn_enemies = false
+	clear_enemies()
+	get_current_tile_map()
 	save_spawnable_positions()
+	await Global.delay(self, 5.0)
+	spawn_enemies = true

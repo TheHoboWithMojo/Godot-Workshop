@@ -37,9 +37,6 @@ func _ready() -> void:
 		add_to_group("enemies")
 		
 	being = Being.create_being(self)
-	health_bar.max_value = base_health
-	health_bar.min_value = 0.0
-	health_bar.set_value(base_health)
 	
 	if not collision_on:
 		being.toggle_collision(false)
@@ -69,15 +66,15 @@ func _physics_process(delta: float) -> void:
 		else:
 			being.play_animation("idle")
 
-func _on_area_body_entered(body) -> void:
+func _on_area_body_entered(body: Node) -> void:
 	if body == Global.player:
 		is_touching_player = true
 	
 	if hostile:
 		while is_touching_player:
 			Global.damage_player(10)
-			await Global.delay(self, 1.0) # two second delay between damage to avoid overload
+			await Global.delay(self, 1.0) # one second delay between damage to avoid overload
 
-func _on_area_body_exited(body) -> void:
+func _on_area_body_exited(body: Node) -> void:
 	if body == Global.player:
 		is_touching_player = false

@@ -87,6 +87,16 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
 	print("Global references reloaded!")
+
+func switch_to_level(self_node: Node, new_level: PackedScene):
+	self_node.remove_from_group("levels")
+	if new_level != null:
+		var _new_level = new_level.instantiate()
+		Global.game_manager.add_child(_new_level)
+		self_node.queue_free()
+		Global.game_manager.level_changed.emit()
+	else:
+		Debug.throw_error(self_node, "switch_to_level", "Given level does not exist", str(new_level))
 	
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
@@ -111,7 +121,7 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 	return positions
 	
 # ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
-func active_and_ready(self_node: Node, active: bool):
+func active_and_ready(self_node: Node, active: bool = true):
 	if active: # Check is node is active and if the player exists
 		if not Global.player:
 			await Global.game_reloaded # if theres no player wait for references to update

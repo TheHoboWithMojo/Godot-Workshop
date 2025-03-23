@@ -8,7 +8,7 @@ func throw_error(self_node: Node, function_name: String, reason: String, input: 
 	if input == null:
 		print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
 		return
-	print("Error: when calling %s() (%s. Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
+	print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
 	
 func pretty_print_dict(dictionary: Dictionary) -> void:
 	_pretty_print_dict(dictionary)

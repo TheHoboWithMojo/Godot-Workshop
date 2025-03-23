@@ -1,7 +1,9 @@
 TileMapLayer
+Marker2D
 CollisionShape2D
-AnimatedSprite2D
 Area2D
+Node2D
+AnimatedSprite2D
 CharacterBody2D
 TextureProgressBar
 ProgressBar
@@ -10,5 +12,3 @@ AnimationPlayer
 Camera2D
 ColorRect
 Button
-AnimatableBody2D
-Label

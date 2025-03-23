@@ -1,9 +1,9 @@
 [gd_scene load_steps=26 format=3 uid="uid://15uoupcpxi20"]
 
 [ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://scripts/node_managers/knight.gd" id="1_xxsvc"]
-[ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="2_abqhh"]
-[ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_swm0g"]
-[ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="3_rv78h"]
+[ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="2_abqhh"]
+[ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_swm0g"]
+[ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="3_rv78h"]
 [ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="4_4wlns"]
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="4_tl2vt"]
 

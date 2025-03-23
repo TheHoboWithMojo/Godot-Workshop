@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=4 uid="uid://bu4uplrikwht3"]
+
+[ext_resource type="Script" uid="uid://civhfk7m7jl31" path="res://scripts/levels/level_2.gd" id="1_d6fun"]
+[ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/texture pack/tiles.tres" id="2_if4l3"]
+
+[node name="level2" type="Node2D" node_paths=PackedStringArray("spawn_point", "tiles")]
+script = ExtResource("1_d6fun")
+spawn_point = NodePath("SpawnPoint")
+tiles = NodePath("Tiles")
+
+[node name="Tiles" type="TileMapLayer" parent="."]
+z_index = -1
+tile_map_data = PackedByteArray("AAD+//7/AAAAABMAAAD+////AAAAABQAAAD+/wAAAAAAABUAAAD///7/AAABABMAAAD/////AAABABQAAAD//wAAAAABABUAAAAAAP7/AAACABMAAAAAAP//AAACABQAAAAAAAAAAAACABUAAAABAP7/AAAAABMAAAABAP//AAAAABQAAAABAAAAAAAAABUAAAACAP7/AAABABMAAAACAP//AAABABQAAAACAAAAAAABABUAAAADAP7/AAACABMAAAADAP//AAACABQAAAADAAAAAAACABUAAAD7//7/AAAAABMAAAD7////AAAAABQAAAD7/wAAAAAAABUAAAD8//7/AAABABMAAAD8////AAABABQAAAD8/wAAAAABABUAAAD9//7/AAACABMAAAD9////AAACABQAAAD9/wAAAAACABUAAAA=")
+tile_set = ExtResource("2_if4l3")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]

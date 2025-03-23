@@ -1,10 +1,10 @@
 [gd_scene load_steps=26 format=3 uid="uid://5wd6f8wnvh8e"]
 
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/rogue.gd" id="1_rkgrm"]
-[ext_resource type="Texture2D" uid="uid://bih0xuackwai5" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Death/Death-Sheet.png" id="2_rkgrm"]
-[ext_resource type="Texture2D" uid="uid://b6ooliqxfrgst" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Idle/Idle-Sheet.png" id="3_djm16"]
+[ext_resource type="Texture2D" uid="uid://bih0xuackwai5" path="res://assets/texture pack/Entities/Npc's/Rogue/Death/Death-Sheet.png" id="2_rkgrm"]
+[ext_resource type="Texture2D" uid="uid://b6ooliqxfrgst" path="res://assets/texture pack/Entities/Npc's/Rogue/Idle/Idle-Sheet.png" id="3_djm16"]
 [ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="4_4wlns"]
-[ext_resource type="Texture2D" uid="uid://da4i3ejxl5w4v" path="res://assets/Pixel Crawler - Free Pack/Entities/Npc's/Rogue/Run/Run-Sheet.png" id="4_c3xat"]
+[ext_resource type="Texture2D" uid="uid://da4i3ejxl5w4v" path="res://assets/texture pack/Entities/Npc's/Rogue/Run/Run-Sheet.png" id="4_c3xat"]
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="4_tl2vt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rkgrm"]

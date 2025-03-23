@@ -21,6 +21,7 @@ Global="*res://scripts/singletons/global.gd"
 Data="*res://scripts/singletons/data.gd"
 Factions="*res://scripts/singletons/factions.gd"
 Debug="*res://scripts/singletons/debug.gd"
+Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
 
 [dialogic]
 
@@ -35,9 +36,13 @@ layout/style_list=["res://dialogic/styles/default.tres"]
 layout/default_style="res://dialogic/styles/default.tres"
 glossary/default_case_sensitive=true
 
+[display]
+
+window/size/always_on_top=true
+
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Fantail-Interactive.top_down_camera/plugin.cfg", "res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
+enabled=PackedStringArray("res://addons/Fantail-Interactive.top_down_camera/plugin.cfg", "res://addons/SignalVisualizer/plugin.cfg", "res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
 
 [input]
 

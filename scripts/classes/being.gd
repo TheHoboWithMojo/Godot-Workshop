@@ -108,7 +108,10 @@ func _init(params: Dictionary = {}):
 	_health_bar = params.get("health_bar")
 	if not _health_bar:
 		_missing_components["health_bar"] = ANIMATOR_FUNCTIONS
-	
+	else:
+		_health_bar.min_value = 0.0
+		_health_bar.max_value = health
+		_health_bar.set_value(health)
 	if _debugging:
 		print("[Being] Initialized: Name = %s, Health = %s Speed = %s" % [_nomen, _health, _speed])
 		
