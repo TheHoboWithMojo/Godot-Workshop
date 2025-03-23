@@ -33,6 +33,10 @@ var player_stats_ref: Dictionary = {
 		"crit_chance": 0.01,
 		"crit_mult": 2.0
 	},
+	"exp": {
+		"exp": 0.0,
+		"exp_mult": 1.0
+	},
 	"personality": {
 		"recklessness": 5,
 		"bravery": 5,
@@ -72,15 +76,39 @@ var Timelines: Dictionary = {
 
 func _ready() -> void:
 	game_reloaded.connect(_on_game_reloaded)
-	# Initialize game data with a copy of our template if not already present
-	if not "player stats" in Data.game_data:
-		Data.game_data["player stats"] = player_stats_ref.duplicate(true)
+	
+	# Run if you update the player stats directly
+	#Data.save_json(player_stats_ref, "res://data/player_stats_data_ref.json")
+	#Data.save_json(player_stats_ref, "res://data/player_stats_data_current.json")
+	#Data.save_json(player_stats_ref, "res://data/player_stats_data_backup.json")
 
-func _on_game_reloaded() -> void: # Reset assignments if scene is reset
+func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player = get_node(PLAYER_PATH)
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
-	print("paths reloaded!")
+	print("Global references reloaded!")
+	
+
+func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	
+	# Get rectangle with used tiles
+	var used_rect = tilemap.get_used_rect()
+	
+	# Scan through all tiles in the used rect
+	for x in range(used_rect.position.x, used_rect.end.x):
+		for y in range(used_rect.position.y, used_rect.end.y):
+			var tile_pos = Vector2i(x, y)
+			var tile_data = tilemap.get_cell_tile_data(tile_pos)
+			
+			# Check if the tile has the specified property
+			if tile_data and tile_data.get_custom_data(property_name):
+				# Convert tile position to world position
+				var world_pos = tilemap.map_to_local(tile_pos)
+				world_pos = tilemap.to_global(world_pos)
+				positions.append(world_pos)
+	
+	return positions
 	
 # ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
 func active_and_ready(self_node: Node, active: bool):
@@ -101,11 +129,15 @@ func player_get_stat(stat: String) -> float:
 	return Data.game_data["player stats"][stat_category][stat] if stat_category else 0.0
 
 func damage_player(damage: float):
-	player_change_stat("health - %s" % [damage])
-	player.player_damaged.emit()
+	if player.damagable == true:
+		player_change_stat("health - %s" % [damage])
+		player.player_damaged.emit()
 	
 func heal_player(heal: float):
 	player_change_stat("health + %s" % [heal])
+	
+func player_add_exp(exp_gain: int):
+	player_change_stat("exp + %s" % [exp_gain])
 
 func player_add_perk(perk_name: String) -> void:
 	if not Data.game_data["perks"].has(perk_name):
@@ -229,9 +261,11 @@ func _print_stat_change(stat: String, original_stat_value: float, new_stat_value
 	])
 
 func _get_stat_category(stat: String) -> String:
-	for stat_category in Data.game_data["player stats"].keys():
-		if stat in Data.game_data["player stats"][stat_category]:
-			return stat_category
+	if Global.game_manager.active:
+		for stat_category in Data.game_data["player stats"].keys():
+			if stat in Data.game_data["player stats"][stat_category]:
+				return stat_category
+		return ""
 	return ""
 
 func _get_stat_constraints(stat_category: String, stat: String) -> Dictionary:

@@ -1,28 +1,20 @@
 # Holds advanced printing functions
 extends Node
-
 # Public Functions:
 func throw_error(self_node: Node, function_name: String, reason: String, input: Variant = null):
-	
 	var file_name: String = self_node.get_script().resource_path.get_file()
-	
-	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
-	
 	var caller_script_name: String = get_stack()[-1].source.get_file()
-
-	
+	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
 	if input == null:
 		print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
 		return
-	
 	print("Error: when calling %s() (%s. Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
 	
-	
 func pretty_print_dict(dictionary: Dictionary) -> void:
-	_pretty_print_dict(dictionary) # Recursion handled elsewhere to avoid extra argument
+	_pretty_print_dict(dictionary)
 
 func pretty_print_array(array: Array) -> void:
-	_pretty_print_array(array) # Recursion handled elsewhere to avoid extra argument
+	_pretty_print_array(array)
 
 func get_dict_as_pretty_string(dictionary: Dictionary) -> String:
 	var result: String = ""
@@ -48,10 +40,12 @@ func print_player_traits():
 		for property in _trait:
 			print("  %s: %s" % [property, _trait[property]])
 
-func frame_print(what_to_print: Variant, frame_delay: int):
-	if Global.frames % frame_delay == 0:
-		print(what_to_print)
-	
+func frame_print(input: Variant, frame_print_delay: int):
+	if Global.track_frames:
+		if Global.frames % frame_print_delay == 0:
+			print(input)
+	else:
+		throw_error(self, "frame_print", "Cannot be called if track frames isn't on.")
 # Helper Functions:
 func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str = "\t".repeat(indent)

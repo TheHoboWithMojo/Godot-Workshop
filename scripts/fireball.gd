@@ -2,6 +2,7 @@ extends Area2D
 
 @export var speed: float = 500.0
 @export var sprite: AnimatedSprite2D
+@export var damage: int = 10
 var velocity: Vector2 = Vector2.ZERO
 
 func _ready():
@@ -16,5 +17,5 @@ func _physics_process(delta):
 func _on_body_entered(body: Node2D):
 	if body != Global.player:
 		if "being" in body:
-			body.being.take_damage(10)
+			body.being.take_damage(damage)
 		queue_free()  # Destroy projectile on impact

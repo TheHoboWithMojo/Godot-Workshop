@@ -81,6 +81,7 @@ animations = [{
 scale = Vector2(-0.028908, -0.028908)
 script = ExtResource("1_1gl40")
 sprite = NodePath("Sprite")
+damage = 80
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, -14)

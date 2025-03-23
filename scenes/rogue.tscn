@@ -144,6 +144,7 @@ animations = [{
 }]
 
 [node name="Rogue" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "animator", "health_bar")]
+motion_mode = 1
 script = ExtResource("1_rkgrm")
 hostile = true
 nomen = "Rogue"

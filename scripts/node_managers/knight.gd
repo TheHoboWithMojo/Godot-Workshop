@@ -11,10 +11,12 @@ extends CharacterBody2D
 @export var base_damage: float = 10.0
 @onready var damage: float = base_damage
 
-@export var base_health: float = 300.0
+@export var base_health: float = 50.0
 @onready var health: float
 
 @export var perception: float = 50.0
+
+@export var EXP_ON_KILL: int = 10
 
 @export var nomen: String = ""
 
@@ -31,29 +33,22 @@ extends CharacterBody2D
 @onready var is_touching_player: bool = false
 
 func _ready() -> void:
-	await Global.active_and_ready(self, active)
-	
-	preload("res://dialogic/characters/npc.dch")
-	
+	if hostile:
+		add_to_group("enemies")
+		
 	being = Being.create_being(self)
-	
 	health_bar.max_value = base_health
 	health_bar.min_value = 0.0
+	health_bar.set_value(base_health)
 	
 	if not collision_on:
 		being.toggle_collision(false)
 
 func _process(_delta: float) -> void:
-	health = being.health
-	
-	if is_touching_player && Input.is_action_just_pressed("interact"):
-		Global.start_dialog("npc")
-		
-	health_bar.set_value(health)
-	
 	if not being.is_alive():
-		health_bar.set_value(0.0)
-		await being.die()
+		await being.die(EXP_ON_KILL)
+	
+	health_bar.set_value(being.health)
 		
 func _physics_process(delta: float) -> void:
 	if hostile:

@@ -78,7 +78,8 @@ func _process(_delta: float) -> void:
 	_auto_bind_camera()
 	
 	# State Checks
-	_check_for_death(health)
+	if Global.frames % 10 == 0:
+		_check_for_death(health)
 	
 	health_bar.set_value(health)
 
@@ -142,9 +143,9 @@ func _check_for_death(health: float):
 		get_tree().reload_current_scene()  # Reload scene after animation
 
 # Signals
-func _on_damage(): # IFRAMES HANDLED BY PLAYER CHANGE STAT METHOD
+func _on_damage(): # Handles iframes
 	damagable = false
 	
-	await Global.delay(self, 2.0)
+	await Global.delay(self, 1.0)
 	
 	damagable = true

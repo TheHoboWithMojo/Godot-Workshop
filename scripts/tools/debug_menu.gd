@@ -1,7 +1,7 @@
 # Creates an in game menu for pausing, and for reading game data in real time
 extends Control
 
-@export var active: bool = false
+@export var active: bool = true
 @export var pause_button: CheckButton
 @export var data_label: Label
 

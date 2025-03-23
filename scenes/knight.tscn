@@ -144,8 +144,10 @@ animations = [{
 }]
 
 [node name="Knight" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "animator", "health_bar")]
+motion_mode = 1
 script = ExtResource("1_xxsvc")
 hostile = true
+nomen = "Knight"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")

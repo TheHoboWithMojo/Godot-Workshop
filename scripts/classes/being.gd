@@ -17,6 +17,7 @@ var _collider: CollisionShape2D = null
 var _area: Area2D = null
 var _animator: AnimationPlayer = null
 var _caller: Node
+var _health_bar: TextureProgressBar = null
 # Missing nodes
 var _missing_components: Dictionary = {}
 
@@ -56,7 +57,7 @@ var health: float:
 			print("[Being] Setting Health: %s" % value)
 		if value <= 0 and _alive:
 			_health = 0
-			print("[Being] " + _caller.name + " - " + _nomen + " died!")
+			#print("[Being] " + _caller.name + " - " + _nomen + " died!")
 			_alive = false
 		elif value > 0:
 			_health = value
@@ -104,6 +105,10 @@ func _init(params: Dictionary = {}):
 	if not _animator:
 		_missing_components["animator"] = ANIMATOR_FUNCTIONS
 	
+	_health_bar = params.get("health_bar")
+	if not _health_bar:
+		_missing_components["health_bar"] = ANIMATOR_FUNCTIONS
+	
 	if _debugging:
 		print("[Being] Initialized: Name = %s, Health = %s Speed = %s" % [_nomen, _health, _speed])
 		
@@ -134,17 +139,29 @@ func take_damage(damage: float) -> void:
 func heal(amount: float) -> void:
 	health += amount
 
-func die() -> void:
-	health = 0
-	_caller.set_process(false)
-	_caller.set_physics_process(false)
-	play_animation("die")
-	if _animator and _animator.is_playing():
-		await _animator.animation_finished
-	
-	elif _sprite and _sprite.is_playing():
-		await _sprite.animation_finished
-	_caller.queue_free()
+var _died: bool = false # Used for die function
+
+func die(exp_gain: int = 0) -> void:
+	if _died == false:
+		_died = true # Stops from piling calls
+		
+		speed = 0
+		
+		_health_bar.set_value(0.0)
+		
+		play_animation("die")
+		
+		if _animator and _animator.is_playing():
+			await _animator.animation_finished
+		
+		elif _sprite and _sprite.is_playing():
+			await _sprite.animation_finished
+		
+		if exp_gain:
+			Global.player_add_exp(exp_gain)
+			
+		Global.game_manager.mob_died.emit()
+		_caller.queue_free()
 	
 func revive(revive_health: float = 100.0) -> void:
 	_alive = true
@@ -287,6 +304,10 @@ static func create_being(self_node: Node) -> Being:
 	var animator = self_node.get("animator")
 	if animator:
 		params["animator"] = animator
+	
+	var health_bar = self_node.get("health_bar")
+	if health_bar:
+		params["health_bar"] = health_bar
 	
 	var base_health = self_node.get("base_health")
 	if base_health != null:
