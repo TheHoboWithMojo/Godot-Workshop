@@ -143,7 +143,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Knight" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "animator", "health_bar")]
+[node name="Knight" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar")]
 motion_mode = 1
 script = ExtResource("1_xxsvc")
 hostile = true
@@ -151,7 +151,6 @@ nomen = "Knight"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
-animator = NodePath("Animator")
 health_bar = NodePath("HealthBar")
 
 [node name="Collider" type="CollisionShape2D" parent="."]
@@ -171,8 +170,6 @@ position = Vector2(8, 0)
 sprite_frames = SubResource("SpriteFrames_rv78h")
 animation = &"die"
 autoplay = "idle"
-
-[node name="Animator" type="AnimationPlayer" parent="."]
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
 offset_left = -11.0

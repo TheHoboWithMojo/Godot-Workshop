@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://cifc518lollhl"]
-
-[node name="level3" type="Node2D"]
-
-[node name="Marker2D" type="Marker2D" parent="."]
-
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-z_index = -1

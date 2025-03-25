@@ -13,6 +13,7 @@ const GAME_MANAGER_PATH: = "/root/Game"
 signal game_reloaded # Receives this signal when game_manager's ready runs
 
 # Global Variables
+@onready var test: PackedScene = preload("res://scenes/fireball.tscn")
 @onready var frames: int = 0
 @onready var speed_mult: float = 1.0
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
@@ -23,7 +24,9 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 var player_stats_ref: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
-		"speed": 50
+		"speed": 50,
+		"attack_speed_mult": 1.05,
+		"attack_speed": 2.0,
 	},
 	"health": {
 		"health": 100.0,
@@ -43,6 +46,12 @@ var player_stats_ref: Dictionary = {
 		"intelligence": 5,
 		"snarkiness": 5,
 		"charisma": 5,
+	},
+	"accomplishments": {
+		"enemies_killed": 0,
+	},
+	"damage":{
+		"fire_damage_mult": 0.0
 	}
 }
 
@@ -76,7 +85,6 @@ var Timelines: Dictionary = {
 
 func _ready() -> void:
 	game_reloaded.connect(_on_game_reloaded)
-	
 	# Run if you update the player stats directly
 	#Data.save_json(player_stats_ref, "res://data/player_stats_data_ref.json")
 	#Data.save_json(player_stats_ref, "res://data/player_stats_data_current.json")
@@ -89,19 +97,26 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	print("Global references reloaded!")
 
 func switch_to_level(self_node: Node, new_level: PackedScene):
-	self_node.remove_from_group("levels")
 	if new_level != null:
 		var _new_level = new_level.instantiate()
 		Global.game_manager.add_child(_new_level)
 		self_node.queue_free()
-		Global.game_manager.level_changed.emit()
 	else:
 		Debug.throw_error(self_node, "switch_to_level", "Given level does not exist", str(new_level))
 	
+func get_rawname(scene_or_node_or_path: Variant) -> String:
+	if scene_or_node_or_path is Node:
+		return scene_or_node_or_path.name
+	elif scene_or_node_or_path is PackedScene:
+		return scene_or_node_or_path.resource_path.get_file().get_basename()
+	elif scene_or_node_or_path is String:
+		return scene_or_node_or_path.get_file().get_basename()
+	else:
+		Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
+		return ""
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
 	var positions: Array[Vector2] = []
-	
 	# Get rectangle with used tiles
 	var used_rect = tilemap.get_used_rect()
 	
@@ -139,9 +154,7 @@ func player_get_stat(stat: String) -> float:
 	return Data.game_data["player stats"][stat_category][stat] if stat_category else 0.0
 
 func damage_player(damage: float):
-	if player.damagable == true:
 		player_change_stat("health - %s" % [damage])
-		player.player_damaged.emit()
 	
 func heal_player(heal: float):
 	player_change_stat("health + %s" % [heal])
@@ -157,8 +170,6 @@ func player_add_perk(perk_name: String) -> void:
 		
 	if _update_toggle_buff(perk_name, Data.game_data["perks"]):
 		print(perk_name, " boolean buff was added!")
-	else:
-		print(perk_name, " boolean buff is already active.")
 
 func player_add_trait(trait_name: String) -> void:
 	if not Data.game_data["traits"].has(trait_name):
@@ -168,8 +179,6 @@ func player_add_trait(trait_name: String) -> void:
 		
 	if _update_toggle_buff(trait_name, Data.game_data["traits"]):
 		print(trait_name, " boolean buff was added!")
-	else:
-		print(trait_name, " boolean buff is already active.")
 
 func start_dialog(timeline: String) -> void:
 	if _is_timeline_running():
@@ -284,9 +293,6 @@ func _get_stat_constraints(stat_category: String, stat: String) -> Dictionary:
 
 func _get_updated_stat(stat_category: String, stat: String, operator: String, value: float) -> float:
 	if player:
-		if stat == "health" and player.damagable == false: # IV frames implementation
-			return Data.game_data["player stats"][stat_category][stat]
-			
 		var current_value: float = Data.game_data["player stats"][stat_category][stat]
 		match operator:
 			"*": current_value *= value

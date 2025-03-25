@@ -21,18 +21,22 @@ extends Node2D
 @export var ENTITY_LOADING_RADIUS: float = 500
 
 # =========================================================================
-# SCENES
+# SCENES AND NODES
 # =========================================================================
 @export var Rogue: PackedScene
 @export var Knight: PackedScene
+@export var default_level: PackedScene
 
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
 @onready var start_ready: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
-@onready var spawnable_positions: Array[Vector2] = []
+@onready var current_level: Node
+@onready var enemy_spawnpoints: Array[Vector2]
+@onready var checkpoints: Dictionary[String, Vector2]
 @onready var current_tile_map: TileMapLayer
+@onready var spawnable_enemies: Array[PackedScene]
 
 # =========================================================================
 # SIGNALS
@@ -47,18 +51,16 @@ signal level_changed # Procks when new area is entered
 func _ready() -> void:
 	if active:
 		update_global_references()
-		clear_enemies()
 		load_data()
 		boot_dialogic()
 		connect_signals()
-		get_current_tile_map()
-		save_spawnable_positions()
+		if current_level == null:
+			current_level = default_level.instantiate()
+			add_child(current_level)
+			_update_level_data()
 		ready_up()
 	else:
 		queue_free()
-
-func get_current_tile_map():
-	current_tile_map = get_tree().get_nodes_in_group("levels")[0].get_node("Tiles")
 	
 func _process(_delta: float) -> void:
 	if track_frames:
@@ -68,17 +70,13 @@ func _process(_delta: float) -> void:
 		disable_unseen_enemies() # Stops processing enemies outside of view
 	
 	if spawn_enemies and total_mobs < MOB_CAP:
-		spawn([Rogue, Knight])
+		spawn(spawnable_enemies)
 
 # =========================================================================
 # READY FUNCTIONS
 # =========================================================================
 func update_global_references():
 	Global.game_reloaded.emit()
-
-func clear_enemies():
-	for node in get_enemies():
-		node.queue_free()
 	
 func load_data():
 	if not use_save_data:
@@ -99,9 +97,7 @@ func connect_signals():
 	Dialogic.timeline_ended.connect(_on_dialogue_end)
 	mob_died.connect(_on_mob_death)
 	level_changed.connect(_on_level_changed)
-
-func save_spawnable_positions():
-	spawnable_positions = Global.get_tiles_with_property(current_tile_map, "spawnable")
+	print("Game Manager Signals Connected!")
 	
 func ready_up():
 	start_ready = true
@@ -115,7 +111,7 @@ func count_frames():
 		Global.frames = 0
 
 func disable_unseen_enemies():
-	var enemies: Array = get_enemies()
+	var enemies: Array = get_current_enemies()
 	var camera = Global.player_camera
 	
 	# Get the viewport rectangle in global coordinates
@@ -138,7 +134,7 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 	spawn_enemies = false
 	
 	# Check if we have spawnable positions
-	if spawnable_positions.size() == 0:
+	if enemy_spawnpoints.size() == 0:
 		await Global.delay(self, SECONDS_PER_SPAWN)
 		spawn_enemies = true
 		return
@@ -148,7 +144,7 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 	var player_pos = Global.player.global_position
 	
 	# Filter positions within the spawn radius
-	for pos in spawnable_positions:
+	for pos in enemy_spawnpoints:
 		var distance = pos.distance_to(player_pos)
 		if distance <= SPAWN_RADIUS:
 			valid_positions.append(pos)
@@ -176,13 +172,18 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 # =========================================================================
 # ENEMY MANAGEMENT
 # =========================================================================
-func get_enemies() -> Array:
+func get_current_enemies() -> Array:
 	return get_tree().get_nodes_in_group("enemies")
+	
+func clear_enemies():
+	if total_mobs > 0:
+		for enemy in get_current_enemies():
+			enemy.queue_free()
 
 func _on_mob_death():
 	if total_mobs > 0:
 		total_mobs -= 1
-
+	Global.player_change_stat("enemies_killed + 1")
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================
@@ -192,10 +193,19 @@ func _on_dialogue_start() -> void:
 func _on_dialogue_end() -> void:
 	Global.speed_mult = 1.0
 	
-func _on_level_changed():
+func _on_level_changed(old_level: Node, new_level: PackedScene):
 	spawn_enemies = false
 	clear_enemies()
-	get_current_tile_map()
-	save_spawnable_positions()
-	await Global.delay(self, 5.0)
+	current_level = new_level.instantiate()
+	add_child(current_level)
+	_update_level_data()
+	old_level.queue_free()
 	spawn_enemies = true
+# =========================================================================
+# HELPER FUNCTIONS
+# =========================================================================
+func _update_level_data():
+	current_tile_map = current_level.tiles
+	spawnable_enemies = current_level.enemies
+	enemy_spawnpoints = current_level.enemy_spawnpoints
+	checkpoints = current_level.checkpoints_dict

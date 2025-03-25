@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1742710821
+::res://::1742849915
 cacert.crt::X509Certificate/X509Certificate::-1::1741998166::0::1::::<><><>0<>0<><>::
 export_presets.cfg::TextFile/TextFile::-1::1742696579::0::1::::<><><>0<>0<><>::
 icon.svg::CompressedTexture2D/CompressedTexture2D::3999585588227416496::1742699810::1742699811::1::::<><><>0<>0<>90a48153ca4304ff961859acbbf004d7<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
@@ -665,12 +665,12 @@ signal_visualizer_dock.tscn::PackedScene/PackedScene::8243364601232602603::17426
 ::res://assets/::1742699036
 ::res://assets/fonts/::1742626902
 KaushanScript-Regular.ttf::FontFile/FontFile::3724710594543940306::1742002418::1742626902::1::::<><><>0<>0<>595f86c644b76aa124a53597a870fd1c<>res://.godot/imported/KaushanScript-Regular.ttf-6127aee4f1a50e280ebc46420da0372d.fontdata::
-::res://assets/shaders/::1742710820
+::res://assets/shaders/::1742849915
 minecraft_enchantment_shader.gdshader::Shader/Shader::3496687002355087369::1742001675::0::1::::<><><>0<>0<><>::
-spooky_shader.gdshader::Shader::8432765536822105801::1742710834::0::1::::<><><>0<>0<><>::
-::res://assets/texture pack/::1742709384
+spooky_shader.gdshader::Shader::8432765536822105801::1742849920::0::1::::<><><>0<>0<><>::
+::res://assets/texture pack/::1742849784
 Terms.txt::TextFile/TextFile::-1::1742533606::0::1::::<><><>0<>0<><>::
-tiles.tres::TileSet/TileSet::8917209240335936906::1742709384::0::1::::<><><>0<>0<><>::uid://dtwm7l2o5pslx::::res://assets/texture pack/Environment/Tilesets/Dungeon_Tiles.png
+tiles.tres::TileSet/TileSet::8917209240335936906::1742849784::0::1::::<><><>0<>0<><>::uid://dtwm7l2o5pslx::::res://assets/texture pack/Environment/Tilesets/Dungeon_Tiles.png
 ::res://assets/texture pack/Entities/::1742533697
 ::res://assets/texture pack/Entities/Characters/::1742533698
 ::res://assets/texture pack/Entities/Characters/Body_A/::1742533698
@@ -941,86 +941,74 @@ full-export.png::CompressedTexture2D/CompressedTexture2D::4642560784806712441::1
 full.png::CompressedTexture2D/CompressedTexture2D::5517333727911135696::1742624985::1742626902::1::::<><><>0<>0<>60fd98a022328250020754f67fe45046<>res://.godot/imported/full.png-26c4baaee1202b504a993963d8e63ca5.ctex::
 Godot_icon.png::CompressedTexture2D/CompressedTexture2D::6406867398943807901::1741726851::1742626902::1::::<><><>0<>0<>a83238dbb3164b06cf803284ea6d0136<>res://.godot/imported/Godot_icon.png-e68abd54ff8c82ab5acee997b1e8ab59.ctex::
 piste-scandinavia-3-red-rectangle-png-alpha-channel-3539078250.png::CompressedTexture2D/CompressedTexture2D::5056730267204901934::1742624041::1742626902::1::::<><><>0<>0<>fc506692288bdd06b084cb1fb8730bdf<>res://.godot/imported/piste-scandinavia-3-red-rectangle-png-alpha-channel-3539078250.png-3c2ffc5490b997dfe18909dbed0f29ab.ctex::
-::res://data/::1742699654
+::res://data/::1742849084
 beings.csv::::4618754987488099770::1742367914::1742366792::0::::<><><>0<>0<>eee310571a4cbc4a9673c1f44f9e584b<>::
 beings_data_ref.json::JSON/JSON::-1::1742367920::0::1::::<><><>0<>0<><>::
-factions_data_backup.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-factions_data_current.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
+factions_data_backup.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+factions_data_current.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
 factions_data_ref.json::JSON/JSON::-1::1742189557::0::1::::<><><>0<>0<><>::
 items.csv::::1898053476625341432::1742367892::1741834536::0::::<><><>0<>0<>eee310571a4cbc4a9673c1f44f9e584b<>::
 items_data_ref.json::JSON/JSON::-1::1742367920::0::1::::<><><>0<>0<><>::
 perks.csv::::5020195448904646804::1742367903::1741851179::0::::<><><>0<>0<>eee310571a4cbc4a9673c1f44f9e584b<>::
-perks_data_backup.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-perks_data_current.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-perks_data_ref.json::JSON/JSON::-1::1742367920::0::1::::<><><>0<>0<><>::
-player_stats_data_backup.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-player_stats_data_current.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-player_stats_data_ref.json::JSON/JSON::-1::1742677927::0::1::::<><><>0<>0<><>::
+perks_data_backup.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+perks_data_current.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+player_stats_data_backup.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+player_stats_data_current.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+player_stats_data_ref.json::JSON/JSON::-1::1742779946::0::1::::<><><>0<>0<><>::
 quests.csv::::1813866445028584669::1742367898::1741834549::0::::<><><>0<>0<>eee310571a4cbc4a9673c1f44f9e584b<>::
-quests_data_backup.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-quests_data_current.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
+quests_data_backup.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+quests_data_current.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
 quests_data_ref.json::JSON/JSON::-1::1742367920::0::1::::<><><>0<>0<><>::
 traits.csv::::320361062539239564::1742367906::1741851211::0::::<><><>0<>0<>eee310571a4cbc4a9673c1f44f9e584b<>::
-traits_data_backup.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
-traits_data_current.json::JSON/JSON::-1::1742710823::0::1::::<><><>0<>0<><>::
+traits_data_backup.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
+traits_data_current.json::JSON/JSON::-1::1742781129::0::1::::<><><>0<>0<><>::
 traits_data_ref.json::JSON/JSON::-1::1742367920::0::1::::<><><>0<>0<><>::
-::res://Demos/::1742699825
-CharacterBody2D.gd::GDScript/GDScript::535086479915808774::1742699810::0::1::::<>CharacterBody2D<><>0<>0<><>::
-Demo1.gd::GDScript/GDScript::3424852862506135820::1742699810::0::1::::Demo1<>Node2D<><>0<>0<><>::
-Demo1.tscn::PackedScene/PackedScene::235051775706593415::1742699810::0::1::::<><><>0<>0<><>::res://Demos/Demo1.gd<>res://Demos/CharacterBody2D.gd
-Demo2.gd::GDScript/GDScript::5221244443722504906::1742699810::0::1::::Demo2<>Demo1<><>0<>0<><>::
-Demo2.tscn::PackedScene/PackedScene::9037871492371421862::1742699810::0::1::::<><><>0<>0<><>::res://Demos/Demo2.gd
-Demo3.gd::GDScript/GDScript::1304043022148413423::1742699810::0::1::::<>Node2D<><>0<>0<><>::
-Demo3.tscn::PackedScene/PackedScene::8517057181964640651::1742699810::0::1::::<><><>0<>0<><>::res://Demos/Demo3.gd
 ::res://dialogic/::1742334000
 ::res://dialogic/characters/::1742334041
 npc.dch::Resource/DialogicCharacter::8158345139964458312::1742334041::0::1::::<><><>0<>0<><>::
-::res://dialogic/styles/::1742707390
-default.tres::Resource/DialogicStyle::1847843145224243458::1742707390::0::1::::<><><>0<>0<><>::uid://ccmbjb6a301yo::::res://addons/dialogic/Resources/dialogic_style_layer.gd<>uid://c1k5m0w3r40xf::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_FullBackground/full_background_layer.tscn<>uid://cn674foxwedqu::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_Input/full_advance_input_layer.tscn<>uid://by6waso0mjpjp::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_SpeakerPortraitTextbox/textbox_with_speaker_portrait.tscn<>uid://dsbwnp5hegnu3::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_Glossary/glossary_popup_layer.tscn<>uid://dhk6j6eb6e3q::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_VN_Choices/vn_choice_layer.tscn<>uid://cvgf4c6gg0tsy::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_TextInput/text_input_layer.tscn<>uid://lx24i8fl6uo::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_History/history_layer.tscn<>uid://dfikvf7en2e65::::res://addons/dialogic/Resources/dialogic_style.gd
+::res://dialogic/styles/::1742849784
+default.tres::Resource/DialogicStyle::1847843145224243458::1742849784::0::1::::<><><>0<>0<><>::uid://ccmbjb6a301yo::::res://addons/dialogic/Resources/dialogic_style_layer.gd<>uid://c1k5m0w3r40xf::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_FullBackground/full_background_layer.tscn<>uid://cn674foxwedqu::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_Input/full_advance_input_layer.tscn<>uid://by6waso0mjpjp::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_SpeakerPortraitTextbox/textbox_with_speaker_portrait.tscn<>uid://dsbwnp5hegnu3::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_Glossary/glossary_popup_layer.tscn<>uid://dhk6j6eb6e3q::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_VN_Choices/vn_choice_layer.tscn<>uid://cvgf4c6gg0tsy::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_TextInput/text_input_layer.tscn<>uid://lx24i8fl6uo::::res://addons/dialogic/Modules/DefaultLayoutParts/Layer_History/history_layer.tscn<>uid://dfikvf7en2e65::::res://addons/dialogic/Resources/dialogic_style.gd
 ::res://dialogic/timelines/::1742334038
 boot.dtl::Resource/DialogicTimeline::1105182031529277261::1742276803::0::1::::<><><>0<>0<><>::
 npc.dtl::Resource/DialogicTimeline::1087182626203497289::1742334038::0::1::::<><><>0<>0<><>::
-::res://scenes/::1742710820
+::res://scenes/::1742849871
 fireball.tscn::PackedScene/PackedScene::5894077423210038220::1742699690::0::1::::<><><>0<>0<><>::uid://vi703kxa5l26::::res://scripts/fireball.gd<>uid://c3auaxssrpxle::::res://assets/textures/fireball.png
-game.tscn::PackedScene::7232917104715668854::1742710820::0::1::::<><><>0<>0<><>::uid://ckmkhqqqnhrgc::::res://scenes/player.tscn<>uid://befhc074vjbqn::::res://scripts/node_managers/game.gd<>uid://15uoupcpxi20::::res://scenes/knight.tscn<>uid://cdv1c4xdmk5kk::::res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd<>uid://dtjqgclskvduj::::res://scenes/tools/debug_menu.tscn<>uid://5wd6f8wnvh8e::::res://scenes/rogue.tscn<>uid://dkmfae421te6a::::res://scenes/levels/level1.tscn
-knight.tscn::PackedScene/PackedScene::1888081681931532279::1742707731::0::1::::<><><>0<>0<><>::uid://brm0xjl72lqnv::::res://scripts/node_managers/knight.gd<>uid://bprcrigl2rny4::::res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png<>uid://db4kurfmybyb3::::res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png<>uid://vn43pr4ebso7::::res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png<>uid://c1xkb7xvjpafx::::res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png
-level_3.tscn::PackedScene::7068644354174749016::1742710834::0::1::::<><><>0<>0<><>::uid://er5wgrw0srit::::res://scripts/levels/level_3.gd
-player.tscn::PackedScene/PackedScene::5500122873135349274::1742699022::0::1::::<><><>0<>0<><>::uid://dpd8perakj03r::::res://scripts/node_managers/player.gd<>uid://2e4fk1nk5r42::::res://assets/texture pack/Entities/Npc's/Wizzard/Death/Death-Sheet.png<>uid://cp8eugxsx1ocq::::res://scenes/fireball.tscn<>uid://cqvthmm5he7oh::::res://assets/texture pack/Entities/Npc's/Wizzard/Idle/Idle-Sheet.png<>uid://ccx7dmogcfutn::::res://assets/texture pack/Entities/Npc's/Wizzard/Run/Run-Sheet.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png<>uid://ckuvxesxh68d5::::res://assets/textures/full.png
-rogue.tscn::PackedScene/PackedScene::2151319444932720506::1742710214::0::1::::<><><>0<>0<><>::uid://8dyyakf5ba63::::res://scripts/node_managers/rogue.gd<>uid://bih0xuackwai5::::res://assets/texture pack/Entities/Npc's/Rogue/Death/Death-Sheet.png<>uid://b6ooliqxfrgst::::res://assets/texture pack/Entities/Npc's/Rogue/Idle/Idle-Sheet.png<>uid://c1xkb7xvjpafx::::res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png<>uid://da4i3ejxl5w4v::::res://assets/texture pack/Entities/Npc's/Rogue/Run/Run-Sheet.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png
-::res://scenes/levels/::1742710820
-level1.tscn::PackedScene::7886226861627158918::1742710820::0::1::::<><><>0<>0<><>::uid://dd8gh6rhn2g1o::::res://scripts/levels/level_1.gd<>uid://bu4uplrikwht3::::res://scenes/levels/level2.tscn<>uid://c7ydsl8f7d34w::::res://scenes/level_3.tscn<>uid://d0btesf5evuvi::::res://assets/texture pack/tiles.tres
-level2.tscn::PackedScene::3851306242481631822::1742710552::0::1::::<><><>0<>0<><>::uid://civhfk7m7jl31::::res://scripts/levels/level_2.gd<>uid://d0btesf5evuvi::::res://assets/texture pack/tiles.tres
-level3.tscn::PackedScene/PackedScene::5344850430168033021::1742710384::0::1::::<><><>0<>0<><>::
+game.tscn::PackedScene/PackedScene::7232917104715668854::1742849871::0::1::::<><><>0<>0<><>::uid://ckmkhqqqnhrgc::::res://scenes/player.tscn<>uid://befhc074vjbqn::::res://scripts/node_managers/game.gd<>uid://15uoupcpxi20::::res://scenes/enemies/knight.tscn<>uid://cdv1c4xdmk5kk::::res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd<>uid://dtjqgclskvduj::::res://scenes/tools/debug_menu.tscn<>uid://5wd6f8wnvh8e::::res://scenes/enemies/rogue.tscn<>uid://dkmfae421te6a::::res://scenes/levels/level_three.tscn
+player.tscn::PackedScene/PackedScene::5500122873135349274::1742768770::0::1::::<><><>0<>0<><>::uid://dpd8perakj03r::::res://scripts/node_managers/player.gd<>uid://2e4fk1nk5r42::::res://assets/texture pack/Entities/Npc's/Wizzard/Death/Death-Sheet.png<>uid://cp8eugxsx1ocq::::res://scenes/fireball.tscn<>uid://cqvthmm5he7oh::::res://assets/texture pack/Entities/Npc's/Wizzard/Idle/Idle-Sheet.png<>uid://ccx7dmogcfutn::::res://assets/texture pack/Entities/Npc's/Wizzard/Run/Run-Sheet.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png<>uid://ckuvxesxh68d5::::res://assets/textures/full.png
+::res://scenes/enemies/::1742769426
+knight.tscn::PackedScene/PackedScene::1888081681931532279::1742768903::0::1::::<><><>0<>0<><>::uid://brm0xjl72lqnv::::res://scripts/node_managers/knight.gd<>uid://bprcrigl2rny4::::res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png<>uid://db4kurfmybyb3::::res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png<>uid://vn43pr4ebso7::::res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png<>uid://c1xkb7xvjpafx::::res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png
+rogue.tscn::PackedScene/PackedScene::2151319444932720506::1742769029::0::1::::<><><>0<>0<><>::uid://8dyyakf5ba63::::res://scripts/node_managers/rogue.gd<>uid://bih0xuackwai5::::res://assets/texture pack/Entities/Npc's/Rogue/Death/Death-Sheet.png<>uid://b6ooliqxfrgst::::res://assets/texture pack/Entities/Npc's/Rogue/Idle/Idle-Sheet.png<>uid://c1xkb7xvjpafx::::res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png<>uid://da4i3ejxl5w4v::::res://assets/texture pack/Entities/Npc's/Rogue/Run/Run-Sheet.png<>uid://b7e5kekjf60qn::::res://assets/textures/full-export.png
+::res://scenes/levels/::1742849915
+level_1.tscn::PackedScene::7886226861627158918::1742849919::0::1::::<><><>0<>0<><>::uid://dd8gh6rhn2g1o::::res://scripts/levels/level_1.gd<>uid://bu4uplrikwht3::::res://scenes/levels/level_32.tscn<>uid://cifc518lollhl::::res://scenes/levels/level_3.tscn<>uid://d0btesf5evuvi::::res://assets/texture pack/tiles.tres<>uid://15uoupcpxi20::::res://scenes/enemies/knight.tscn<>uid://5wd6f8wnvh8e::::res://scenes/enemies/rogue.tscn
+level_3.tscn::PackedScene::5344850430168033021::1742777019::0::1::::<><><>0<>0<><>::uid://er5wgrw0srit::::res://scripts/levels/level_3.gd<>uid://5wd6f8wnvh8e::::res://scenes/enemies/rogue.tscn
+level_32.tscn::PackedScene::3851306242481631822::1742849291::0::1::::<><><>0<>0<><>::uid://civhfk7m7jl31::::res://scripts/levels/level_2.gd<>uid://15uoupcpxi20::::res://scenes/enemies/knight.tscn<>uid://d0btesf5evuvi::::res://assets/texture pack/tiles.tres
 ::res://scenes/tools/::1742368161
 debug_menu.tscn::PackedScene/PackedScene::8512411789507728645::1742368161::0::1::::<><><>0<>0<><>::uid://c0qy1iqa0pyhs::::res://scripts/tools/debug_menu.gd
 file_syncer.tscn::PackedScene/PackedScene::3932640603769549605::1742368161::0::1::::<><><>0<>0<><>::uid://c3x8s7varfdau::::res://scripts/tools/file_syncer.gd
-::res://scripts/::1742710552
+::res://scripts/::1742769190
 fireball.gd::GDScript/GDScript::1492469814195363249::1742686474::0::1::::<>Area2D<><>0<>0<><>::
-::res://scripts/classes/::1742699551
-being.gd::GDScript/GDScript::4885697679114518136::1742699551::0::1::::Being<>Node2D<><>0<>0<><>::
-::res://scripts/levels/::1742710564
-level_1.gd::GDScript::7438331505213324898::1742710468::0::1::::<>Node2D<><>0<>0<><>::
-level_2.gd::GDScript::5378138572500204230::1742710507::0::1::::<>Node2D<><>0<>0<><>::
-level_3.gd::GDScript::317710936055538439::1742710530::0::1::::<>Node2D<><>0<>0<><>::
-::res://scripts/node_managers/::1742710132
-game.gd::GDScript/GDScript::2677927901416245225::1742710132::0::1::::<>Node2D<><>0<>0<><>::
-knight.gd::GDScript/GDScript::3605963047860808919::1742707843::0::1::::<>CharacterBody2D<><>0<>0<><>::
-player.gd::GDScript/GDScript::8220318522950657621::1742686957::0::1::::<>CharacterBody2D<><>0<>0<><>::
-rogue.gd::GDScript/GDScript::2323925055912712386::1742707856::0::1::::<>CharacterBody2D<><>0<>0<><>::
-::res://scripts/singletons/::1742710787
+::res://scripts/classes/::1742768867
+being.gd::GDScript/GDScript::4885697679114518136::1742768867::0::1::::Being<>Node2D<><>0<>0<><>::
+::res://scripts/levels/::1742849784
+level_1.gd::GDScript/GDScript::7438331505213324898::1742849784::0::1::::<>Node2D<><>0<>0<><>::
+level_2.gd::GDScript/GDScript::5378138572500204230::1742769369::0::1::::<>Node2D<><>0<>0<><>::
+level_3.gd::GDScript/GDScript::317710936055538439::1742769373::0::1::::<>Node2D<><>0<>0<><>::
+::res://scripts/node_managers/::1742848867
+game.gd::GDScript/GDScript::2677927901416245225::1742781013::0::1::::<>Node2D<><>0<>0<><>::
+knight.gd::GDScript/GDScript::3605963047860808919::1742768996::0::1::::<>CharacterBody2D<><>0<>0<><>::
+player.gd::GDScript/GDScript::8220318522950657621::1742848867::0::1::::<>CharacterBody2D<><>0<>0<><>::
+rogue.gd::GDScript/GDScript::2323925055912712386::1742768969::0::1::::<>CharacterBody2D<><>0<>0<><>::
+::res://scripts/singletons/::1742780492
 data.gd::GDScript/GDScript::4587180731635932630::1742683542::0::1::::<>Node<><>0<>0<><>::
-debug.gd::GDScript::7825573477647175741::1742710787::0::1::::<>Node<><>0<>0<><>::
+debug.gd::GDScript/GDScript::7825573477647175741::1742710787::0::1::::<>Node<><>0<>0<><>::
 factions.gd::GDScript/GDScript::1976476330185406335::1742193033::0::1::::<>Node<><>0<>0<><>::
-global.gd::GDScript::4447482362640437869::1742710753::0::1::::<>Node2D<><>0<>0<><>::
+global.gd::GDScript/GDScript::4447482362640437869::1742780492::0::1::::<>Node2D<><>0<>0<><>::
 ::res://scripts/tools/::1742687723
 debug_menu.gd::GDScript/GDScript::6562096585807588328::1742687723::0::1::::<>Control<><>0<>0<><>::
 file_syncer.gd::GDScript/GDScript::6787647195857080216::1742189866::0::1::::<>Node2D<><>0<>0<><>::
-::res://textfiles/::1741851399
-Godot Notes.txt::TextFile/TextFile::-1::1741749986::0::1::::<><><>0<>0<><>::
-stable data.txt::TextFile/TextFile::-1::1741835008::0::1::::<><><>0<>0<><>::
-stable game manager.txt::TextFile/TextFile::-1::1741830356::0::1::::<><><>0<>0<><>::
-stable global.txt::TextFile/TextFile::-1::1741821948::0::1::::<><><>0<>0<><>::
-::res://textfiles/templates.txt/::0
+::res://textfiles/::1742710881
+::res://textfiles/templates/::1742710894
+level_template.txt::TextFile/TextFile::-1::1742710894::0::1::::<><><>0<>0<><>::
 ::res://ursc/::1742004943
 LICENSE.md::TextFile/TextFile::-1::1741999271::0::1::::<><><>0<>0<><>::
 setup.gd::GDScript/GDScript::5198272600044350344::1742004943::0::1::::<>EditorScript<><>0<>1<><>::

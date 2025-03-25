@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cifc518lollhl"]
+
+[ext_resource type="Script" uid="uid://er5wgrw0srit" path="res://scripts/levels/level_3.gd" id="1_s1j21"]
+[ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/enemies/rogue.tscn" id="2_sru4k"]
+
+[node name="Level3" type="Node2D" node_paths=PackedStringArray("tiles")]
+script = ExtResource("1_s1j21")
+tiles = NodePath("Tiles")
+enemies = Array[PackedScene]([ExtResource("2_sru4k")])
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+
+[node name="Tiles" type="TileMapLayer" parent="."]
+z_index = -1

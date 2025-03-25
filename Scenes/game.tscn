@@ -2,21 +2,21 @@
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
-[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/knight.tscn" id="2_qxrlw"]
+[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/enemies/knight.tscn" id="2_qxrlw"]
 [ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
-[ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/rogue.tscn" id="6_u5sy4"]
-[ext_resource type="PackedScene" uid="uid://dkmfae421te6a" path="res://scenes/levels/level1.tscn" id="7_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/enemies/rogue.tscn" id="6_u5sy4"]
+[ext_resource type="PackedScene" uid="uid://dkmfae421te6a" path="res://scenes/levels/level_1.tscn" id="7_u5sy4"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
 Rogue = ExtResource("6_u5sy4")
 Knight = ExtResource("2_qxrlw")
+default_level = ExtResource("7_u5sy4")
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
-scale = Vector2(1, 0.991816)
+process_mode = 3
 motion_mode = 1
-camera_distance_limit = 10.0
 
 [node name="PlayerCamera" type="Camera2D" parent="Player"]
 unique_name_in_owner = true
@@ -28,6 +28,3 @@ metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
 
 [node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
 visible = false
-
-[node name="Level1" parent="." instance=ExtResource("7_u5sy4")]
-position = Vector2(-7, -16)

@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=4 uid="uid://dkmfae421te6a"]
+[gd_scene load_steps=9 format=4 uid="uid://dkmfae421te6a"]
 
 [ext_resource type="Script" uid="uid://dd8gh6rhn2g1o" path="res://scripts/levels/level_1.gd" id="1_dopym"]
-[ext_resource type="PackedScene" uid="uid://bu4uplrikwht3" path="res://scenes/levels/level2.tscn" id="2_m7ahb"]
-[ext_resource type="PackedScene" uid="uid://c7ydsl8f7d34w" path="res://scenes/level_3.tscn" id="3_bfxgj"]
+[ext_resource type="PackedScene" uid="uid://bu4uplrikwht3" path="res://scenes/levels/level_2.tscn" id="2_m7ahb"]
+[ext_resource type="PackedScene" uid="uid://cifc518lollhl" path="res://scenes/levels/level_3.tscn" id="3_bfxgj"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/texture pack/tiles.tres" id="3_m7ahb"]
+[ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/enemies/knight.tscn" id="4_1seuy"]
+[ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/enemies/rogue.tscn" id="5_2r1tl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u5sy4"]
 size = Vector2(33, 57)
@@ -11,11 +13,12 @@ size = Vector2(33, 57)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ootpb"]
 size = Vector2(33, 57)
 
-[node name="Level1" type="Node2D" node_paths=PackedStringArray("spawn_point")]
+[node name="Level1" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
 script = ExtResource("1_dopym")
-spawn_point = NodePath("SpawnPoint")
-level_two = ExtResource("2_m7ahb")
-level_three = ExtResource("3_bfxgj")
+tiles = NodePath("Tiles")
+enemies = Array[PackedScene]([ExtResource("4_1seuy"), ExtResource("5_2r1tl")])
+checkpoints = [NodePath("DefaultSpawn")]
+linked_levels = Array[PackedScene]([ExtResource("2_m7ahb"), ExtResource("3_bfxgj")])
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -35,7 +38,7 @@ position = Vector2(0, -1)
 position = Vector2(96, -51.5)
 shape = SubResource("RectangleShape2D_ootpb")
 
-[node name="SpawnPoint" type="Marker2D" parent="."]
+[node name="DefaultSpawn" type="Marker2D" parent="."]
 position = Vector2(7, 16)
 
 [connection signal="body_entered" from="Tiles/Door1" to="." method="_on_door_1_body_entered"]
