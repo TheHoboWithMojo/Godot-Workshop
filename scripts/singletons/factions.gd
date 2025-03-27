@@ -1,5 +1,4 @@
 extends Node
-
 # Not used, save as json if updated
 var factions_template = {
 	"New California Republic": {
@@ -127,18 +126,29 @@ func get_rep_status(faction: String) -> String:
 	if Data.game_data["factions"].has(faction):
 		var rep = Data.game_data["factions"][faction]["rep"]
 		if rep < 0:
-			return "Hostile"
+			return "hostile"
 		elif rep < 25:
-			return "Unfriendly"
+			return "unfriendly"
 		elif rep < 50:
-			return "Neutral"
+			return "neutral"
 		elif rep < 75:
-			return "Friendly"
+			return "friendly"
 		else:
-			return "Allied"
+			return "allied"
 	else:
-		Data.throw_error(self, "Faction " + faction + " not found!")
+		Debug.throw_error(self, "get_rep_status", "Faction " + faction + " not found!")
 		return "Faction not found!"
+		
+func faction_exists(faction: String) -> bool:
+	if faction in factions_template.keys():
+		return true
+	else:
+		return false
+		
+func get_rep_num(faction: String) -> int:
+	if Data.game_data["factions"].has(faction):
+		return Data.game_data["factions"][faction]["rep"]
+	return 0
 
 func reset_faction(faction: String) -> void:
 	if Data.game_data["factions"].has(faction):

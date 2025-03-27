@@ -16,9 +16,9 @@ extends Node2D
 @onready var is_level_loaded = false
 
 func _ready() -> void:
-	init()
+	init_dicts()
 		
-func init():
+func init_dicts():
 	for level in linked_levels:
 		var level_name = Global.get_rawname(level)
 		linked_levels_dict[level_name] = level

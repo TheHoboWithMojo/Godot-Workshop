@@ -29,6 +29,8 @@ extends Camera2D
 ## Camera speed (pixels/s)
 @export var pan_speed := 450
 
+@export var camera_distance_limit: float = 10.0
+
 var prev_mouse_pos := Vector2.ZERO
 var dragging := false
 var move_left := false
@@ -83,6 +85,22 @@ func _process(delta: float) -> void:
 		zoom.y = zoom.x
 
 	prev_mouse_pos = get_local_mouse_position()
+	
+	_center_camera()
+	
+	_auto_bind_camera()
+	
+func _center_camera():
+	if Input.is_action_just_pressed("center_camera"):
+		Global.player_camera.position = Vector2.ZERO  # Reset camera position relative to player
+
+func _auto_bind_camera(): # Ensures the camera doesnt go too far from the player
+	var max_offset = camera_distance_limit
+	if abs(Global.player_camera.position.x) > max_offset:
+		Global.player_camera.position.x = sign(Global.player_camera.position.x) * max_offset  # Snap to the max boundary
+	
+	if abs(Global.player_camera.position.y) > max_offset:
+		Global.player_camera.position.y = sign(Global.player_camera.position.y) * max_offset  # Snap to the max boundary
 
 ## Check for any unhandled input events and take note of them
 ##

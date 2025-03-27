@@ -3,6 +3,7 @@ extends Node2D
 
 # Name and stats
 var _nomen: String = "Unnamed"
+var _faction: String = ""
 var _health: float = 0.0
 var _speed: float = 0.0
 var _damage: float = 0.0
@@ -11,7 +12,8 @@ var _damage: float = 0.0
 var _alive: bool = true # Alive is not required by caller
 var _hostile: bool = false
 var _debugging: bool = false
-var is_touching_player = false
+var is_touching_player: bool = false
+var _vincible: bool = true
 
 # Nodes
 var _sprite: AnimatedSprite2D = null
@@ -97,12 +99,19 @@ func _init(params: Dictionary = {}):
 		print("[Being] Constructor called by ", _caller.name)
 	
 	# Set non node values
-	_nomen = params.get("nomen", "Unnamed")
+	_nomen = params.get("nomen", "unnamed")
+	_faction = params.get("faction", "unaffiliated")
+	if _faction and _faction != "unaffiliated" and _faction not in Factions.factions_template.keys():
+		Debug.throw_error(self, "_init", "Faction %s does not exist" % [_faction])
+		_faction = "unaffiliated"
+	else:
+		_caller.add_to_group(_faction)
+		
 	_hostile = params.get("hostile", false)
+	_vincible = params.get("vincible", true)
 	health = params.get("base_health", 0.0) # If no health in entity, assume its non living
 	speed = params.get("base_speed", 0.0)
 	damage = params.get("base_damage", 0.0)
-	
 	
 	# Store node components and track missing ones
 	_sprite = params.get("sprite")
@@ -130,7 +139,9 @@ func _init(params: Dictionary = {}):
 		_health_bar.set_value(health)
 	if _debugging:
 		print("[Being] Initialized: Name = %s, Health = %s Speed = %s" % [_nomen, _health, _speed])
-		
+	
+	if _caller:
+		_caller.add_to_group("beings")
 	_print_missing_components()
 	
 func _print_missing_components() -> void:
@@ -150,10 +161,11 @@ func _has_component(component: String) -> bool:
 # ===== Core Functions (No Component Requirements) =====
 
 func take_damage(amount: float) -> void:
-	var new_health = health - amount
-	if new_health < 0:
-		new_health = 0
-	health = new_health
+	if _vincible:
+		var new_health = health - amount
+		if new_health < 0:
+			new_health = 0
+		health = new_health
 
 func heal(amount: float) -> void:
 	health += amount
@@ -169,6 +181,9 @@ func die(exp_gain: int = 0) -> void:
 		_health_bar.set_value(0.0)
 		
 		play_animation("die")
+		
+		if _faction != "unaffiliated":
+			Factions.log_decision(_faction, "killed a member.", -100)
 		
 		if _animator and _animator.is_playing():
 			await _animator.animation_finished
@@ -191,6 +206,9 @@ func is_alive() -> bool:
 
 func is_hostile() -> bool:
 	return _hostile
+
+func set_vincible(Bool: bool):
+	_vincible = Bool
 
 func set_hostile(value: bool) -> void:
 	_hostile = value
@@ -341,7 +359,7 @@ static func create_being(self_node: Node) -> Being:
 		params["base_speed"] = base_speed
 		
 	var nomen = self_node.get("nomen")
-	if nomen != null:
+	if nomen != null and nomen != "":
 		params["nomen"] = nomen
 		
 	var hostile = self_node.get("hostile")
@@ -351,7 +369,15 @@ static func create_being(self_node: Node) -> Being:
 	var debugging = self_node.get("debugging")
 	if debugging != null:
 		params["debugging"] = debugging
+		
+	var faction = self_node.get("faction")
+	if faction != null and faction != "":
+		params["faction"] = faction
 	
+	var vincible = self_node.get("vincible")
+	if vincible != null:
+		params["vincible"] = vincible
+		
 	return Being.new(params)
 	
 static func print_reqs() -> void:

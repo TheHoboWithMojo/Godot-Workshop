@@ -58,3 +58,7 @@ func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 func _on_save_game_button_pressed() -> void:
 	Data.save_data_changes()
 	await Data.data_saved
+
+
+func _on_spawn_enemies_button_toggled(toggled_on: bool) -> void:
+	Global.game_manager.spawn_enemies = !toggled_on

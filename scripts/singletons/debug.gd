@@ -41,7 +41,7 @@ func print_player_traits():
 			print("  %s: %s" % [property, _trait[property]])
 
 func frame_print(input: Variant, frame_print_delay: int):
-	if Global.track_frames:
+	if Global.game_manager.track_frames:
 		if Global.frames % frame_print_delay == 0:
 			print(input)
 	else:

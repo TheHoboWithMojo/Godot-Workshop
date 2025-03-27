@@ -141,12 +141,13 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "health_bar")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "health_bar", "direction_tracker")]
 script = ExtResource("1_cvnsp")
 sprite = NodePath("AnimatedSprite2D")
 collider = NodePath("CollisionShape2D")
 fireball = ExtResource("2_fjrip")
 health_bar = NodePath("HealthBar")
+direction_tracker = NodePath("Marker2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, -0.5)
@@ -165,3 +166,5 @@ offset_bottom = 230.0
 scale = Vector2(0.05, 0.05)
 texture_under = ExtResource("5_tuyoq")
 texture_progress = ExtResource("6_fjrip")
+
+[node name="Marker2D" type="Marker2D" parent="."]

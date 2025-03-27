@@ -18,6 +18,8 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var speed_mult: float = 1.0
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
+@onready var player_touching_node: Area2D = null
+@onready var cursor_touching_node: Area2D = null
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 
 # HERE TO EDIT, MANUALLY SAVE AS REF AFTER EDITING USING DATA.SAVE_JSON()
@@ -96,13 +98,12 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	game_manager = get_node(GAME_MANAGER_PATH)
 	print("Global references reloaded!")
 
-func switch_to_level(self_node: Node, new_level: PackedScene):
-	if new_level != null:
-		var _new_level = new_level.instantiate()
-		Global.game_manager.add_child(_new_level)
-		self_node.queue_free()
-	else:
-		Debug.throw_error(self_node, "switch_to_level", "Given level does not exist", str(new_level))
+func swap_scenes(self_node: Node, new_scene: PackedScene):
+	self_node.queue_free()
+	get_tree().get_parent().add_child(new_scene.instantiate())
+	
+func get_interactable_nodes() -> Array[Node]:
+	return get_tree().get_nodes_in_group("interactable")
 	
 func get_rawname(scene_or_node_or_path: Variant) -> String:
 	if scene_or_node_or_path is Node:
@@ -141,7 +142,7 @@ func active_and_ready(self_node: Node, active: bool = true):
 		if not Global.player:
 			await Global.game_reloaded # if theres no player wait for references to update
 			
-		if Global.game_manager.start_ready != true:
+		if not Global.game_manager.is_ready_to_start:
 			await Global.game_manager.ready_to_start
 	else:
 		self_node.queue_free()

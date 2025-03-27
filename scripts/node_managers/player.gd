@@ -2,15 +2,16 @@ extends CharacterBody2D
 @export var active: bool = true
 @export var collision_on: bool = true
 
-@export var camera_distance_limit: float = 10.0
 @export var base_speed: float = 10000.0
 @export var base_health: float = 100.0
 @export var base_attack_speed: float = 20.0
 
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D
-@export var fireball: PackedScene
+@export var projectile: PackedScene
 @export var health_bar: TextureProgressBar
+@export var direction_tracker: Marker2D
+@onready var can_shoot: bool = true
 
 signal player_damaged
 
@@ -36,8 +37,8 @@ func _ready():
 @onready var direction_y: float
 @onready var mouse_pos
 @onready var character_position
-@onready var angle_to_mouse: float
 @onready var normal: Vector2
+@onready var orientation_angle: float
 
 func _physics_process(delta: float) -> void:
 	normal = velocity.normalized()
@@ -62,21 +63,16 @@ func _physics_process(delta: float) -> void:
 	# Animation handling
 	mouse_pos = get_global_mouse_position()
 	character_position = position
-	angle_to_mouse = (mouse_pos - character_position).angle()
+	orientation_angle = (mouse_pos - character_position).angle()
 	
-	_flip_sprite(sprite, angle_to_mouse)
+	_flip_sprite(sprite, orientation_angle)
 	_run_or_idle(velocity)
 
 	move_and_slide()
 
 func _process(_delta: float) -> void:
 	var health: float = Global.player_get_stat("health")
-	# Key Press Functions
-	_center_camera()
-	_shoot(angle_to_mouse)
-	
-	# Automatic Functions
-	_auto_bind_camera()
+	_shoot(orientation_angle)
 	
 	# State Checks
 	if Global.frames % 10 == 0:
@@ -88,24 +84,25 @@ func _process(_delta: float) -> void:
 		check_for_achievements()
 
 @onready var _just_shot: bool = false
-func _shoot(_angle_to_mouse): # spawns a projectile at a given angle
-	if Input.is_action_just_pressed("shoot") and not _just_shot:
-		_just_shot = true
-		var new_projectile = fireball.instantiate() as Area2D
-		get_parent().add_child(new_projectile)  # Add projectile to the scene
-		_flip_sprite(new_projectile.sprite, _angle_to_mouse)
-		new_projectile.position = global_position  # Spawn at player's position
-		var direction = (get_global_mouse_position() - global_position).normalized()
-		new_projectile.set_velocity(direction)  # Set projectile velocity
-		await Global.delay(self, 1/(Global.player_get_stat("attack_speed")*Global.player_get_stat("attack_speed_mult")))
-		_just_shot = false
+func _shoot(angle): # spawns a projectile at a given angle
+	if can_shoot:
+		if Input.is_action_just_pressed("shoot") and not _just_shot:
+			_just_shot = true
+			var new_projectile = projectile.instantiate() as Area2D
+			get_parent().add_child(new_projectile)  # Add projectile to the scene
+			_flip_sprite(new_projectile.sprite, angle)
+			new_projectile.position = global_position  # Spawn at player's position
+			var direction = (get_global_mouse_position() - global_position).normalized()
+			new_projectile.set_velocity(direction)  # Set projectile velocity
+			await Global.delay(self, 1/(Global.player_get_stat("attack_speed")*Global.player_get_stat("attack_speed_mult")))
+			_just_shot = false
 
 func check_for_achievements(): #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
 	if Global.player_get_stat("enemies_killed") > 5:
 		Global.player_add_perk("dead eye")
 
-func _flip_sprite(_sprite: AnimatedSprite2D, _angle_to_mouse: float):
-	_sprite.flip_h = not (-PI/2 <= _angle_to_mouse and _angle_to_mouse <= PI/2)
+func _flip_sprite(_sprite: AnimatedSprite2D, _orientation_angle: float):
+	_sprite.flip_h = not (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
 	
 func _run_or_idle(_velocity: Vector2):
 	if _velocity.length() > 0:
@@ -130,18 +127,6 @@ func _get_direction(x_or_y: String) -> float:
 	else:
 		Debug.throw_error(self, "_get_direction", "x or y only", x_or_y)
 		return 0.0
-
-func _center_camera():
-		if Input.is_action_just_pressed("center_camera"):
-			Global.player_camera.position = Vector2.ZERO  # Reset camera position relative to player
-
-func _auto_bind_camera(): # Ensures the camera doesnt go too far from the player
-	var max_offset = camera_distance_limit
-	if abs(Global.player_camera.position.x) > max_offset:
-		Global.player_camera.position.x = sign(Global.player_camera.position.x) * max_offset  # Snap to the max boundary
-	
-	if abs(Global.player_camera.position.y) > max_offset:
-		Global.player_camera.position.y = sign(Global.player_camera.position.y) * max_offset  # Snap to the max boundary
 
 func _check_for_death(health: float):
 	if health <= 0:

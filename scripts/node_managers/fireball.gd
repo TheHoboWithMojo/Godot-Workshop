@@ -16,6 +16,6 @@ func _physics_process(delta):
 
 func _on_body_entered(body: Node2D):
 	if body != Global.player:
-		if "being" in body:
-			body.being.take_damage(damage)
+		if "controller" in body:
+			body.controller.take_damage(damage)
 		queue_free()  # Destroy projectile on impact

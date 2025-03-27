@@ -11,6 +11,8 @@ extends Node2D
 @export var use_save_data: bool = false
 @export var active: bool = true
 @export var spawn_enemies: bool = true
+@onready var _spawn_enemies: bool = spawn_enemies
+@export_range(1, 10) var enemies_per_spawn: int = 2
 
 # =========================================================================
 # CONSTANTS
@@ -30,13 +32,14 @@ extends Node2D
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
-@onready var start_ready: bool = false # Updated by ready_to_start signal
+@onready var is_ready_to_start: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
 @onready var current_level: Node
 @onready var enemy_spawnpoints: Array[Vector2]
 @onready var checkpoints: Dictionary[String, Vector2]
 @onready var current_tile_map: TileMapLayer
 @onready var spawnable_enemies: Array[PackedScene]
+@onready var is_level_loaded
 
 # =========================================================================
 # SIGNALS
@@ -44,6 +47,7 @@ extends Node2D
 signal ready_to_start # Nodes read this to know when to begin processing
 signal mob_died # Handles mob death
 signal level_changed # Procks when new area is entered
+signal level_loaded
 
 # =========================================================================
 # CORE LIFECYCLE METHODS
@@ -57,19 +61,25 @@ func _ready() -> void:
 		if current_level == null:
 			current_level = default_level.instantiate()
 			add_child(current_level)
-			_update_level_data()
+			update_level_data()
 		ready_up()
 	else:
 		queue_free()
 	
 func _process(_delta: float) -> void:
+	for entity in get_tree().get_nodes_in_group("beings"):
+		if "controller" in entity:
+			if Factions.faction_exists(entity.controller._faction):
+				if Factions.get_rep_status(entity.controller._faction) == "hostile":
+					entity.controller.set_hostile(true)
+	
 	if track_frames:
 		count_frames()
 	
 	if total_mobs:
 		disable_unseen_enemies() # Stops processing enemies outside of view
-	
-	if spawn_enemies and total_mobs < MOB_CAP:
+
+	if _spawn_enemies and total_mobs < MOB_CAP:
 		spawn(spawnable_enemies)
 
 # =========================================================================
@@ -85,8 +95,6 @@ func load_data():
 			await Data.data_cleared
 	
 	Data.load_game_data() # Load _current data into the game
-	if Data.is_data_loaded != true:
-		await Data.data_loaded
 	
 func boot_dialogic():
 	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets
@@ -100,7 +108,12 @@ func connect_signals():
 	print("Game Manager Signals Connected!")
 	
 func ready_up():
-	start_ready = true
+	# Wait for ALL SIGNALS BEFORE STARTING
+	if not Data.is_data_loaded:
+		await Data.data_loaded
+	if not is_level_loaded:
+		await level_loaded
+	is_ready_to_start = true
 	ready_to_start.emit()
 # =========================================================================
 # PROCESS FUNCTIONS
@@ -131,43 +144,55 @@ func disable_unseen_enemies():
 		enemy.visible = _is_visible
 
 func spawn(enemy_scene_array: Array[PackedScene]) -> void:
-	spawn_enemies = false
-	
-	# Check if we have spawnable positions
-	if enemy_spawnpoints.size() == 0:
+	if spawn_enemies:
+		if not _spawn_enemies or total_mobs >= MOB_CAP:
+			return  # Early exit if spawning is disabled or the cap is already reached
+		
+		_spawn_enemies = false  # Lock spawning immediately
+		
+		# Calculate how many enemies we can spawn without exceeding the cap
+		var available_slots = MOB_CAP - total_mobs
+		var spawn_count = min(enemies_per_spawn, available_slots)
+		
+		# Early return if no room for new mobs
+		if spawn_count <= 0:
+			await Global.delay(self, SECONDS_PER_SPAWN)
+			_spawn_enemies = true
+			return
+		
+		# Check if we have spawnable positions
+		if enemy_spawnpoints.is_empty():
+			await Global.delay(self, SECONDS_PER_SPAWN)
+			_spawn_enemies = true
+			return
+		
+		# Find valid spawn positions within the radius
+		var valid_positions = []
+		var player_pos = Global.player.global_position
+		
+		# Filter positions within the spawn radius
+		for pos in enemy_spawnpoints:
+			if pos.distance_to(player_pos) <= SPAWN_RADIUS:
+				valid_positions.append(pos)
+		
+		# If no valid positions found, wait and try again later
+		if valid_positions.is_empty():
+			#print("No valid spawn positions within radius!")
+			await Global.delay(self, SECONDS_PER_SPAWN)
+			_spawn_enemies = true
+			return
+		
+		# Spawn the calculated number of enemies
+		for i in range(spawn_count):
+			var spawn_position = valid_positions[randi() % valid_positions.size()] # Rand pos
+			var random = randi_range(0, enemy_scene_array.size() - 1)
+			var _enemy: Node = enemy_scene_array[random].instantiate() as CharacterBody2D # Rand enemy
+			_enemy.global_position = spawn_position
+			Global.game_manager.add_child(_enemy)
+			total_mobs += 1
+		
 		await Global.delay(self, SECONDS_PER_SPAWN)
-		spawn_enemies = true
-		return
-	
-	# Find valid spawn positions within the radius
-	var valid_positions = []
-	var player_pos = Global.player.global_position
-	
-	# Filter positions within the spawn radius
-	for pos in enemy_spawnpoints:
-		var distance = pos.distance_to(player_pos)
-		if distance <= SPAWN_RADIUS:
-			valid_positions.append(pos)
-	
-	# If no valid positions found, wait and try again later
-	if valid_positions.size() == 0:
-		print("No valid spawn positions within radius!")
-		await Global.delay(self, SECONDS_PER_SPAWN)
-		spawn_enemies = true
-		return
-	
-	# Choose a random valid position
-	var spawn_position = valid_positions[randi() % valid_positions.size()]
-	
-	# Spawn enemies at the chosen position
-	for enemy in enemy_scene_array:
-		var _enemy: Node = enemy.instantiate() as CharacterBody2D
-		_enemy.global_position = spawn_position
-		Global.game_manager.add_child(_enemy)
-		total_mobs += 1
-	
-	await Global.delay(self, SECONDS_PER_SPAWN)
-	spawn_enemies = true
+		_spawn_enemies = true
 
 # =========================================================================
 # ENEMY MANAGEMENT
@@ -187,25 +212,45 @@ func _on_mob_death():
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================
+var _total_mobs: int = 0 
 func _on_dialogue_start() -> void:
+	Global.player.set_physics_process(false)
+	Global.player.can_shoot = false
+	_total_mobs = total_mobs # Store actual mob count
+	total_mobs = MOB_CAP # Sets mob count to max to stop spawning
 	Global.speed_mult = 0.0
+	for being in get_beings():
+		if "controller" in being:
+			being.controller.set_vincible(false)
 
 func _on_dialogue_end() -> void:
+	Global.player.set_physics_process(true)
+	Global.player.can_shoot = true
+	total_mobs = _total_mobs # Restores actual mob count
 	Global.speed_mult = 1.0
+	for being in get_beings():
+		if "controller" in being:
+			being.controller.set_vincible(true)
 	
 func _on_level_changed(old_level: Node, new_level: PackedScene):
-	spawn_enemies = false
+	_spawn_enemies = false
 	clear_enemies()
 	current_level = new_level.instantiate()
 	add_child(current_level)
-	_update_level_data()
+	update_level_data()
 	old_level.queue_free()
-	spawn_enemies = true
+	if spawn_enemies:
+		_spawn_enemies = true
 # =========================================================================
 # HELPER FUNCTIONS
 # =========================================================================
-func _update_level_data():
+func update_level_data():
 	current_tile_map = current_level.tiles
 	spawnable_enemies = current_level.enemies
 	enemy_spawnpoints = current_level.enemy_spawnpoints
 	checkpoints = current_level.checkpoints_dict
+	is_level_loaded = true
+	level_loaded.emit()
+	
+func get_beings() -> Array[Node]:
+	return get_tree().get_nodes_in_group("beings")

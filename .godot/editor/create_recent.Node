@@ -1,6 +1,7 @@
-TileMapLayer
-Marker2D
 CollisionShape2D
+Marker2D
+CheckButton
+TileMapLayer
 Area2D
 Node2D
 AnimatedSprite2D
@@ -11,4 +12,3 @@ Control
 AnimationPlayer
 Camera2D
 ColorRect
-Button

@@ -37,6 +37,10 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Pause Game"
 
+[node name="SpawnEnemiesButton" type="CheckButton" parent="VBoxContainer"]
+layout_mode = 2
+text = "Turn Off Spawns"
+
 [node name="ShowPlayerStatsButton" type="CheckButton" parent="VBoxContainer"]
 layout_mode = 2
 text = "Player Stats"
@@ -55,6 +59,7 @@ layout_mode = 2
 horizontal_alignment = 1
 
 [connection signal="toggled" from="VBoxContainer/PauseButton" to="." method="_on_pause_button_toggled"]
+[connection signal="toggled" from="VBoxContainer/SpawnEnemiesButton" to="." method="_on_spawn_enemies_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/ShowPlayerStatsButton" to="." method="_on_show_player_stats_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/ShowFramesButton" to="." method="_on_show_frames_button_toggled"]
 [connection signal="pressed" from="VBoxContainer/SaveGameButton" to="." method="_on_save_game_button_pressed"]

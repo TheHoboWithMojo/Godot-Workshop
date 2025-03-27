@@ -10,8 +10,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rkgrm"]
 size = Vector2(20, 30)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_djm16"]
-size = Vector2(26, 30)
+[sub_resource type="CircleShape2D" id="CircleShape2D_kosol"]
+radius = 22.0227
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1ll3e"]
 atlas = ExtResource("2_rkgrm")
@@ -146,8 +146,8 @@ animations = [{
 [node name="Rogue" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar")]
 motion_mode = 1
 script = ExtResource("1_rkgrm")
-hostile = true
 nomen = "Rogue"
+faction = "New California Republic"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
@@ -161,7 +161,7 @@ shape = SubResource("RectangleShape2D_rkgrm")
 
 [node name="Collider" type="CollisionShape2D" parent="Area"]
 position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_djm16")
+shape = SubResource("CircleShape2D_kosol")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_4scct")

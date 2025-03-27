@@ -1,7 +1,8 @@
 extends CharacterBody2D
+######## STATS #####################
 @export var active: bool = true
 @export var collision_on: bool = true
-@export var hostile: bool = true
+@export var hostile: bool = false
 @export var debugging: bool
 @export var base_speed: float = 3500.0
 @export var base_damage: float = 10.0
@@ -11,16 +12,24 @@ extends CharacterBody2D
 @export var nomen: String = ""
 @export var faction: String = ""
 
+########## NODES #######################
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D
 @export var area: Area2D
 @export var health_bar: TextureProgressBar
 
+####### RUNTIME VARIABLES ##############
 @onready var controller: Object
 
 func _ready() -> void:
+	preload("res://dialogic/timelines/npc.dtl")
+	preload("res://dialogic/characters/npc.dch")
+	preload("res://dialogic/styles/default.tres")
 	if hostile:
 		add_to_group("enemies")
+	else:
+		health_bar.visible = false
+		add_to_group("interactable")
 		
 	controller = Being.create_being(self)
 	
@@ -32,9 +41,19 @@ func _process(_delta: float) -> void:
 		await controller.die(EXP_ON_KILL)
 	
 	health_bar.set_value(controller.health)
-		
+	
+	converse()
+	
+	attack()
+
+var first_time_hostile: bool = true
 func _physics_process(delta: float) -> void:
-	if hostile:
+	if controller.is_hostile():
+		if first_time_hostile:
+			var label = Label.new()
+			label.text = "you killed my friends!"
+			self.add_child(label)
+
 		var vector_to_player =  Global.get_vector_to_player(self)
 		var direction: Vector2 = vector_to_player.normalized()
 		var detection_range: float = perception * 10
@@ -49,18 +68,34 @@ func _physics_process(delta: float) -> void:
 				controller.flip_sprite(false)
 			
 			move_and_slide()
-		else:
-			controller.play_animation("idle")
+	else:
+		controller.play_animation("idle")
 
-func _on_area_body_entered(body: Node) -> void:
-	if body == Global.player:
-		controller.is_touching_player = true
-	
+func converse():
+	if controller.is_touching_player:
+		if Global.player_touching_node == Global.cursor_touching_node:
+			if Input.is_action_just_pressed("interact"):
+					Global.start_dialog("npc")
+
+func attack():
 	if hostile:
 		while controller.is_touching_player:
 			Global.player.player_damaged.emit(base_damage)
-			await Global.delay(self, 0.1) # avoid overload
+			await Global.delay(self, 0.1) # avoid overload	
 
-func _on_area_body_exited(body: Node) -> void:
+func _on_area_body_entered(body: Node2D) -> void:
+	if body == Global.player:
+		controller.is_touching_player = true
+		Global.player_touching_node = area
+		
+
+func _on_area_body_exited(body: Node2D) -> void:
 	if body == Global.player:
 		controller.is_touching_player = false
+		Global.player_touching_node = null
+
+func _on_area_mouse_entered() -> void:
+	Global.cursor_touching_node = area
+
+func _on_area_mouse_exited() -> void:
+	Global.cursor_touching_node = null
