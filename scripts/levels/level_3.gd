@@ -7,26 +7,29 @@ extends Node2D
 
 # IN FILE REFERENCES SECTION #
 @export var checkpoints: Array[Marker2D]
-@export var linked_levels: Array[PackedScene] = []
-@onready var door1_player_in_range: bool = false
-@onready var door2_player_in_range: bool = false
-@onready var linked_levels_dict: Dictionary[String, PackedScene] = {}
+@export var linked_levels_dict: Dictionary[Area2D, PackedScene]
 @onready var enemies_dict: Dictionary[String, PackedScene] = {}
-
-@onready var is_level_loaded = false
 
 func _ready() -> void:
 	init_dicts()
-		
-func init_dicts():
-	for level in linked_levels:
-		var level_name = Global.get_rawname(level)
-		linked_levels_dict[level_name] = level
 	
-	for enemy in enemies:
-		var enemy_name = Global.get_rawname(enemy)
+func init_dicts() -> void:
+	for enemy: PackedScene in enemies:
+		var enemy_name: String = Global.get_rawname(enemy)
 		enemies_dict[enemy_name] = enemy
 	
-	for checkpoint in checkpoints:
-		var checkpoint_name = Global.get_rawname(checkpoint)
+	for checkpoint: Marker2D in checkpoints:
+		var checkpoint_name: String = Global.get_rawname(checkpoint)
 		checkpoints_dict[checkpoint_name] = checkpoint.position
+		
+	for portal: Area2D in linked_levels_dict:
+		portal.add_to_group("interactable")
+		
+func _process(_delta: float) -> void:
+	if Global.player_touching_node:
+		if Global.player_touching_node in linked_levels_dict.keys():
+				open_portal(Global.player_touching_node)
+		
+func open_portal(portal: Area2D) -> void:
+	if Input.is_action_just_pressed("interact"):
+		Global.game_manager.level_changed.emit(self, linked_levels_dict[portal])

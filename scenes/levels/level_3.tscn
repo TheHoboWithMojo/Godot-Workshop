@@ -1,14 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://cifc518lollhl"]
+[gd_scene load_steps=5 format=4 uid="uid://cifc518lollhl"]
 
 [ext_resource type="Script" uid="uid://er5wgrw0srit" path="res://scripts/levels/level_3.gd" id="1_s1j21"]
 [ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/enemies/rogue.tscn" id="2_sru4k"]
+[ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/texture pack/tiles.tres" id="3_0qepi"]
+[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawn_point.tscn" id="4_fmg3e"]
 
-[node name="Level3" type="Node2D" node_paths=PackedStringArray("tiles")]
+[node name="Level3" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
 script = ExtResource("1_s1j21")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_sru4k")])
-
-[node name="SpawnPoint" type="Marker2D" parent="."]
+checkpoints = [NodePath("")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
+tile_map_data = PackedByteArray("AAD///7/AAAFAAEAAAD+//7/AAAFAAEAAAD+////AAAFAAEAAAD/////AAAFAAEAAAAAAP//AAAFAAEAAAABAP//AAAFAAEAAAACAP//AAAFAAEAAAACAP7/AAAFAAEAAAABAP7/AAAFAAEAAAAAAP7/AAAFAAEAAAD9//7/AAAFAAEAAAD9////AAAFAAEAAAD8////AAAFAAEAAAD8//7/AAAFAAEAAAD7////AAAFAAEAAAD7/wAAAAAFAAEAAAD8/wAAAAAFAAEAAAD9/wAAAAAFAAEAAAD+/wAAAAAFAAEAAAD//wAAAAAFAAEAAAAAAAAAAAAFAAEAAAABAAAAAAAFAAEAAAACAAAAAAAFAAEAAAADAAAAAAAFAAEAAAAEAAAAAAAFAAEAAAAEAP//AAAFAAEAAAADAP//AAAFAAEAAAADAP7/AAAFAAEAAAD7//7/AAAFAAEAAAAEAP7/AAAFAAEAAAAFAP7/AAAFAAEAAAAFAP//AAAFAAEAAAAFAAAAAAAFAAEAAAAFAAEAAAAFAAEAAAAEAAEAAAAFAAEAAAADAAEAAAAFAAEAAAACAAEAAAAFAAEAAAABAAEAAAAFAAEAAAAAAAEAAAAFAAEAAAD//wEAAAAFAAEAAAD+/wEAAAAFAAEAAAD9/wEAAAAFAAEAAAD7/wEAAAAFAAEAAAD8/wEAAAAFAAEAAAD6/wEAAAAFAAEAAAD6/wAAAAAFAAEAAAD6////AAAFAAEAAAD6//7/AAAFAAEAAAA=")
+tile_set = ExtResource("3_0qepi")
+
+[node name="SpawnPoint" parent="." instance=ExtResource("4_fmg3e")]

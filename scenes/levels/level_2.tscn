@@ -1,17 +1,19 @@
-[gd_scene load_steps=4 format=4 uid="uid://bu4uplrikwht3"]
+[gd_scene load_steps=5 format=4 uid="uid://bu4uplrikwht3"]
 
 [ext_resource type="Script" uid="uid://civhfk7m7jl31" path="res://scripts/levels/level_2.gd" id="1_d6fun"]
 [ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/enemies/knight.tscn" id="2_71baw"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/texture pack/tiles.tres" id="2_if4l3"]
+[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawn_point.tscn" id="4_fiq81"]
 
-[node name="Level2" type="Node2D" node_paths=PackedStringArray("tiles")]
+[node name="Level2" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
 script = ExtResource("1_d6fun")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_71baw")])
+checkpoints = [NodePath("SpawnPoint")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
 tile_map_data = PackedByteArray("AAD+//7/AAAAABMAAAD+////AAAAABQAAAD+/wAAAAAAABUAAAD///7/AAABABMAAAD/////AAABABQAAAD//wAAAAABABUAAAAAAP7/AAACABMAAAAAAP//AAACABQAAAAAAAAAAAACABUAAAABAP7/AAAAABMAAAABAP//AAAAABQAAAABAAAAAAAAABUAAAACAP7/AAABABMAAAACAP//AAABABQAAAACAAAAAAABABUAAAADAP7/AAACABMAAAADAP//AAACABQAAAADAAAAAAACABUAAAD7//7/AAAAABMAAAD7////AAAAABQAAAD7/wAAAAAAABUAAAD8//7/AAABABMAAAD8////AAABABQAAAD8/wAAAAABABUAAAD9//7/AAACABMAAAD9////AAACABQAAAD9/wAAAAACABUAAAA=")
 tile_set = ExtResource("2_if4l3")
 
-[node name="SpawnPoint" type="Marker2D" parent="."]
+[node name="SpawnPoint" parent="." instance=ExtResource("4_fiq81")]

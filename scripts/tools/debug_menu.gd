@@ -15,8 +15,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# Get the target position
-	var screen_pos = Global.player_camera.get_screen_center_position()
-	var target_position = screen_pos - (size / 2)
+	var screen_pos: Vector2 = Global.player_camera.get_screen_center_position()
+	var target_position: Vector2 = screen_pos - (size / 2)
 
 	# Smoothly move towards the target position
 	global_position = global_position.lerp(target_position, 10 * delta)
@@ -36,7 +36,7 @@ func _process(delta: float) -> void:
 		if show_player_stats or show_frames:
 			var data: String = ""
 			if show_player_stats:
-				data = data + "Player Stats:\n" + Debug.get_dict_as_pretty_string(Data.game_data["player stats"]) + "\n"
+				data = data + "Player Stats:\n" + Debug.get_dict_as_pretty_string(Data.game_data["stats"]) + "\n"
 			if show_frames == true:
 				data = data + "Frames: " + str(Global.frames) + "\n"
 			data_label.text = data

@@ -1,86 +1,13 @@
 extends Node
-# Not used, save as json if updated
-var factions_template = {
-	"New California Republic": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Caesar's Legion": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Brotherhood of Steel": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Followers of the Apocalypse": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Great Khans": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Gun Runners": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Boomers": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Enclave Remnants": {
-		"rep": 50,
-		"decisions": []
-	},
-	"White Glove Society": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Omertas": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Chairmen": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Kings": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Powder Gangers": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Fiends": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Van Graffs": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Crimson Caravan": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Jacobstown": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Westside Cooperative": {
-		"rep": 50,
-		"decisions": []
-	},
-	"Brotherhood Outcasts": {
-		"rep": 50,
-		"decisions": []
-	}
-}
+func _process(_delta: float) -> void:
+	if Global.frames % 60 == 0:
+		for being: Node2D in get_tree().get_nodes_in_group("beings"):
+			if being.master._faction != "unaffiliated":
+				if Factions.get_rep_status(being.master._faction) == "hostile":
+					being.master.hostile = true
 
 # Wrapper function to update any faction data
-func update_faction_data(faction: String, property: String, value) -> void:
+func update_faction_data(faction: String, property: String, value: Variant) -> void:
 	if Data.game_data["factions"].has(faction):
 		if property in Data.game_data["factions"][faction]:
 			Data.game_data["factions"][faction][property] = value
@@ -91,7 +18,7 @@ func update_faction_data(faction: String, property: String, value) -> void:
 
 func change_rep(faction: String, rep_change: int) -> void:
 	if Data.game_data["factions"].has(faction):
-		var new_rep = Data.game_data["factions"][faction]["rep"] + rep_change
+		var new_rep: int = Data.game_data["factions"][faction]["rep"] + rep_change
 		update_faction_data(faction, "rep", new_rep)
 	else:
 		Data.throw_error(self, "Faction " + faction + " not found!")
@@ -102,11 +29,11 @@ func log_decision(faction: String, decision: String, rep_change: int) -> void:
 		change_rep(faction, rep_change)
 		
 		# Get current decisions
-		var decisions = Data.game_data["factions"][faction]["decisions"]
+		var decisions: Array = Data.game_data["factions"][faction]["decisions"]
 		
 		# Check if decision already exists
-		var found = false
-		for entry in decisions:
+		var found: bool = false
+		for entry: Array in decisions:
 			if entry[0] == decision:
 				entry[1] += rep_change  # Update reputation impact
 				entry[2] += 1  # Increment count
@@ -124,7 +51,7 @@ func log_decision(faction: String, decision: String, rep_change: int) -> void:
 		
 func get_rep_status(faction: String) -> String:
 	if Data.game_data["factions"].has(faction):
-		var rep = Data.game_data["factions"][faction]["rep"]
+		var rep: int = Data.game_data["factions"][faction]["rep"]
 		if rep < 0:
 			return "hostile"
 		elif rep < 25:
@@ -140,7 +67,7 @@ func get_rep_status(faction: String) -> String:
 		return "Faction not found!"
 		
 func faction_exists(faction: String) -> bool:
-	if faction in factions_template.keys():
+	if faction in Dicts.factions.keys():
 		return true
 	else:
 		return false
@@ -159,14 +86,14 @@ func reset_faction(faction: String) -> void:
 		
 func print_faction_status(faction: String) -> void:
 	if Data.game_data["factions"].has(faction):
-		var rep = Data.game_data["factions"][faction]["rep"]
-		var status = get_rep_status(faction)
-		var header = "| %-25s | %-10s (%3d) |" % [faction, status, rep]
-		var divider = "-" .repeat(header.length())
+		var rep: int = Data.game_data["factions"][faction]["rep"]
+		var status: String = get_rep_status(faction)
+		var header: String = "| %-25s | %-10s (%3d) |" % [faction, status, rep]
+		var divider: String = "-" .repeat(header.length())
 		print(divider)
 		print(header)
 		print(divider)
-		for entry in Data.game_data["factions"][faction]["decisions"]:
+		for entry: Array in Data.game_data["factions"][faction]["decisions"]:
 			print("x" + str(entry[2]) + " " + entry[0] + " (" + str(entry[1]) + ")")
 		print(divider)
 	else:

@@ -1,11 +1,16 @@
-[gd_scene load_steps=26 format=3 uid="uid://c2egw80ivqb1j"]
+[gd_scene load_steps=31 format=3 uid="uid://c2egw80ivqb1j"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/steve.gd" id="1_xsdk0"]
+[ext_resource type="Resource" uid="uid://c81oivvmsqqk0" path="res://dialogic/styles/alt.tres" id="2_6ikfg"]
 [ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_tdk7l"]
+[ext_resource type="Resource" uid="uid://doh70t5q7p001" path="res://dialogic/characters/npc.dch" id="3_aygba"]
 [ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="3_yvwvd"]
 [ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="4_daltg"]
+[ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="5_l3uag"]
+[ext_resource type="Resource" uid="uid://pqv0ekhju17r" path="res://dialogic/timelines/npc.dtl" id="5_ojn1p"]
 [ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="6_tx583"]
+[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/roblox-death-sound_1.mp3" id="11_aygba"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rv78h"]
 size = Vector2(53.3634, 80.4956)
@@ -143,14 +148,17 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Steve" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar")]
+[node name="Steve" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
 script = ExtResource("1_xsdk0")
-nomen = "Steve"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
 health_bar = NodePath("HealthBar")
+audio = NodePath("Audio")
+style = ExtResource("2_6ikfg")
+character = ExtResource("3_aygba")
+timelines = Array[ExtResource("4_r5v4l")]([ExtResource("5_ojn1p")])
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 position = Vector2(6.5, 1.5)
@@ -181,6 +189,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture_under = ExtResource("5_l3uag")
 texture_progress = ExtResource("6_tx583")
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("11_aygba")
 
 [connection signal="mouse_exited" from="." to="Area" method="_on_mouse_exited"]
 [connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]

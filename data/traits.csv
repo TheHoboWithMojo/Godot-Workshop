@@ -1,4 +1,0 @@
-name,description,has,buffs
-apple,munch,false,health + 2
-claustrophobic,dont like tight spaces,false,speed * 0.25
-pyromaniac,likes fire,false,fire_damage_mult + 0.05

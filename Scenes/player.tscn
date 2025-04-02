@@ -1,8 +1,7 @@
-[gd_scene load_steps=26 format=3 uid="uid://ckmkhqqqnhrgc"]
+[gd_scene load_steps=25 format=3 uid="uid://ckmkhqqqnhrgc"]
 
 [ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://scripts/node_managers/player.gd" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://2e4fk1nk5r42" path="res://assets/texture pack/Entities/Npc's/Wizzard/Death/Death-Sheet.png" id="2_dqkch"]
-[ext_resource type="PackedScene" uid="uid://cp8eugxsx1ocq" path="res://scenes/fireball.tscn" id="2_fjrip"]
 [ext_resource type="Texture2D" uid="uid://cqvthmm5he7oh" path="res://assets/texture pack/Entities/Npc's/Wizzard/Idle/Idle-Sheet.png" id="2_qhqgy"]
 [ext_resource type="Texture2D" uid="uid://ccx7dmogcfutn" path="res://assets/texture pack/Entities/Npc's/Wizzard/Run/Run-Sheet.png" id="3_dqkch"]
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="5_tuyoq"]
@@ -145,7 +144,6 @@ animations = [{
 script = ExtResource("1_cvnsp")
 sprite = NodePath("AnimatedSprite2D")
 collider = NodePath("CollisionShape2D")
-fireball = ExtResource("2_fjrip")
 health_bar = NodePath("HealthBar")
 direction_tracker = NodePath("Marker2D")
 

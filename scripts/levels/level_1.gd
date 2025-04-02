@@ -14,16 +14,16 @@ extends Node2D
 func _ready() -> void:
 	init_dicts()
 	
-func init_dicts():
-	for enemy in enemies:
-		var enemy_name = Global.get_rawname(enemy)
+func init_dicts() -> void:
+	for enemy: PackedScene in enemies:
+		var enemy_name: String = Global.get_rawname(enemy)
 		enemies_dict[enemy_name] = enemy
 	
-	for checkpoint in checkpoints:
-		var checkpoint_name = Global.get_rawname(checkpoint)
+	for checkpoint: Marker2D in checkpoints:
+		var checkpoint_name: String = Global.get_rawname(checkpoint)
 		checkpoints_dict[checkpoint_name] = checkpoint.position
 		
-	for portal in linked_levels_dict:
+	for portal: Area2D in linked_levels_dict:
 		portal.add_to_group("interactable")
 		
 func _process(_delta: float) -> void:
@@ -31,6 +31,6 @@ func _process(_delta: float) -> void:
 		if Global.player_touching_node in linked_levels_dict.keys():
 				open_portal(Global.player_touching_node)
 		
-func open_portal(portal: Area2D):
+func open_portal(portal: Area2D) -> void:
 	if Input.is_action_just_pressed("interact"):
 		Global.game_manager.level_changed.emit(self, linked_levels_dict[portal])

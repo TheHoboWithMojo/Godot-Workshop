@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://5wd6f8wnvh8e"]
+[gd_scene load_steps=27 format=3 uid="uid://5wd6f8wnvh8e"]
 
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/rogue.gd" id="1_rkgrm"]
 [ext_resource type="Texture2D" uid="uid://bih0xuackwai5" path="res://assets/texture pack/Entities/Npc's/Rogue/Death/Death-Sheet.png" id="2_rkgrm"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="4_4wlns"]
 [ext_resource type="Texture2D" uid="uid://da4i3ejxl5w4v" path="res://assets/texture pack/Entities/Npc's/Rogue/Run/Run-Sheet.png" id="4_c3xat"]
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="4_tl2vt"]
+[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/roblox-death-sound_1.mp3" id="7_7vupv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rkgrm"]
 size = Vector2(20, 30)
@@ -143,7 +144,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Rogue" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar")]
+[node name="Rogue" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
 script = ExtResource("1_rkgrm")
 nomen = "Rogue"
@@ -152,6 +153,7 @@ sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
 health_bar = NodePath("HealthBar")
+audio = NodePath("Audio")
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)
@@ -178,6 +180,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture_under = ExtResource("4_tl2vt")
 texture_progress = ExtResource("4_4wlns")
+
+[node name="Audio" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_7vupv")
 
 [connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]
 [connection signal="body_exited" from="Area" to="." method="_on_area_body_exited"]

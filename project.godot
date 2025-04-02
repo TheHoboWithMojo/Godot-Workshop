@@ -21,7 +21,14 @@ Global="*res://scripts/singletons/global.gd"
 Data="*res://scripts/singletons/data.gd"
 Factions="*res://scripts/singletons/factions.gd"
 Debug="*res://scripts/singletons/debug.gd"
-Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
+Player="*res://scripts/singletons/player.gd"
+Dialogue="*res://scripts/singletons/dialogue.gd"
+Dicts="*res://scripts/singletons/dicts.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
 
 [dialogic]
 
@@ -32,9 +39,30 @@ directories/dtl_directory={
 "boot": "res://dialogic/timelines/boot.dtl",
 "npc": "res://dialogic/timelines/npc.dtl"
 }
-layout/style_list=["res://dialogic/styles/default.tres"]
+layout/style_list=["res://dialogic/styles/default.tres", "res://dialogic/styles/alt.tres"]
 layout/default_style="res://dialogic/styles/default.tres"
 glossary/default_case_sensitive=true
+variables={}
+extensions_folder="res://addons/dialogic_additions"
+text/letter_speed=0.01
+text/initial_text_reveal_skippable=true
+text/text_reveal_skip_delay=0.1
+text/advance_delay=0.1
+text/autoadvance_per_character_delay=0.1
+text/autoadvance_ignored_characters_enabled=true
+audio/max_channels=4.0
+animations/join_default_length=0.5
+animations/join_default_wait=true
+animations/leave_default_length=0.5
+animations/leave_default_wait=true
+animations/cross_fade_default_length=0.5
+choices/autofocus_first=true
+choices/delay=0.2
+choices/reveal_delay=0
+choices/reveal_by_input=false
+save/autosave_delay=60.0
+save/encryption_on_exports_only=true
+text/autopauses={}
 
 [display]
 
@@ -42,7 +70,7 @@ window/size/always_on_top=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Fantail-Interactive.top_down_camera/plugin.cfg", "res://addons/SignalVisualizer/plugin.cfg", "res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
+enabled=PackedStringArray("res://addons/Fantail-Interactive.top_down_camera/plugin.cfg", "res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
 
 [input]
 
@@ -86,12 +114,12 @@ interact={
 }
 zoom_in={
 "deadzone": 0.2,
-"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":4,"canceled":false,"pressed":false,"double_click":false,"script":null)
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":true,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":4,"canceled":false,"pressed":false,"double_click":false,"script":null)
 ]
 }
 zoom_out={
 "deadzone": 0.2,
-"events": [null, Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":5,"canceled":false,"pressed":false,"double_click":false,"script":null)
+"events": [null, Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":true,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":5,"canceled":false,"pressed":false,"double_click":false,"script":null)
 ]
 }
 drag_camera={
@@ -122,6 +150,7 @@ tls/certificate_bundle_override="res://cacert.crt"
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 
 [shader_globals]
 

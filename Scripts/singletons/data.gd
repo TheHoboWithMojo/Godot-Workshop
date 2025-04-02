@@ -1,136 +1,117 @@
 # Handles data saving and loading
 extends Node
+
 # ----- Variables -----
 var game_data: Dictionary = {} # stores ALL GAME DATA
-
 var is_data_loaded: bool = false
-
 var is_data_cleared: bool = false
 
-var spreadsheet_dict: Dictionary = { # dictionary for saving and syncing data
-	"items": {
-		"id": "1J16pLFRq0sskkJiUBQhY4QvSbcZ4VGSB00Zy3yi-1Vc",
-		"sheet_path": "res://data/items.csv",
-		"data_path": "res://data/items_data_ref.json",
-		"static": true
-	},
-	"quests": {
-		"id": "1YyJAqxexIt5-x0fV528fsZG9R7tNW6V0nZjoHDgejpY",
-		"sheet_path": "res://data/quests.csv",
-		"data_path": "res://data/quests_data_ref.json",
-		"static": false
-	},
-	"perks": {
-		"id": "1IQzht6HNObieTbztdmvUhZiIbRn8SqKPUCMjAEF9rXM",
-		"sheet_path": "res://data/perks.csv",
-		"data_path": "res://data/perks_data_ref.json",
-		"static": false
-	},
-	"traits": {
-		"id": "1KLbQ5k6whXAKWBNl_nwSfP1Rs2-0_y9-WZuwTxaigl8",
-		"sheet_path": "res://data/traits.csv",
-		"data_path": "res://data/traits_data_ref.json",
-		"static": false
-	},
-	"beings": {
-		"id": "1-ydtxqgvrp60mp_hDfPeCgo9gltg_JpEysfCA67aLuw",
-		"sheet_path": "res://data/beings.csv",
-		"data_path": "res://data/beings_data_ref.json",
-		"static": true
-	},
-	"factions": {
-		"id": "",
-		"sheet_path": "",
-		"data_path": "res://data/factions_data_ref.json",
-		"static": false
-	},
-	"player stats": {
-		"id": "",
-		"sheet_path": "",
-		"data_path": "res://data/player_stats_data_ref.json",
-		"static": false
-	},
-}
 # ----- Signals -----
 signal data_cleared
-
 signal data_loaded
-
 signal data_saved
+
 # ----- Initialization -----
 func load_game_data() -> void:
 	print("Loading game data...")
-	var file_data: Dictionary
-	for sheet_name: String in spreadsheet_dict:
-		if _is_static(sheet_name):
-			file_data = load_json_file(spreadsheet_dict[sheet_name]["data_path"])
-		else:
-			file_data = load_json_file(spreadsheet_dict[sheet_name]["data_path"].replace("_ref.json", "_current.json"))
-		game_data[sheet_name] = file_data
+	
+	# Load pure references
+	game_data["items"] = load_json_file(_get_current_path("items").replace("_current", ""))
+	
+	# Load All Currents
+	for data_name: String in Dicts.reference_data.keys():
+		game_data[data_name] = load_json_file(_get_current_path(data_name))
+	game_data["quests"] = load_json_file(_get_current_path("quests"))
+	
+	Global.player.global_position = string_to_vector(game_data["reload_data"]["last_position"])
+	
 	print("Game data loaded...")
+	
 	is_data_loaded = true
 	data_loaded.emit()
-# ----- Data Backup And Clearing -----	
+	
+func string_to_vector(vector_string: String) -> Vector2:
+	vector_string = vector_string.strip_edges(true).trim_prefix("(").trim_suffix(")")
+	var x_y: Array = vector_string.split(",")
+	return Vector2(float(x_y[0]), float(x_y[1]))
+
+func _get_current_path(data_name: String) -> String:
+	return "res://data/%s_current.json" % [data_name]
+	
+# ----- Data Backup And Clearing -----
+	
 func save_data_changes() -> void: # Safely updates and stores current and backup data
-	for sheet_name in spreadsheet_dict:
-		if not _is_static(sheet_name):
-			# Get file paths
-			var ref_data_path: String = spreadsheet_dict[sheet_name]["data_path"]
-			var current_data_path: String = ref_data_path.replace("_ref.json", "_current.json")
-			var backup_data_path: String = ref_data_path.replace("_ref.json", "_backup.json")
-			var temp_data_path: String = ref_data_path.replace("_ref.json", "_temp.json")
-			
-			# Step 1: Copy current JSON to make copied JSON
-			var current_data: Dictionary = load_json_file(current_data_path)
-			var success_temp_save = save_json(current_data, temp_data_path)
-			if not success_temp_save:
-				print("Failed to create temporary copy for: ", sheet_name)
-				continue
-				
-			# Step 2: Edit copied JSON to make new JSON (already done in memory)
-			# The changes are already in Data.game_data[sheet_name]
-			
-			# Step 3: Copied JSON overwrites _backup
-			var success_backup = save_json(current_data, backup_data_path)
-			if not success_backup:
-				print("Failed to create backup for: ", sheet_name)
-				# Clean up temp file
-				var temp_dir = DirAccess.open("res://data/")
-				if temp_dir:
-					temp_dir.remove(temp_data_path)
-				continue
-				
-			# Step 4: Edited JSON overwrites current
-			var success_current = save_json(game_data[sheet_name], current_data_path)
-			if not success_current:
-				print("Failed to save current data for: ", sheet_name)
-				continue
-				
-			# Clean up temp file
-			var cleanup_dir = DirAccess.open("res://data/")
-			if cleanup_dir:
-				cleanup_dir.remove(temp_data_path)
-				
-			#print("Successfully saved changes for: ", sheet_name)
+	# Save quests data with backup
+	_save_data_with_backup("quests")
+	
+	# Save all reference data with backup
+	for data_name: String in Dicts.reference_data.keys():
+		_save_data_with_backup(data_name)
+	
 	data_saved.emit()
 	print("All non-static data has been saved with backups.")
+	
+func _save_data_with_backup(data_name: String) -> void:
+	# Get file paths
+	var current_data_path: String = _get_current_path(data_name)
+	var backup_data_path: String = current_data_path.replace("_current", "_backup")
+	var temp_data_path: String = current_data_path.replace("_current", "_temp")
+	
+	# Step 1: Copy current JSON to make copied JSON
+	var current_data: Dictionary = load_json_file(current_data_path)
+	var success_temp_save: bool = save_json(current_data, temp_data_path)
+	if not success_temp_save:
+		print("Failed to create temporary copy for: ", data_name)
+		return
+	
+	# Step 2: Edit copied JSON to make new JSON (already done in memory)
+	# The changes are already in Data.game_data[data_name]
+	
+	# Step 3: Copied JSON overwrites _backup
+	var success_backup: bool = save_json(current_data, backup_data_path)
+	if not success_backup:
+		print("Failed to create backup for: ", data_name)
+		# Clean up temp file
+		var temp_dir: DirAccess = DirAccess.open("res://data/")
+		if temp_dir:
+			temp_dir.remove(temp_data_path)
+		return
+	
+	# Step 4: Edited JSON overwrites current
+	var success_current: bool = save_json(game_data[data_name], current_data_path)
+	if not success_current:
+		print("Failed to save current data for: ", data_name)
+		return
+	
+	# Clean up temp file
+	var cleanup_dir: DirAccess = DirAccess.open("res://data/")
+	if cleanup_dir:
+		cleanup_dir.remove(temp_data_path)
+	
+	#print("Successfully saved changes for: ", data_name)
+
+func clear_data() -> void: # Resets all current and backup files to default
+	# Reset reference data (perks, player_stats, faction_stats)
+	for data_name: String in Dicts.reference_data.keys():
+		var current_path: String = _get_current_path(data_name)
+		var backup_path: String = current_path.replace("_current", "_backup")
 		
-func clear_data() -> void: # Resets all current and backup save data to ref
-	for sheet_name: String in spreadsheet_dict:
-		if not _is_static(sheet_name):
-			var ref_data_path: String = spreadsheet_dict[sheet_name]["data_path"]
-			var current_data_path: String = ref_data_path.replace("_ref.json", "_current.json")
-			var backup_data_path: String = ref_data_path.replace("_ref.json", "_backup.json")
-			
-			var ref_data: Dictionary = load_json_file(ref_data_path)
-			
-			save_json(ref_data, current_data_path)
-			save_json(ref_data, backup_data_path)
-			
-			#print("Reset data for: ", sheet_name)
-	print("All non-static data has been reset to reference values.")
+		save_json(Dicts.reference_data[data_name], current_path)
+		save_json(Dicts.reference_data[data_name], backup_path)
+		game_data[data_name] = Dicts.reference_data[data_name].duplicate(true)
+	
+	# Reset quests (using reference data)
+	var quests_ref_path: String = _get_current_path("quests").replace("_current", "")
+	var quests_ref_data: Dictionary = load_json_file(quests_ref_path)
+	save_json(quests_ref_data, _get_current_path("quests"))
+	save_json(quests_ref_data, _get_current_path("quests").replace("_current", "_backup"))
+	game_data["quests"] = quests_ref_data.duplicate(true)
+	
+	print("All data have been reset to defaults.")
+	
 	is_data_cleared = true
 	data_cleared.emit()
+
 # ----- Data Querying -----
 func print_info(sheet_name: String, key: String) -> void:
 	var display_name: String = sheet_name.trim_suffix("s").capitalize()
@@ -176,21 +157,22 @@ func get_filtered_rows_co(sheet_name: String, property: String, key: String) -> 
 func _print_filtered_rows(rows_data: Array, title: String = "Filtered Items") -> void:
 	print("\n=== " + title + " ===\n")
 	
-	for item_index in range(rows_data.size()):
-		var item = rows_data[item_index]
+	for item_index: int in range(rows_data.size()):
+		var item: Array = rows_data[item_index]
 		print("Item #" + str(item_index + 1) + ":")
 		
-		var item_dict = {}
+		var item_dict: Dictionary = {}
 		# Convert the array of field pairs into a dictionary for easier reading
-		for field_pair in item:
+		for field_pair: Array in item:
 			if field_pair.size() >= 2:
 				item_dict[field_pair[0]] = field_pair[1]
 		
 		# Print each field with proper indentation
-		for key in item_dict:
+		for key: Variant in item_dict:
 			print("\t" + key + ": " + Debug.format_value(item_dict[key]))
 		
 		print("")
+
 # ----- Utility Functions -----
 func save_json(data: Dictionary, file_path: String) -> bool: # Quick function that stores a dict as a json at a specific file path
 	var json_string: String = JSON.stringify(data, "", false)
@@ -222,23 +204,15 @@ func save_json(data: Dictionary, file_path: String) -> bool: # Quick function th
 
 func load_json_file(path: String) -> Dictionary: # Quick function for loading a json as a dict
 	var json_as_text: String = FileAccess.get_file_as_string(path)
-	#print(path)
 	var json_as_dict: Dictionary = JSON.parse_string(json_as_text)
 	if json_as_dict == null:
 		Debug.throw_error(self, "load_json_file", "Could not parse input", path)
 		return {}
 	return json_as_dict
+
 # ----- Helper Functions -----
 func _sheet_exists(sheet_name: String) -> bool:
-	if sheet_name in spreadsheet_dict.keys():
+	if sheet_name in Dicts.spreadsheets.keys() or sheet_name in Dicts.reference_data.keys():
 		return true
 	Debug.throw_error(self, "_sheet_exists", "Sheet '%s' does not exist" % [sheet_name])
-	return false
-
-func _is_static(sheet_name: String) -> bool:
-	if _sheet_exists(sheet_name):
-		if spreadsheet_dict[sheet_name]["static"] == true:
-			return true
-		return false
-	Debug.throw_error(self, "_is_static", "Input sheet name '%s' does not exist" % sheet_name)
 	return false

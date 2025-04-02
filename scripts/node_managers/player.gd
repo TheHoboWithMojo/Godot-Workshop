@@ -15,7 +15,7 @@ extends CharacterBody2D
 
 signal player_damaged
 
-func _ready():
+func _ready() -> void:
 	await Global.active_and_ready(self, active)
 	
 	if not collision_on:
@@ -23,9 +23,9 @@ func _ready():
 
 	# Initialize Game Data with these stats (use if save_data in game manager is false)
 	if Global.game_manager.use_save_data == false:
-		Global.player_change_stat("health = %s" % [base_health])
-		Global.player_change_stat("speed = %s" % [base_speed])
-		Global.player_change_stat("attack_speed = %s" % [base_attack_speed])
+		Player.change_stat("health = %s" % [base_health])
+		Player.change_stat("speed = %s" % [base_speed])
+		Player.change_stat("attack_speed = %s" % [base_attack_speed])
 	
 	health_bar.min_value = 0.0
 	health_bar.max_value = base_health
@@ -35,15 +35,15 @@ func _ready():
 @onready var speed: float
 @onready var direction_x: float
 @onready var direction_y: float
-@onready var mouse_pos
-@onready var character_position
+@onready var mouse_pos: Vector2
+@onready var character_position: Vector2
 @onready var normal: Vector2
 @onready var orientation_angle: float
 
 func _physics_process(delta: float) -> void:
 	normal = velocity.normalized()
 	
-	speed = _get_current_speed()
+	speed = Player.get_speed()
 	
 	direction_x = _get_direction("x")
 	
@@ -71,8 +71,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func _process(_delta: float) -> void:
-	var health: float = Global.player_get_stat("health")
-	_shoot(orientation_angle)
+	var health: float = Player.get_health()
+	shoot(orientation_angle)
 	
 	# State Checks
 	if Global.frames % 10 == 0:
@@ -84,56 +84,50 @@ func _process(_delta: float) -> void:
 		check_for_achievements()
 
 @onready var _just_shot: bool = false
-func _shoot(angle): # spawns a projectile at a given angle
-	if can_shoot:
-		if Input.is_action_just_pressed("shoot") and not _just_shot:
-			_just_shot = true
-			var new_projectile = projectile.instantiate() as Area2D
-			get_parent().add_child(new_projectile)  # Add projectile to the scene
-			_flip_sprite(new_projectile.sprite, angle)
-			new_projectile.position = global_position  # Spawn at player's position
-			var direction = (get_global_mouse_position() - global_position).normalized()
-			new_projectile.set_velocity(direction)  # Set projectile velocity
-			await Global.delay(self, 1/(Global.player_get_stat("attack_speed")*Global.player_get_stat("attack_speed_mult")))
-			_just_shot = false
+func shoot(angle: float) -> void: # spawns a projectile at a given angle
+	if projectile != null:
+		if can_shoot:
+			if Input.is_action_just_pressed("shoot") and not _just_shot:
+				_just_shot = true
+				var new_projectile: Area2D = projectile.instantiate() as Area2D
+				get_parent().add_child(new_projectile)  # Add projectile to the scene
+				_flip_sprite(new_projectile.sprite, angle)
+				new_projectile.position = global_position  # Spawn at player's position
+				var direction: Vector2 = (get_global_mouse_position() - global_position).normalized()
+				new_projectile.set_velocity(direction)  # Set projectile velocity
+				await Global.delay(self, 1/(Player.get_stat("attack_speed")*Player.get_stat("attack_speed_mult")))
+				_just_shot = false
 
-func check_for_achievements(): #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
-	if Global.player_get_stat("enemies_killed") > 5:
-		Global.player_add_perk("dead eye")
+func check_for_achievements() -> void: #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
+	if Player.get_stat("enemies_killed") > 5:
+		Player.add_perk("dead eye")
 
-func _flip_sprite(_sprite: AnimatedSprite2D, _orientation_angle: float):
+func _flip_sprite(_sprite: AnimatedSprite2D, _orientation_angle: float) -> void:
 	_sprite.flip_h = not (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
 	
-func _run_or_idle(_velocity: Vector2):
+func _run_or_idle(_velocity: Vector2) -> void:
 	if _velocity.length() > 0:
 		sprite.play("run")
 	else:
 		sprite.play("idle")
-
-func _get_current_speed() -> float:
-	speed = Global.player_get_stat("speed")
-	
-	speed = speed * Global.speed_mult * Global.player_get_stat("speed_mult")
-	
-	return speed
 	
 func _get_direction(x_or_y: String) -> float:
 	if x_or_y.to_lower() == "x":
-		var direction := Input.get_axis("move_left", "move_right")
+		var direction: float = Input.get_axis("move_left", "move_right")
 		return direction
 	elif x_or_y.to_lower() == "y":
-		var direction := Input.get_axis("move_up", "move_down")
+		var direction: float = Input.get_axis("move_up", "move_down")
 		return direction
 	else:
 		Debug.throw_error(self, "_get_direction", "x or y only", x_or_y)
 		return 0.0
 
-func _check_for_death(health: float):
+func _check_for_death(health: float) -> void:
 	if health <= 0:
-		_die()
+		die()
 
 @onready var _process_death: bool = true
-func _die():
+func die() -> void:
 	if _process_death:
 		_process_death = false
 		set_process(false)  # Stop processing inputs
@@ -147,9 +141,9 @@ func _die():
 
 # Signals
 @onready var _damagable: bool = true
-func _on_damage(damage: int):
+func _on_damage(damage: int) -> void:
 	if _damagable:
 		_damagable = false
-		Global.damage_player(damage)
+		Player.damage(damage)
 		await Global.delay(self, 1.0) # IFRAMES
 		_damagable = true
