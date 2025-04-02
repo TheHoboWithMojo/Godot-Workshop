@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/player_detectors.gd" id="7_s8va5"]
 [ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://assets/textures/Godot_icon.png" id="9_dga24"]
 [ext_resource type="PackedScene" uid="uid://drv2an0hti84j" path="res://scenes/projectiles/fireball_pickup.tscn" id="9_excbq"]
-[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawn_point.tscn" id="9_qxy0u"]
+[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawnpoint.tscn" id="9_qxy0u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u5sy4"]
 size = Vector2(33, 49)

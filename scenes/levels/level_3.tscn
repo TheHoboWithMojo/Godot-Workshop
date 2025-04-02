@@ -3,13 +3,13 @@
 [ext_resource type="Script" uid="uid://er5wgrw0srit" path="res://scripts/levels/level_3.gd" id="1_s1j21"]
 [ext_resource type="PackedScene" uid="uid://5wd6f8wnvh8e" path="res://scenes/enemies/rogue.tscn" id="2_sru4k"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/texture pack/tiles.tres" id="3_0qepi"]
-[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawn_point.tscn" id="4_fmg3e"]
+[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawnpoint.tscn" id="4_fmg3e"]
 
 [node name="Level3" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
 script = ExtResource("1_s1j21")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_sru4k")])
-checkpoints = [NodePath("")]
+checkpoints = [null]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1

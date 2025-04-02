@@ -15,8 +15,13 @@ func get_health() -> float:
 func get_speed() -> float:
 	return get_stat("speed")*get_stat("speed_mult")*Global.speed_mult
 
+@onready var _damagable: bool = true
 func damage(_damage: float) -> void:
-	change_stat("health - %s" % [_damage])
+	if _damagable:
+		_damagable = false
+		change_stat("health - %s" % [_damage])
+		await Global.delay(self, 1.0) # IFRAMES
+		_damagable = true
 
 func heal(_heal: float) -> void:
 	change_stat("health + %s" % [_heal])

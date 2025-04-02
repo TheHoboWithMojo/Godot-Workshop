@@ -1,9 +1,16 @@
-# Creates an in game menu for pausing, and for reading game data in real time
 extends Control
 
+@export_group("Config")
 @export var active: bool = true
-@export var pause_button: CheckButton
-@export var data_label: Label
+
+@export_group("Labels")
+@export var health: Label
+@export var speed: Label
+@export var accomplishments: Label
+@export var experience: Label
+@export var crit: Label
+@export var personality: Label
+@export var damage: Label
 
 @onready var is_menu_open: bool = false
 @onready var show_player_stats: bool = false
@@ -12,6 +19,7 @@ extends Control
 func _ready() -> void:
 	await Global.active_and_ready(self, active)
 	self.visible = false # If active, make sure menu starts invisible
+	clear_data()
 
 func _process(delta: float) -> void:
 	# Get the target position
@@ -30,35 +38,46 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed("open_debug_menu"):
 			self.visible = false
 			is_menu_open = false
-			
-			pause_button.button_pressed = false # Make sure the game unpauses
 		
 		if show_player_stats or show_frames:
-			var data: String = ""
-			if show_player_stats:
-				data = data + "Player Stats:\n" + Debug.get_dict_as_pretty_string(Data.game_data["stats"]) + "\n"
-			if show_frames == true:
-				data = data + "Frames: " + str(Global.frames) + "\n"
-			data_label.text = data
+			update_stat_labels()
 
-				
+func update_stat_labels() -> void:
+	health.text = "Health:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["health"])
+	speed.text = "Speed:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["speed"])
+	accomplishments.text = "Accomplishments:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["accomplishments"])
+	experience.text = "Exp:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["exp"])
+	crit.text = "Crit:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["crit"])
+	personality.text = "Personality:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["personality"])
+	damage.text = "Damage:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["damage"])
+	
+func clear_data() -> void:
+	health.text = ""
+	speed.text = ""
+	accomplishments.text = ""
+	experience.text = ""
+	crit.text = ""
+	personality.text = ""
+	damage.text = ""
+
 func _on_pause_button_toggled(toggled_on: bool) -> void:
 	get_tree().paused = toggled_on
-	
+
 func _on_show_frames_button_toggled(toggled_on: bool) -> void:
 	show_frames = toggled_on
-	if show_frames == false:
-		data_label.text = ""
+	if not show_frames:
+		clear_data()
 
 func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 	show_player_stats = toggled_on
-	if show_player_stats == false:
-		data_label.text = ""
+	if not show_player_stats:
+		clear_data()
+	else:
+		update_stat_labels()
 
 func _on_save_game_button_pressed() -> void:
 	Data.save_data_changes()
 	await Data.data_saved
-
 
 func _on_spawn_enemies_button_toggled(toggled_on: bool) -> void:
 	Global.game_manager.spawn_enemies = !toggled_on

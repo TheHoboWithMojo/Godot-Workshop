@@ -46,10 +46,10 @@ func _physics_process(delta: float) -> void:
 func _on_area_body_entered(body: Node) -> void:
 	if body == Global.player:
 		master.is_touching_player = true
-	
+		
 	if master.is_hostile():
 		while master.is_touching_player:
-			Global.player.player_damaged.emit(base_damage)
+			Player.damage(master._damage)
 			await Global.delay(self, 0.1) # avoid overload
 
 func _on_area_body_exited(body: Node) -> void:

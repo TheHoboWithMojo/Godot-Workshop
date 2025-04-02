@@ -2,19 +2,30 @@
 
 [ext_resource type="Script" uid="uid://c0qy1iqa0pyhs" path="res://scripts/tools/debug_menu.gd" id="1_1uwqr"]
 
-[node name="DebugMenu" type="Control" node_paths=PackedStringArray("pause_button", "data_label")]
+[node name="DebugMenu" type="Control" node_paths=PackedStringArray("health", "speed", "accomplishments", "experience", "crit", "personality", "damage")]
 process_mode = 3
+z_index = 5
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -352.0
+offset_bottom = -248.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource("1_1uwqr")
-pause_button = NodePath("VBoxContainer/PauseButton")
-data_label = NodePath("VBoxContainer/DataLabel")
+health = NodePath("VBoxContainer/StatsBox/HBoxContainer/Health")
+speed = NodePath("VBoxContainer/StatsBox/HBoxContainer/Speed")
+accomplishments = NodePath("VBoxContainer/StatsBox/HBoxContainer2/Accomplishments")
+experience = NodePath("VBoxContainer/StatsBox/HBoxContainer/Exp")
+crit = NodePath("VBoxContainer/StatsBox/HBoxContainer/Crit")
+personality = NodePath("VBoxContainer/StatsBox/HBoxContainer2/Personality")
+damage = NodePath("VBoxContainer/StatsBox/HBoxContainer/Damage")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+z_index = 5
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -54,9 +65,79 @@ text = "Frames Data
 layout_mode = 2
 text = "Save Game"
 
-[node name="DataLabel" type="Label" parent="VBoxContainer"]
+[node name="StatsBox" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/StatsBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Health" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Health"
 horizontal_alignment = 1
+
+[node name="Speed" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Speed
+"
+horizontal_alignment = 1
+
+[node name="Damage" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Damage
+"
+horizontal_alignment = 1
+
+[node name="Crit" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Crit"
+horizontal_alignment = 1
+
+[node name="Exp" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Exp"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/StatsBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="Accomplishments" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Accomplishments"
+horizontal_alignment = 1
+
+[node name="Personality" type="Label" parent="VBoxContainer/StatsBox/HBoxContainer2"]
+layout_mode = 2
+text = "Personality"
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = 4
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.0
+offset_top = -146.0
+offset_right = 122.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.188235, 0.25098, 0.301961, 0.588235)
 
 [connection signal="toggled" from="VBoxContainer/PauseButton" to="." method="_on_pause_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/SpawnEnemiesButton" to="." method="_on_spawn_enemies_button_toggled"]

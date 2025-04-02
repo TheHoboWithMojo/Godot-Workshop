@@ -15,6 +15,7 @@ var stats: Dictionary = {
 		"attack_speed": 2.0,
 	},
 	"health": {
+		"max_health": 100.0,
 		"health": 100.0,
 		"health_regen": 0.05
 	},
@@ -72,8 +73,8 @@ var perks: Dictionary = {
 }
 
 var reload_data: Dictionary = {
-	"last_level": null,
-	"last_position": Vector2(0.0, 0.0),
+	"last_level": "res://scenes/levels/level_1.tscn", # these are set to level one values by default
+	"last_position": Vector2(7.0, 15.0),
 }
 
 # FACTIONS

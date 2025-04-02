@@ -1,19 +1,19 @@
 extends CharacterBody2D
+@export_group("Control")
 @export var active: bool = true
 @export var collision_on: bool = true
 
+@export_group("Base Stats")
 @export var base_speed: float = 10000.0
 @export var base_health: float = 100.0
 @export var base_attack_speed: float = 20.0
 
+@export_group("Nodes")
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D
 @export var projectile: PackedScene
 @export var health_bar: TextureProgressBar
 @export var direction_tracker: Marker2D
-@onready var can_shoot: bool = true
-
-signal player_damaged
 
 func _ready() -> void:
 	await Global.active_and_ready(self, active)
@@ -29,8 +29,6 @@ func _ready() -> void:
 	
 	health_bar.min_value = 0.0
 	health_bar.max_value = base_health
-		
-	player_damaged.connect(_on_damage)
 
 @onready var speed: float
 @onready var direction_x: float
@@ -83,6 +81,8 @@ func _process(_delta: float) -> void:
 	if Global.frames % 120 == 0:
 		check_for_achievements()
 
+
+@onready var can_shoot: bool = true # Turns off during dialogue
 @onready var _just_shot: bool = false
 func shoot(angle: float) -> void: # spawns a projectile at a given angle
 	if projectile != null:
@@ -138,12 +138,3 @@ func die() -> void:
 		await sprite.animation_finished
 		Data.is_data_loaded = false # DATA IS A SINGLETON SO ITS BOOLS DONT UPDATE ON CALLED RELOAD
 		get_tree().reload_current_scene()  # Reload scene after animation
-
-# Signals
-@onready var _damagable: bool = true
-func _on_damage(damage: int) -> void:
-	if _damagable:
-		_damagable = false
-		Player.damage(damage)
-		await Global.delay(self, 1.0) # IFRAMES
-		_damagable = true

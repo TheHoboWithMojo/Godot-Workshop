@@ -41,8 +41,6 @@ func _ready() -> void:
 		
 func _process(_delta: float) -> void:
 	converse()
-	
-	attack()
 
 #var first_time_hostile: bool = true
 func _physics_process(delta: float) -> void:
@@ -69,17 +67,16 @@ func converse() -> void:
 		if Global.player_touching_node == Global.cursor_touching_node:
 			if Input.is_action_just_pressed("interact"):
 				Dialogue.start("npc")
-
-func attack() -> void:
-	if master.is_hostile():
-		while master.is_touching_player:
-			Global.player.player_damaged.emit(base_damage)
-			await Global.delay(self, 0.1) # avoid overload	
 			
 func _on_area_body_entered(body: Node2D) -> void:
 	if body == Global.player:
 		master.is_touching_player = true
 		Global.player_touching_node = area
+	
+	if master.is_hostile():
+		while master.is_touching_player:
+			Player.damage(master._damage)
+			await Global.delay(self, 0.1) # avoid overload
 
 func _on_area_body_exited(body: Node2D) -> void:
 	if body == Global.player:

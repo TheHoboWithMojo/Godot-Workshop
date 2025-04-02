@@ -6,27 +6,22 @@ extends Node2D
 # =========================================================================
 # CONFIGURATION
 # =========================================================================
+@export_group("Config")
+@export var active: bool = true
 @export var track_frames: bool = true
 @export var use_save_data: bool = true
 @export var autosaving: bool = true
-@export var active: bool = true
-@export var spawn_enemies: bool = true
-@onready var _spawn_enemies: bool = spawn_enemies
-@export_range(1, 10) var enemies_per_spawn: int = 2
-
 # =========================================================================
 # CONSTANTS
 # =========================================================================
+@export_group("Spawning")
+@export var spawn_enemies: bool = true
+@onready var _spawn_enemies: bool = spawn_enemies
+@export_range(1, 10) var enemies_per_spawn: int = 2
 @export var MOB_CAP: int = 10
 @export var SECONDS_PER_SPAWN: float = 10.0
 @export var SPAWN_RADIUS: float = 1000
 @export var ENTITY_LOADING_RADIUS: float = 500
-
-# =========================================================================
-# SCENES AND NODES
-# =========================================================================
-@export var default_level: PackedScene
-
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
@@ -52,13 +47,9 @@ signal level_loaded
 func _ready() -> void:
 	if active:
 		update_global_references()
-		load_data()
 		boot_dialogic()
 		connect_signals()
-		if use_save_data:
-			current_level = load((Data.game_data["reload_data"]["last_level"])).instantiate()
-		else:
-			current_level = default_level.instantiate()
+		load_data()
 		add_child(current_level)
 		update_level_data()
 		ready_up()
@@ -88,8 +79,10 @@ func load_data() -> void:
 		Data.clear_data()
 		if Data.is_data_cleared != true:
 			await Data.data_cleared
-	
 	Data.load_game_data() # Load _current data into the game
+	Player.change_stat("health = %s" % [Player.get_stat("max_health")]) # Ensure health is set to max (in case it saved with 0 health)
+	current_level = load((Data.game_data["reload_data"]["last_level"])).instantiate()
+	
 	
 func boot_dialogic() -> void:
 	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets

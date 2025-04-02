@@ -1,16 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=5 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
 [ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/Fantail-Interactive.top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
-[ext_resource type="PackedScene" uid="uid://dkmfae421te6a" path="res://scenes/levels/level_1.tscn" id="7_u5sy4"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
 use_save_data = false
 autosaving = false
-default_level = ExtResource("7_u5sy4")
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3
@@ -27,4 +25,6 @@ camera_distance_limit = 100.0
 metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
 
 [node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
-visible = false
+offset_right = 0.0
+offset_bottom = 0.0
+scale = Vector2(0.25, 0.25)

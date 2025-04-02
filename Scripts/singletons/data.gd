@@ -22,7 +22,7 @@ func load_game_data() -> void:
 	for data_name: String in Dicts.reference_data.keys():
 		game_data[data_name] = load_json_file(_get_current_path(data_name))
 	game_data["quests"] = load_json_file(_get_current_path("quests"))
-	
+
 	Global.player.global_position = string_to_vector(game_data["reload_data"]["last_position"])
 	
 	print("Game data loaded...")
