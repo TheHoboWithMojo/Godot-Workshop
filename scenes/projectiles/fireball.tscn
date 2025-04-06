@@ -78,18 +78,20 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Fireball" type="Area2D" node_paths=PackedStringArray("sprite", "audio")]
-scale = Vector2(-0.028908, -0.028908)
+[node name="Fireball" type="Area2D" node_paths=PackedStringArray("sprite", "audio", "collider")]
 script = ExtResource("1_1gl40")
 sprite = NodePath("Sprite")
 damage = 80
 audio = NodePath("Audio")
+collider = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, -14)
+scale = Vector2(0.0282037, 0.0282037)
 shape = SubResource("RectangleShape2D_pa2l1")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+rotation = -3.13821
+scale = Vector2(0.0282037, 0.0282037)
 sprite_frames = SubResource("SpriteFrames_h25np")
 autoplay = "default"
 frame_progress = 0.403715

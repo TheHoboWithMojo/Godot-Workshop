@@ -4,6 +4,7 @@ extends Control
 @export var active: bool = true
 
 @export_group("Labels")
+@export var background: ColorRect
 @export var health: Label
 @export var speed: Label
 @export var accomplishments: Label
@@ -12,6 +13,7 @@ extends Control
 @export var personality: Label
 @export var damage: Label
 
+@onready var buttons_box: VBoxContainer = $ButtonsBox
 @onready var is_menu_open: bool = false
 @onready var show_player_stats: bool = false
 @onready var show_frames: bool = false
@@ -24,10 +26,17 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	# Get the target position
 	var screen_pos: Vector2 = Global.player_camera.get_screen_center_position()
-	var target_position: Vector2 = screen_pos - (size / 2)
-
+	var target_position: Vector2 = screen_pos - (get_rect().size / 2)
+	
 	# Smoothly move towards the target position
 	global_position = global_position.lerp(target_position, 10 * delta)
+	
+	# Position the background at the top-left of the VBoxContainer
+	background.position = buttons_box.position
+	
+	# Then resize it to match the VBoxContainer
+	background.size.x = buttons_box.size.x
+	background.size.y = buttons_box.size.y
 	
 	# Handle menu visibility
 	if not is_menu_open:
@@ -38,9 +47,9 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed("open_debug_menu"):
 			self.visible = false
 			is_menu_open = false
-		
-		if show_player_stats or show_frames:
-			update_stat_labels()
+			
+	if show_player_stats or show_frames:
+		update_stat_labels()
 
 func update_stat_labels() -> void:
 	health.text = "Health:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["health"])

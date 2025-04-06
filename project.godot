@@ -33,7 +33,7 @@ gdscript/warnings/inferred_declaration=1
 [dialogic]
 
 directories/dch_directory={
-"npc": "res://dialogic/characters/npc.dch"
+"npc": "res://dialogic/characters/steve.dch"
 }
 directories/dtl_directory={
 "boot": "res://dialogic/timelines/boot.dtl",

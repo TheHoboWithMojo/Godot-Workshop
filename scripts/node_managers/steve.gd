@@ -9,8 +9,6 @@ extends CharacterBody2D
 @export var base_health: float = 30
 @export var perception: float = 50.0
 @export var exp_on_kill: int = 10
-@export var nomen: String = "Steve"
-@export var faction: String = "New California Republic"
 
 ########## NODES #######################
 @export var sprite: AnimatedSprite2D
@@ -24,6 +22,8 @@ extends CharacterBody2D
 @export var timelines: Array[DialogicTimeline]
 
 ####### RUNTIME VARIABLES ##############
+@onready var nomen: String = "steve"
+@onready var faction: int = Factions.factions.NEW_CALIFORNIA_REPUBLIC
 @onready var master: Object
 
 func _ready() -> void:

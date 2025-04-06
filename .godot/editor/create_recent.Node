@@ -1,3 +1,4 @@
+MarginContainer
 ColorRect
 Label
 VBoxContainer
@@ -10,5 +11,4 @@ Marker2D
 Camera2D
 SubViewportContainer
 SubViewport
-MarginContainer
 CanvasLayer

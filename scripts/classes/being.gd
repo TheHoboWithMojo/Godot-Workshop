@@ -3,7 +3,7 @@ extends Node2D
 
 # Name and stats
 var _nomen: String = ""
-var _faction: String = ""
+var _faction: int = -1
 var _health: float = 0.0
 var _speed: float = 0.0
 var _damage: float = 0.0
@@ -131,12 +131,12 @@ func _init(params: Dictionary = {}) -> void:
 	# Set non node values
 	_nomen = params.get("nomen", "unnamed")
 	
-	_faction = params.get("faction", "unaffiliated")
-	if not Factions.faction_exists(_faction) and _faction != "unaffiliated":
+	_faction = params.get("faction", -1)
+	if _faction not in Factions.factions.values() and _faction != -1:
 		Debug.throw_error(self, "_init", "Faction %s does not exist" % [_faction])
-		_faction = "unaffiliated"
+		_faction = -1
 	else:
-		_caller.add_to_group(_faction)
+		_caller.add_to_group(Factions.factions.keys()[_faction])
 		
 	# Store node components and track missing ones
 	_sprite = params.get("sprite", null)
@@ -210,7 +210,8 @@ func die() -> void:
 			_audio.play()
 			
 		play_animation("die")
-		if _faction != "unaffiliated":
+		
+		if Factions.faction_exists(_faction):
 			Factions.log_decision(_faction, "killed a member.", -100)
 		
 		if _animator != null and _animator.is_playing():
@@ -414,7 +415,7 @@ static func create_being(self_node: Node) -> Being:
 		
 	@warning_ignore("untyped_declaration")
 	var faction = self_node.get("faction")
-	if faction != null and faction != "":
+	if Factions.faction_exists(faction):
 		params["faction"] = faction
 	
 	@warning_ignore("untyped_declaration")

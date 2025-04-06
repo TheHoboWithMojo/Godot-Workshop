@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/steve.gd" id="1_xsdk0"]
 [ext_resource type="Resource" uid="uid://c81oivvmsqqk0" path="res://dialogic/styles/alt.tres" id="2_6ikfg"]
 [ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_tdk7l"]
-[ext_resource type="Resource" uid="uid://doh70t5q7p001" path="res://dialogic/characters/npc.dch" id="3_aygba"]
+[ext_resource type="Resource" uid="uid://doh70t5q7p001" path="res://dialogic/characters/steve.dch" id="3_aygba"]
 [ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="3_yvwvd"]
 [ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="4_daltg"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]

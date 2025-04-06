@@ -81,16 +81,13 @@ func load_data() -> void:
 			await Data.data_cleared
 	Data.load_game_data() # Load _current data into the game
 	Player.change_stat("health = %s" % [Player.get_stat("max_health")]) # Ensure health is set to max (in case it saved with 0 health)
-	current_level = load((Data.game_data["reload_data"]["last_level"])).instantiate()
-	
+	current_level = load(Data.game_data.reload_data.last_level).instantiate()
 	
 func boot_dialogic() -> void:
 	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets
 	preload("res://dialogic/styles/default.tres") # Load generic dialogic style
 	
 func connect_signals() -> void:
-	Dialogic.timeline_started.connect(_on_dialogue_start)
-	Dialogic.timeline_ended.connect(_on_dialogue_end)
 	mob_died.connect(_on_mob_death)
 	level_changed.connect(_on_level_changed)
 	print("Game Manager Signals Connected!")
@@ -173,12 +170,17 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 			
 			# Spawn the calculated number of enemies
 			for i: int in range(spawn_count):
+				var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
 				var spawn_position: Vector2 = valid_positions[randi() % valid_positions.size()] # Rand pos
-				var random: int = randi_range(0, enemy_scene_array.size() - 1)
-				var _enemy: Node = enemy_scene_array[random].instantiate() as CharacterBody2D # Rand enemy
-				_enemy.global_position = spawn_position
-				Global.game_manager.add_child(_enemy)
-				total_mobs += 1
+				var query: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+				query.position = spawn_position
+				
+				if not space_state.intersect_point(query, 1): # Only spawn if there will it will not overlap another body
+					var random: int = randi_range(0, enemy_scene_array.size() - 1)
+					var _enemy: Node = enemy_scene_array[random].instantiate() as CharacterBody2D # Rand enemy
+					_enemy.global_position = spawn_position
+					Global.game_manager.add_child(_enemy)
+					total_mobs += 1
 			
 			await Global.delay(self, SECONDS_PER_SPAWN)
 			_spawn_enemies = true
@@ -207,26 +209,6 @@ func _on_mob_death() -> void:
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================
-var _total_mobs: int = 0 
-func _on_dialogue_start() -> void:
-	Global.player.set_physics_process(false)
-	Global.player.can_shoot = false
-	_total_mobs = total_mobs # Store actual mob count
-	total_mobs = MOB_CAP # Sets mob count to max to stop spawning
-	Global.speed_mult = 0.0
-	for being: Node2D in get_beings():
-		if "master" in being:
-			being.master.vincible = false
-
-func _on_dialogue_end() -> void:
-	Global.player.set_physics_process(true)
-	Global.player.can_shoot = true
-	total_mobs = _total_mobs # Restores actual mob count
-	Global.speed_mult = 1.0
-	for being: Node2D in get_beings():
-		if "master" in being:
-			being.master.vincible = true
-	
 func _on_level_changed(old_level: Node, new_level: PackedScene) -> void:
 	_spawn_enemies = false
 	clear_enemies()
@@ -244,9 +226,6 @@ func update_level_data() -> void:
 	spawnable_enemies = current_level.enemies
 	enemy_spawnpoints = current_level.enemy_spawnpoints
 	checkpoints = current_level.checkpoints_dict
-	Data.game_data["reload_data"]["last_level"] = current_level.scene_file_path
+	Data.game_data.reload_data.last_level = current_level.scene_file_path
 	is_level_loaded = true
 	level_loaded.emit()
-	
-func get_beings() -> Array[Node]:
-	return get_tree().get_nodes_in_group("beings")

@@ -63,7 +63,7 @@ func get_methods_completion_times(argumentless_methods: Array[Callable] = [], ar
 func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str: String = "\t".repeat(indent)
 	
-	for key: String in dictionary.keys():
+	for key: Variant in dictionary.keys():
 		var value: Variant = dictionary[key]
 		var key_str: String = str(key)
 		

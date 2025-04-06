@@ -20,12 +20,6 @@ func _ready() -> void:
 	
 	if not collision_on:
 		collider.queue_free()
-
-	# Initialize Game Data with these stats (use if save_data in game manager is false)
-	if Global.game_manager.use_save_data == false:
-		Player.change_stat("health = %s" % [base_health])
-		Player.change_stat("speed = %s" % [base_speed])
-		Player.change_stat("attack_speed = %s" % [base_attack_speed])
 	
 	health_bar.min_value = 0.0
 	health_bar.max_value = base_health
@@ -74,13 +68,22 @@ func _process(_delta: float) -> void:
 	
 	# State Checks
 	if Global.frames % 10 == 0:
-		_check_for_death(health)
+		check_for_death(health)
+		
+	regen_health()
 	
 	health_bar.set_value(health)
 	
 	if Global.frames % 120 == 0:
 		check_for_achievements()
 
+var healing: bool = false
+func regen_health() -> void:
+	if not healing and Player.get_health() < Player.get_stat("max_health"):
+		healing = true
+		Player.heal(Player.get_stat("health_regen"))
+	await Global.delay(self, 1.0)
+	healing = false
 
 @onready var can_shoot: bool = true # Turns off during dialogue
 @onready var _just_shot: bool = false
@@ -100,7 +103,7 @@ func shoot(angle: float) -> void: # spawns a projectile at a given angle
 
 func check_for_achievements() -> void: #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
 	if Player.get_stat("enemies_killed") > 5:
-		Player.add_perk("dead eye")
+		Player.add_perk("asshole")
 
 func _flip_sprite(_sprite: AnimatedSprite2D, _orientation_angle: float) -> void:
 	_sprite.flip_h = not (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
@@ -122,7 +125,7 @@ func _get_direction(x_or_y: String) -> float:
 		Debug.throw_error(self, "_get_direction", "x or y only", x_or_y)
 		return 0.0
 
-func _check_for_death(health: float) -> void:
+func check_for_death(health: float) -> void:
 	if health <= 0:
 		die()
 

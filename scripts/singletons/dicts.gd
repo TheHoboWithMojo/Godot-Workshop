@@ -1,18 +1,21 @@
 extends Node2D
 
 @onready var reference_data: Dictionary[String, Dictionary] = {
-	"stats": stats,
-	"factions": factions,
-	"perks": perks,
 	"reload_data": reload_data,
+	"stats": stats,
+	"factions_data": factions_data,
+	"perks": perks,
+	"characters": characters,
+	"timelines": timelines,
 }
+
 # PLAYER
 var stats: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
 		"speed": 10000.0,
 		"attack_speed_mult": 1.00,
-		"attack_speed": 2.0,
+		"attack_speed": 5.0,
 	},
 	"health": {
 		"max_health": 100.0,
@@ -78,80 +81,80 @@ var reload_data: Dictionary = {
 }
 
 # FACTIONS
-var factions: Dictionary = {
-	"New California Republic": {
+var factions_data: Dictionary = {
+	Factions.factions.NEW_CALIFORNIA_REPUBLIC: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Caesar's Legion": {
+	Factions.factions.CAESERS_LEGION: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Brotherhood of Steel": {
+	Factions.factions.BROTHERHOOD_OF_STEEL: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Followers of the Apocalypse": {
+	Factions.factions.FOLLOWERS_OF_THE_APOCALYPSE: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Great Khans": {
+	Factions.factions.GREAT_KHANS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Gun Runners": {
+	Factions.factions.GUN_RUNNERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Boomers": {
+	Factions.factions.BOOMERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Enclave Remnants": {
+	Factions.factions.ENCLAVE_REMNANTS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"White Glove Society": {
+	Factions.factions.WHITE_GLOVE_SOCIETY: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Omertas": {
+	Factions.factions.OMERTAS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Chairmen": {
+	Factions.factions.CHAIRMEN: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Kings": {
+	Factions.factions.KINGS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Powder Gangers": {
+	Factions.factions.POWDER_GANGERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Fiends": {
+	Factions.factions.FIENDS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Van Graffs": {
+	Factions.factions.VAN_GRAFFS: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Crimson Caravan": {
+	Factions.factions.CRIMSON_CARAVAN: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Jacobstown": {
+	Factions.factions.JACOBSTOWN: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Westside Cooperative": {
+	Factions.factions.WESTSIDE_COOPERATIVE: {
 		"rep": 50,
 		"decisions": []
 	},
-	"Brotherhood Outcasts": {
+	Factions.factions.BROTHERHOOD_OUTCASTS: {
 		"rep": 50,
 		"decisions": []
 	}
@@ -165,4 +168,22 @@ var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing cs
 	"quests": {
 		"id": "1YyJAqxexIt5-x0fV528fsZG9R7tNW6V0nZjoHDgejpY",
 	},
+}
+
+# Dialogue
+var characters: Dictionary = {
+	"steve": {
+		"name": "steve",
+		"alive": true,
+		"resource": "res://dialogic/characters/steve.dch",
+		"faction": Factions.factions.NEW_CALIFORNIA_REPUBLIC,
+		},
+}
+
+var timelines: Dictionary = {
+	"npc": {
+		"completed": false,
+		"repeatable": false,
+		"characters": [characters.steve]
+	}
 }

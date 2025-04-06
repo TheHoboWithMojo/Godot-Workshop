@@ -16,28 +16,36 @@ func load_game_data() -> void:
 	print("Loading game data...")
 	
 	# Load pure references
-	game_data["items"] = load_json_file(_get_current_path("items").replace("_current", ""))
+	game_data.items = load_json_file(_get_current_path("items").replace("_current", ""))
 	
 	# Load All Currents
 	for data_name: String in Dicts.reference_data.keys():
 		game_data[data_name] = load_json_file(_get_current_path(data_name))
+	
 	game_data["quests"] = load_json_file(_get_current_path("quests"))
-
-	Global.player.global_position = string_to_vector(game_data["reload_data"]["last_position"])
+	
+	Global.player.global_position = _string_to_vector2(game_data["reload_data"]["last_position"])
+	
+	for faction_number in game_data["factions_data"].keys(): # convert all factions to int
+		game_data["factions_data"][int(faction_number)] = game_data["factions_data"][faction_number]
+		game_data["factions_data"].erase(faction_number)
 	
 	print("Game data loaded...")
 	
 	is_data_loaded = true
 	data_loaded.emit()
-	
-func string_to_vector(vector_string: String) -> Vector2:
-	vector_string = vector_string.strip_edges(true).trim_prefix("(").trim_suffix(")")
-	var x_y: Array = vector_string.split(",")
-	return Vector2(float(x_y[0]), float(x_y[1]))
+
+func _string_to_vector2(input: String) -> Vector2:
+	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
+	var parts: PackedStringArray = trimmed.split(",")
+	if parts.size() == 2:
+		var x: float = parts[0].to_float()
+		var y: float = parts[1].to_float()
+		return Vector2(x, y)
+	return Vector2.ZERO  # fallback if string is malformed
 
 func _get_current_path(data_name: String) -> String:
 	return "res://data/%s_current.json" % [data_name]
-	
 # ----- Data Backup And Clearing -----
 	
 func save_data_changes() -> void: # Safely updates and stores current and backup data

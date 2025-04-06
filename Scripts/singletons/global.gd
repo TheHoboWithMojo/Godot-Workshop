@@ -46,6 +46,16 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
 	print("Global references reloaded!")
+	
+func get_beings() -> Array[Node]:
+	return get_tree().get_nodes_in_group("beings")
+	
+func string_to_enum(string: String, enum_reference: Variant) -> int:
+	string = string.to_snake_case().to_upper()
+	return enum_reference[string]
+
+func enum_to_camelcase(value: int, enum_reference: Variant) -> String:
+	return enum_reference.keys()[value].to_lower()
 
 func swap_scenes(self_node: Node, new_scene: PackedScene) -> void:
 	self_node.queue_free()
@@ -212,5 +222,5 @@ func _update_toggle_buff(buff_name: String, buff_data: Dictionary) -> bool:
 		return false
 	
 	buff["has"] = "true"
-	Player.player_change_stat(buff.get("buffs", ""))
+	Player.change_stat(buff.get("buffs", ""))
 	return true

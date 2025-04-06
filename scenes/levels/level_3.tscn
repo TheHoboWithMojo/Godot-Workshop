@@ -9,7 +9,7 @@
 script = ExtResource("1_s1j21")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_sru4k")])
-checkpoints = [null]
+checkpoints = [NodePath("SpawnPoint")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1

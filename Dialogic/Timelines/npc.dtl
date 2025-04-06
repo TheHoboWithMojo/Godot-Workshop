@@ -1,10 +1,15 @@
 npc: Huh? Who are you? This area is off limits.
+label Loop1
 - Where am I?
 	npc: A dungeon.
+	jump Loop1
 - Who are YOU?
 	npc: I don't trust you with that knowledge.
+	jump Loop1
 - Off limits? Who owns this?
 	npc: The king, who else?
+	jump Loop1
+- [Continue]
 npc: Now leave before I cut you down.
 - Will do.
 	[end_timeline]
@@ -12,5 +17,5 @@ npc: Now leave before I cut you down.
 	npc: The left. Take the right and you'll greet a great many more of me.
 	[end_timeline]
 - Fuck you! [Attack]
-	do Dialogue.aggro_conversers()
+	[signal arg="aggro"]
 	[end_timeline]

@@ -34,6 +34,7 @@ func log_kill(exp_gain: int) -> void:
 	change_stat("enemies_killed + 1")
 
 func add_perk(perk_name: String) -> void:
+	perk_name = perk_name.capitalize()
 	if not Data.game_data["perks"].has(perk_name):
 		print("Could not find '", perk_name, "' in perks data")
 		Debug.print_player_perks()
