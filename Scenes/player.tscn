@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://ckmkhqqqnhrgc"]
+[gd_scene load_steps=10 format=3 uid="uid://ckmkhqqqnhrgc"]
 
 [ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://scripts/node_managers/player.gd" id="1_cvnsp"]
-[ext_resource type="Texture2D" uid="uid://rbp65w7omd12" path="res://assets/textures/moai.png" id="2_dqkch"]
-[ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="5_tuyoq"]
-[ext_resource type="Texture2D" uid="uid://ckuvxesxh68d5" path="res://assets/textures/full.png" id="6_fjrip"]
+[ext_resource type="Texture2D" uid="uid://rbp65w7omd12" path="res://assets/textures/player.png" id="2_dqkch"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="3_qhqgy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cvnsp"]
 size = Vector2(25, 31)
@@ -87,13 +86,10 @@ sprite_frames = SubResource("SpriteFrames_ur7pv")
 animation = &"die"
 autoplay = "idle"
 
-[node name="HealthBar" type="TextureProgressBar" parent="."]
-offset_left = -22.0
-offset_top = 12.0
-offset_right = 838.0
-offset_bottom = 230.0
-scale = Vector2(0.05, 0.05)
-texture_under = ExtResource("5_tuyoq")
-texture_progress = ExtResource("6_fjrip")
+[node name="HealthBar" parent="." instance=ExtResource("3_qhqgy")]
+offset_left = -14.0
+offset_top = 13.0
+offset_right = 846.0
+offset_bottom = 231.0
 
 [node name="Marker2D" type="Marker2D" parent="."]

@@ -26,7 +26,7 @@ func load_game_data() -> void:
 	
 	Global.player.global_position = _string_to_vector2(game_data["reload_data"]["last_position"])
 	
-	for faction_number in game_data["factions_data"].keys(): # convert all factions to int
+	for faction_number: String in game_data["factions_data"].keys(): # convert all factions to int
 		game_data["factions_data"][int(faction_number)] = game_data["factions_data"][faction_number]
 		game_data["factions_data"].erase(faction_number)
 	

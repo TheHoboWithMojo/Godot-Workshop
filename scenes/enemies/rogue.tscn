@@ -1,12 +1,11 @@
-[gd_scene load_steps=27 format=3 uid="uid://5wd6f8wnvh8e"]
+[gd_scene load_steps=26 format=3 uid="uid://5wd6f8wnvh8e"]
 
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/rogue.gd" id="1_rkgrm"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="2_kosol"]
 [ext_resource type="Texture2D" uid="uid://bih0xuackwai5" path="res://assets/texture pack/Entities/Npc's/Rogue/Death/Death-Sheet.png" id="2_rkgrm"]
 [ext_resource type="Texture2D" uid="uid://b6ooliqxfrgst" path="res://assets/texture pack/Entities/Npc's/Rogue/Idle/Idle-Sheet.png" id="3_djm16"]
-[ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="4_4wlns"]
 [ext_resource type="Texture2D" uid="uid://da4i3ejxl5w4v" path="res://assets/texture pack/Entities/Npc's/Rogue/Run/Run-Sheet.png" id="4_c3xat"]
-[ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="4_tl2vt"]
-[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/roblox-death-sound_1.mp3" id="7_7vupv"]
+[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="7_7vupv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rkgrm"]
 size = Vector2(20, 30)
@@ -148,12 +147,17 @@ animations = [{
 motion_mode = 1
 script = ExtResource("1_rkgrm")
 nomen = "Rogue"
-faction = "New California Republic"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
 health_bar = NodePath("HealthBar")
 audio = NodePath("Audio")
+
+[node name="HealthBar" parent="." instance=ExtResource("2_kosol")]
+offset_left = -15.0
+offset_top = 14.0
+offset_right = 845.0
+offset_bottom = 232.0
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)
@@ -169,17 +173,6 @@ shape = SubResource("CircleShape2D_kosol")
 sprite_frames = SubResource("SpriteFrames_4scct")
 animation = &"idle"
 autoplay = "idle"
-
-[node name="HealthBar" type="TextureProgressBar" parent="."]
-offset_left = -11.0
-offset_top = 15.0
-offset_right = 2037.0
-offset_bottom = 2063.0
-scale = Vector2(0.0247043, 0.0247043)
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_under = ExtResource("4_tl2vt")
-texture_progress = ExtResource("4_4wlns")
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("7_7vupv")

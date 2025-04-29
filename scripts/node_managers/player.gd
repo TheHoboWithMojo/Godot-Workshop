@@ -1,4 +1,5 @@
 extends CharacterBody2D
+# EXPORTS
 @export_group("Control")
 @export var active: bool = true
 @export var collision_on: bool = true
@@ -11,7 +12,7 @@ extends CharacterBody2D
 @export_group("Nodes")
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D
-@export var projectile: PackedScene
+@export var projectiles: Array[PackedScene]
 @export var health_bar: TextureProgressBar
 @export var direction_tracker: Marker2D
 
@@ -24,13 +25,15 @@ func _ready() -> void:
 	health_bar.min_value = 0.0
 	health_bar.max_value = base_health
 
+# RUNTIME VARIABLES
 @onready var speed: float
 @onready var direction_x: float
 @onready var direction_y: float
 @onready var mouse_pos: Vector2
-@onready var character_position: Vector2
+#@onready var character_position: Vector2
 @onready var normal: Vector2
 @onready var orientation_angle: float
+@onready var current_projectile: PackedScene
 
 func _physics_process(delta: float) -> void:
 	normal = velocity.normalized()
@@ -54,8 +57,8 @@ func _physics_process(delta: float) -> void:
 
 	# Animation handling
 	mouse_pos = get_global_mouse_position()
-	character_position = position
-	orientation_angle = (mouse_pos - character_position).angle()
+	#character_position = position
+	orientation_angle = (mouse_pos - position).angle()
 	
 	_flip_sprite(sprite, orientation_angle)
 	_run_or_idle(velocity)
@@ -76,6 +79,23 @@ func _process(_delta: float) -> void:
 	
 	if Global.frames % 120 == 0:
 		check_for_achievements()
+	
+	if projectiles:
+		process_scroll()
+
+func process_scroll() -> void:
+	var size: int = projectiles.size()
+	var current_pos: int = projectiles.find(current_projectile)
+	if Input.is_action_just_pressed("cycle_up"):
+		if current_pos == size - 1: # if we're at the end, go to the beginning
+			current_projectile = projectiles[0]
+		else:
+			current_projectile = projectiles[(projectiles.find(current_projectile) + 1)]
+	if Input.is_action_just_pressed("cycle_down"):
+		if current_pos == 0: # if we're at the beginning of the array, move to the last part of the array
+			current_projectile = projectiles[size - 1]
+		else:
+			current_projectile = projectiles[(projectiles.find(current_projectile) - 1)]
 
 var healing: bool = false
 func regen_health() -> void:
@@ -88,11 +108,11 @@ func regen_health() -> void:
 @onready var can_shoot: bool = true # Turns off during dialogue
 @onready var _just_shot: bool = false
 func shoot(angle: float) -> void: # spawns a projectile at a given angle
-	if projectile != null:
+	if current_projectile != null:
 		if can_shoot:
 			if Input.is_action_just_pressed("shoot") and not _just_shot:
 				_just_shot = true
-				var new_projectile: Area2D = projectile.instantiate() as Area2D
+				var new_projectile: Area2D = current_projectile.instantiate() as Area2D
 				get_parent().add_child(new_projectile)  # Add projectile to the scene
 				_flip_sprite(new_projectile.sprite, angle)
 				new_projectile.position = global_position  # Spawn at player's position

@@ -9,7 +9,7 @@ extends CharacterBody2D
 @export var perception: float = 50.0
 @export var exp_on_kill: int = 10
 @export var nomen: String = ""
-@export var faction: String = ""
+@export var faction: int = Factions.factions.NEW_CALIFORNIA_REPUBLIC
 
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D

@@ -1,11 +1,11 @@
 [gd_scene load_steps=15 format=3 uid="uid://cp8eugxsx1ocq"]
 
-[ext_resource type="Script" uid="uid://vi703kxa5l26" path="res://scripts/node_managers/fireball.gd" id="1_1gl40"]
-[ext_resource type="Texture2D" uid="uid://c3auaxssrpxle" path="res://assets/textures/fireball.png" id="2_cb14k"]
-[ext_resource type="AudioStream" uid="uid://piy55vdk0ago" path="res://assets/fireball-whoosh-2-179126.mp3" id="3_cb14k"]
+[ext_resource type="Script" uid="uid://vi703kxa5l26" path="res://scripts/node_managers/projectile.gd" id="1_1gl40"]
+[ext_resource type="Texture2D" uid="uid://c3auaxssrpxle" path="res://scenes/projectiles/fireball.png" id="2_cb14k"]
+[ext_resource type="AudioStream" uid="uid://piy55vdk0ago" path="res://scenes/projectiles/fireball_shot.mp3" id="3_cb14k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pa2l1"]
-size = Vector2(839, 408)
+size = Vector2(354.563, 354.563)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bphau"]
 atlas = ExtResource("2_cb14k")

@@ -1,5 +1,7 @@
-res://assets/textures
 res://scenes
+res://scenes/projectiles
+res://assets/textures/Bullets
+res://assets/textures
 res://scripts/singletons
 res://
 res://dialogic/styles

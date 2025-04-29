@@ -1,0 +1,25 @@
+extends Area2D
+
+@export var projectile: PackedScene
+@export var audio: AudioStreamPlayer2D
+@export var sprite: Sprite2D
+@export var collision: CollisionShape2D
+
+@onready var collected: bool = false # only runs once
+func _on_body_entered(body: Node2D) -> void:
+	if body == Global.player:
+		if not collected:
+			collected = true
+			collect_projectile()
+			audio.play()
+			sprite.visible = false
+			if audio.playing:
+				await audio.finished
+			queue_free()
+
+func collect_projectile() -> void:
+	if not projectile in Global.player.projectiles: # Check if the player already has the projectile
+		Global.player.projectiles.append(projectile) # Add it if not
+		
+		if Global.player.projectiles.size() == 1: # if its the first they pick up, set it as their active
+			Global.player.current_projectile = projectile

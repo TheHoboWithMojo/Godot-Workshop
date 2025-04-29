@@ -1,12 +1,11 @@
-[gd_scene load_steps=27 format=3 uid="uid://15uoupcpxi20"]
+[gd_scene load_steps=26 format=3 uid="uid://15uoupcpxi20"]
 
 [ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://scripts/node_managers/knight.gd" id="1_xxsvc"]
 [ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="2_abqhh"]
 [ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_swm0g"]
 [ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="3_rv78h"]
-[ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://assets/textures/413-4135632_health-bar-png-video-game-health-bar-png-3592699705-removebg-preview.png" id="4_4wlns"]
-[ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://assets/textures/full-export.png" id="4_tl2vt"]
-[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/roblox-death-sound_1.mp3" id="7_lja41"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="6_n53qi"]
+[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="7_lja41"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rv78h"]
 size = Vector2(48.2811, 80.4956)
@@ -148,7 +147,6 @@ animations = [{
 motion_mode = 1
 script = ExtResource("1_xxsvc")
 nomen = "Knight"
-faction = "New California Republic"
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")
@@ -172,19 +170,14 @@ sprite_frames = SubResource("SpriteFrames_rv78h")
 animation = &"die"
 autoplay = "idle"
 
-[node name="HealthBar" type="TextureProgressBar" parent="."]
-offset_left = -11.0
-offset_top = 15.0
-offset_right = 2037.0
-offset_bottom = 2063.0
-scale = Vector2(0.0247043, 0.0247043)
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_under = ExtResource("4_tl2vt")
-texture_progress = ExtResource("4_4wlns")
-
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("7_lja41")
+
+[node name="HealthBar" parent="." instance=ExtResource("6_n53qi")]
+offset_left = -7.0
+offset_top = 14.0
+offset_right = 853.0
+offset_bottom = 232.0
 
 [connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]
 [connection signal="body_exited" from="Area" to="." method="_on_area_body_exited"]

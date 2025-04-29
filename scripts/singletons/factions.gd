@@ -44,8 +44,7 @@ func log_decision(faction: int, decision: String, rep_change: int) -> void:
 		# If decision not found, add a new entry
 		if not found:
 			decisions.append([decision, rep_change, 1])
-		
-		print(decision)
+
 		# Update decisions using the wrapper
 		update_faction_data(faction, "decisions", decisions)
 	else:
