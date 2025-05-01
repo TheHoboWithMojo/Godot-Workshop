@@ -10,18 +10,18 @@ var _damage: float = 0.0
 var _exp_on_kill: int = 0
 
 # Booleans
-var _alive: bool = true # Alive is not required by caller
+var _alive: bool = true
 var _hostile: bool = false
 var _debugging: bool = false
+var _character: bool = false # in the characters dict?
 var is_touching_player: bool = false
 var vincible: bool = true
-
 # Nodes
 var _sprite: AnimatedSprite2D = null
 var _collider: CollisionShape2D = null
 var _area: Area2D = null
 var _animator: AnimationPlayer = null
-var _caller: Node
+var _slave: Node
 var _health_bar: TextureProgressBar = null
 var _audio: AudioStreamPlayer2D = null
 
@@ -103,10 +103,10 @@ var hostile: bool:
 			
 		if value == true:
 			_hostile = true
-			_caller.add_to_group("enemies")
+			_slave.add_to_group("enemies")
 		else:
 			_hostile = false
-			_caller.remove_from_group("enemies")
+			_slave.remove_from_group("enemies")
 				
 		if _health_bar != null:
 			_health_bar.set_visible(hostile)
@@ -117,26 +117,30 @@ var hostile: bool:
 func _init(params: Dictionary = {}) -> void:
 	# First set debugging properties
 	_debugging = params.get("debugging", false)
-	_caller = params.get("caller", null)
-	
-	if _caller == null:
-		Debug.throw_error(self, "init", "Could not initiate caller")
-		return
-	else:
-		_caller.add_to_group("beings")
-		
-	if _debugging:
-		print("[Being] Constructor called by ", _caller.name)
-		
-	# Set non node values
+	_slave = params.get("slave", null)
 	_nomen = params.get("nomen", "unnamed")
 	
+	if _slave == null:
+		Debug.throw_error(self, "init", "Could not initiate slave")
+		return
+
+	if "character" in _slave and _nomen in Data.game_data["characters"].keys():
+		_character = true
+		if not Data.game_data["characters"][_nomen]["alive"]:
+			_slave.queue_free()
+			return
+	
+	_slave.add_to_group("beings")
+		
+	if _debugging:
+		print("[Being] Constructor called by ", _slave.name)
+	
 	_faction = params.get("faction", -1)
-	if _faction not in Factions.factions.values() and _faction != -1:
+	if not Factions.faction_exists(_faction) and _faction != -1:
 		Debug.throw_error(self, "_init", "Faction %s does not exist" % [_faction])
 		_faction = -1
 	else:
-		_caller.add_to_group(Factions.factions.keys()[_faction])
+		_slave.add_to_group(Factions.FACTIONS.keys()[_faction])
 		
 	# Store node components and track missing ones
 	_sprite = params.get("sprite", null)
@@ -198,12 +202,38 @@ func take_damage(amount: float) -> void:
 func heal(amount: float) -> void:
 	health += amount
 
+func approach_player(delta: float, perception: float, repulsion_strength: float) -> void:
+	var vector_to_player: Vector2 =  Global.get_vector_to_player(_slave)
+	var direction: Vector2 = vector_to_player.normalized()
+	
+	if vector_to_player.length() < perception:
+		_slave.velocity = direction * _speed * delta * Global.speed_mult
+		if _slave.velocity.length() > 0:
+			play_animation("run")
+		else:
+			play_animation("idle")
+		if direction.x < 0:
+			flip_sprite(true)
+		else:
+			flip_sprite(false)
+		if Global.is_touching_player(_slave):
+			print("hello")
+			var repulsion_vector: Vector2 = -direction * repulsion_strength * delta
+			_slave.velocity += repulsion_vector
+	else:
+		_slave.velocity = Vector2.ZERO
+		play_animation("idle")
+
 func die() -> void:
-	_caller.set_physics_process(false)
-	_caller.set_process(false)
+	_slave.set_physics_process(false)
+	_slave.set_process(false)
 	
 	if _alive == true:
 		_alive = false # Stops from piling calls
+		
+		if _character:
+			Data.game_data["characters"][_nomen]["alive"] = false
+		
 		speed = 0
 		
 		if _audio != null:
@@ -222,7 +252,7 @@ func die() -> void:
 		
 		Global.game_manager.mob_died.emit()
 		Player.log_kill(_exp_on_kill)
-		_caller.queue_free()
+		_slave.queue_free()
 
 func revive(revive_health: float = 100.0) -> void:
 	_alive = true
@@ -348,10 +378,10 @@ func get_current_animation() -> String:
 # ===== Static Functions =====
 
 static func create_being(self_node: Node) -> Being:
-	var params: Dictionary = {} # Keep track of what variables and nodes the caller has
+	var params: Dictionary = {} # Keep track of what variables and nodes the slave has
 	
-	var caller: Node = self_node # Save caller path for direct manipulation
-	params["caller"] = caller
+	var slave: Node = self_node # Save slave path for direct manipulation
+	params["slave"] = slave
 	
 	# Add available components to params
 	var sprite: AnimatedSprite2D = self_node.get("sprite")

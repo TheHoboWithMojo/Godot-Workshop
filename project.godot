@@ -70,7 +70,7 @@ window/size/always_on_top=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Fantail-Interactive.top_down_camera/plugin.cfg", "res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
+enabled=PackedStringArray("res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg")
 
 [input]
 

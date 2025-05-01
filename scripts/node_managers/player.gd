@@ -99,7 +99,7 @@ func process_scroll() -> void:
 
 var healing: bool = false
 func regen_health() -> void:
-	if not healing and Player.get_health() < Player.get_stat("max_health"):
+	if not healing and (Player.get_health() > 0 and Player.get_health() < Player.get_stat("max_health")):
 		healing = true
 		Player.heal(Player.get_stat("health_regen"))
 	await Global.delay(self, 1.0)
@@ -117,7 +117,7 @@ func shoot(angle: float) -> void: # spawns a projectile at a given angle
 				_flip_sprite(new_projectile.sprite, angle)
 				new_projectile.position = global_position  # Spawn at player's position
 				var direction: Vector2 = (get_global_mouse_position() - global_position).normalized()
-				new_projectile.set_velocity(direction)  # Set projectile velocity
+				new_projectile.velocity = direction*new_projectile.speed # Set projectile velocity
 				await Global.delay(self, 1/(Player.get_stat("attack_speed")*Player.get_stat("attack_speed_mult")))
 				_just_shot = false
 
@@ -145,19 +145,22 @@ func _get_direction(x_or_y: String) -> float:
 		Debug.throw_error(self, "_get_direction", "x or y only", x_or_y)
 		return 0.0
 
+var dying: bool = false
 func check_for_death(health: float) -> void:
-	if health <= 0:
-		die()
+	if not dying:
+		if health <= 0:
+			dying = true
+			die()
 
-@onready var _process_death: bool = true
 func die() -> void:
-	if _process_death:
-		_process_death = false
-		set_process(false)  # Stop processing inputs
-		set_physics_process(false)  # Stop physics updates (prevents movement)
-		velocity = Vector2.ZERO  # Prevent movement from overriding animation
-		sprite.play("die")  # Play death animation
-		print("you died!")
+	Global.speed_mult = 0.0 # Stop all enemy movement
+	set_process(false)  # Stop processing inputs
+	set_physics_process(false)  # Stop physics updates (prevents movement)
+	velocity = Vector2.ZERO  # Prevent movement from overriding animation
+	sprite.play("die")  # Play death animation
+	print("you died!")
+	if sprite.is_playing():
 		await sprite.animation_finished
-		Data.is_data_loaded = false # DATA IS A SINGLETON SO ITS BOOLS DONT UPDATE ON CALLED RELOAD
-		get_tree().reload_current_scene()  # Reload scene after animation
+	await Global.delay(self, 1.0)
+	Data.is_data_loaded = false # DATA IS A SINGLETON SO ITS BOOLS DONT UPDATE ON CALLED RELOAD
+	get_tree().reload_current_scene()  # Reload scene after animation

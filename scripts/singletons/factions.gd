@@ -3,13 +3,13 @@ func _process(_delta: float) -> void:
 	if Data.is_data_loaded:
 		if Global.frames % 60 == 0:
 			for being: Node2D in get_tree().get_nodes_in_group("beings"):
-				if being.master._faction in Factions.factions.values():
+				if being.master._faction in Factions.FACTIONS.values():
 					if Factions.get_rep_status(being.master._faction) == "hostile":
 						being.master.hostile = true
 
 # Wrapper function to update any faction data
 func update_faction_data(faction: int, property: String, value: Variant) -> void:
-	var faction_name: String = Global.enum_to_camelcase(faction, factions)
+	var faction_name: String = Global.enum_to_camelcase(faction, FACTIONS)
 	if faction_exists(faction):
 		if property in Data.game_data["factions_data"][faction]:
 			Data.game_data["factions_data"][faction][property] = value
@@ -23,7 +23,7 @@ func change_rep(faction: int, rep_change: int) -> void:
 		var new_rep: int = Data.game_data["factions_data"][faction]["rep"] + rep_change
 		update_faction_data(faction, "rep", new_rep)
 	else:
-		var faction_name: String = Global.enum_to_camelcase(faction, factions)
+		var faction_name: String = Global.enum_to_camelcase(faction, FACTIONS)
 		Data.throw_error(self, "Faction " + faction_name + " not found!")
 
 func log_decision(faction: int, decision: String, rep_change: int) -> void:
@@ -68,7 +68,7 @@ func get_rep_status(faction: int) -> String:
 		return "Faction not found!"
 		
 func faction_exists(faction: int) -> bool:
-	return faction in factions.values()
+	return faction in FACTIONS.values()
 		
 func get_rep_num(faction: int) -> int:
 	if faction_exists(faction):
@@ -80,12 +80,12 @@ func reset_faction(faction: int) -> void:
 		update_faction_data(faction, "rep", 50.0)
 		update_faction_data(faction, "decisions", [])
 	else:
-		var faction_name: String = Global.enum_to_camelcase(faction, factions)
+		var faction_name: String = Global.enum_to_camelcase(faction, FACTIONS)
 		Data.throw_error(self, "Faction " + faction_name + " not found!")
 		
 func print_faction_status(faction: int) -> void:
 	if faction_exists(faction):
-		var faction_name: String = factions.keys()[faction]
+		var faction_name: String = FACTIONS.keys()[faction]
 		var rep: int = Data.game_data["factions_data"][faction]["rep"]
 		var status: String = get_rep_status(faction)
 		var header: String = "| %-25s | %-10s (%3d) |" % [faction_name, status, rep]
@@ -99,7 +99,7 @@ func print_faction_status(faction: int) -> void:
 	else:
 		Data.throw_error(self, "Faction int " + str(faction) + " not found!")
 		
-enum factions {
+enum FACTIONS {
 	NEW_CALIFORNIA_REPUBLIC,
 	CAESERS_LEGION,
 	BROTHERHOOD_OF_STEEL,

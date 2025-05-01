@@ -51,110 +51,111 @@ var stats: Dictionary = {
 }
 
 var perks: Dictionary = {
-	"Heavy Handed":
+	"heavy_handed":
 		{
-		"Reqs": {"level": 5, "bravery": 10},
-		"Buffs": "melee_damage_mult + 0.05",
+		"reqs": {"level": 5, "bravery": 10},
+		"buffs": "melee_damage_mult + 0.05",
 		},
-	"Experienced":
+	"experienced":
 		{
-		"Reqs": {"level": 2, "intelligence": 5},
-		"Buffs": "exp_mult + 0.05",
+		"reqs": {"level": 2, "intelligence": 5},
+		"buffs": "exp_mult + 0.05",
 		},
-	"Asshole":
+	"asshole":
 		{
-		"Reqs": {"level": 5, "cruelty": 10},
-		"Buffs": "none",
-		"Abilities": "none" # write the function name that adds the functionality so you can call it here
+		"reqs": {"level": 5, "cruelty": 10},
+		"buffs": "none",
+		"abilities": "none" # write the function name that adds the functionality so you can call it here
 		},
-	"Politician":
+	"politician":
 		{
-		"Reqs": {"level": 1, "charisma": 10},
-		"Buffs": "persuasion_damage + 0.05",
-		"Abilities": "none"
+		"reqs": {"level": 1, "charisma": 10},
+		"buffs": "persuasion_damage + 0.05",
+		"abilities": "none"
 		},
 }
 
 var reload_data: Dictionary = {
 	"last_level": "res://scenes/levels/level_1.tscn", # these are set to level one values by default
 	"last_position": Vector2(7.0, 15.0),
+	"acquired_weapons": [],
 }
 
 # FACTIONS
 var factions_data: Dictionary = {
-	Factions.factions.NEW_CALIFORNIA_REPUBLIC: {
+	Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.CAESERS_LEGION: {
+	Factions.FACTIONS.CAESERS_LEGION: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.BROTHERHOOD_OF_STEEL: {
+	Factions.FACTIONS.BROTHERHOOD_OF_STEEL: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.FOLLOWERS_OF_THE_APOCALYPSE: {
+	Factions.FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.GREAT_KHANS: {
+	Factions.FACTIONS.GREAT_KHANS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.GUN_RUNNERS: {
+	Factions.FACTIONS.GUN_RUNNERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.BOOMERS: {
+	Factions.FACTIONS.BOOMERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.ENCLAVE_REMNANTS: {
+	Factions.FACTIONS.ENCLAVE_REMNANTS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.WHITE_GLOVE_SOCIETY: {
+	Factions.FACTIONS.WHITE_GLOVE_SOCIETY: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.OMERTAS: {
+	Factions.FACTIONS.OMERTAS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.CHAIRMEN: {
+	Factions.FACTIONS.CHAIRMEN: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.KINGS: {
+	Factions.FACTIONS.KINGS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.POWDER_GANGERS: {
+	Factions.FACTIONS.POWDER_GANGERS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.FIENDS: {
+	Factions.FACTIONS.FIENDS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.VAN_GRAFFS: {
+	Factions.FACTIONS.VAN_GRAFFS: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.CRIMSON_CARAVAN: {
+	Factions.FACTIONS.CRIMSON_CARAVAN: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.JACOBSTOWN: {
+	Factions.FACTIONS.JACOBSTOWN: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.WESTSIDE_COOPERATIVE: {
+	Factions.FACTIONS.WESTSIDE_COOPERATIVE: {
 		"rep": 50,
 		"decisions": []
 	},
-	Factions.factions.BROTHERHOOD_OUTCASTS: {
+	Factions.FACTIONS.BROTHERHOOD_OUTCASTS: {
 		"rep": 50,
 		"decisions": []
 	}
@@ -176,7 +177,7 @@ var characters: Dictionary = {
 		"name": "steve",
 		"alive": true,
 		"resource": "res://dialogic/characters/steve.dch",
-		"faction": Factions.factions.NEW_CALIFORNIA_REPUBLIC,
+		"faction": Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC,
 		},
 }
 

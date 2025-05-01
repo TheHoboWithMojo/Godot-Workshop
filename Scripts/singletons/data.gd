@@ -15,23 +15,77 @@ signal data_saved
 func load_game_data() -> void:
 	print("Loading game data...")
 	
-	# Load pure references
-	game_data.items = load_json_file(_get_current_path("items").replace("_current", ""))
+	# Load synced files (not stored in dicts singleton)
+	game_data["items"] = load_json_file(_get_current_path("items").replace("_current", "")) # Doesn't change
+	game_data["quests"] = load_json_file(_get_current_path("quests"))
 	
 	# Load All Currents
 	for data_name: String in Dicts.reference_data.keys():
-		game_data[data_name] = load_json_file(_get_current_path(data_name))
+		var current_data_path: String = _get_current_path(data_name)
+		var backup_data_path: String = _get_backup_path(data_name)
+		
+		var current_data_str: String = FileAccess.get_file_as_string(current_data_path)
+		var backup_data_str: String = FileAccess.get_file_as_string(backup_data_path)
+		
+		var current_data: Dictionary = {}
+		var backup_data: Dictionary = {}
+		
+		# Try to parse both files
+		if not current_data_str.is_empty():
+			current_data = JSON.parse_string(current_data_str)
+		
+		if not backup_data_str.is_empty():
+			backup_data = JSON.parse_string(backup_data_str)
+		
+		# Handle corruption or missing files
+		if current_data == null or current_data.is_empty():
+			print("Warning: Current data for %s is invalid or empty" % data_name)
+			
+			if backup_data != null and not backup_data.is_empty():
+				print("Restoring from backup for %s" % data_name)
+				game_data[data_name] = backup_data
+				# Also save the backup to current to fix corruption
+				save_json(backup_data, current_data_path)
+			else:
+				print("Using default data for %s" % data_name)
+				game_data[data_name] = Dicts.reference_data[data_name].duplicate(true)
+				# Save default data to both files
+				save_json(game_data[data_name], current_data_path)
+				save_json(game_data[data_name], backup_data_path)
+		else:
+			# Current data is valid
+			game_data[data_name] = current_data
+			
+			# If current and backup don't match, update backup
+			if current_data_str != backup_data_str:
+				print("Updating backup for %s" % data_name)
+				save_json(current_data, backup_data_path)
 	
-	game_data["quests"] = load_json_file(_get_current_path("quests"))
+	# Process loaded data
+	if game_data.has("reload_data"):
+		if game_data["reload_data"].has("last_position"):
+			Global.player.global_position = _string_to_vector2(game_data["reload_data"]["last_position"])
+		
+		if game_data["reload_data"].has("acquired_weapons"):
+			for weapon_scene_path: String in game_data["reload_data"]["acquired_weapons"]:
+				Global.player.projectiles.append(load(weapon_scene_path))
+				if Global.player.projectiles:
+					Global.player.current_projectile = Global.player.projectiles[0]
+			
+		if game_data["reload_data"].has("last_level"):
+			Global.game_manager.current_level = load(game_data["reload_data"]["last_level"]).instantiate()
 	
-	Global.player.global_position = _string_to_vector2(game_data["reload_data"]["last_position"])
-	
-	for faction_number: String in game_data["factions_data"].keys(): # convert all factions to int
-		game_data["factions_data"][int(faction_number)] = game_data["factions_data"][faction_number]
-		game_data["factions_data"].erase(faction_number)
+	# Convert faction keys from string to int
+	if game_data.has("factions_data"):
+		var factions_copy: Dictionary = game_data["factions_data"].duplicate()
+		game_data["factions_data"].clear()
+		for faction_number: String in factions_copy.keys():
+			game_data["factions_data"][int(faction_number)] = factions_copy[faction_number]
+			
+	if Player.get_stat("health") == 0:
+		Player.change_stat("health = 10") # Ensure health is set to a feasible value (in case it saved with 0 health)
 	
 	print("Game data loaded...")
-	
 	is_data_loaded = true
 	data_loaded.emit()
 
@@ -46,9 +100,37 @@ func _string_to_vector2(input: String) -> Vector2:
 
 func _get_current_path(data_name: String) -> String:
 	return "res://data/%s_current.json" % [data_name]
-# ----- Data Backup And Clearing -----
 	
-func save_data_changes() -> void: # Safely updates and stores current and backup data
+func _get_backup_path(data_name: String) -> String:
+	return "res://data/%s_backup.json" % [data_name]
+# ----- Data Backup And Clearing -----
+func verify_data_integrity() -> bool:
+	var all_valid: bool = true
+	
+	# Check all data files
+	for data_name: String in Dicts.reference_data.keys():
+		var current_path: String = _get_current_path(data_name)
+		var backup_path: String = _get_backup_path(data_name)
+		
+		if not FileAccess.file_exists(current_path) or not FileAccess.file_exists(backup_path):
+			print("Missing data file for: ", data_name)
+			all_valid = false
+			continue
+		
+		var current_data: Dictionary = load_json_file(current_path)
+		var backup_data: Dictionary = load_json_file(backup_path)
+		
+		if current_data.is_empty() and not game_data[data_name].is_empty():
+			print("Current data file is empty for: ", data_name)
+			all_valid = false
+		
+		if backup_data.is_empty() and not game_data[data_name].is_empty():
+			print("Backup data file is empty for: ", data_name)
+			all_valid = false
+	
+	return all_valid
+
+func save_data_changes() -> void:
 	# Save quests data with backup
 	_save_data_with_backup("quests")
 	
@@ -56,37 +138,45 @@ func save_data_changes() -> void: # Safely updates and stores current and backup
 	for data_name: String in Dicts.reference_data.keys():
 		_save_data_with_backup(data_name)
 	
+	# Verify data integrity
+	var is_valid: bool = verify_data_integrity()
+	if is_valid:
+		print("All data saved successfully and verified.")
+	else:
+		print("WARNING: Some data may not have been saved correctly!")
+	
 	data_saved.emit()
-	print("All non-static data has been saved with backups.")
 	
 func _save_data_with_backup(data_name: String) -> void:
 	# Get file paths
 	var current_data_path: String = _get_current_path(data_name)
-	var backup_data_path: String = current_data_path.replace("_current", "_backup")
+	var backup_data_path: String = _get_backup_path(data_name)
 	var temp_data_path: String = current_data_path.replace("_current", "_temp")
 	
-	# Step 1: Copy current JSON to make copied JSON
-	var current_data: Dictionary = load_json_file(current_data_path)
-	var success_temp_save: bool = save_json(current_data, temp_data_path)
+	# Step 1: Save the NEW data to temp file first
+	var new_data: Dictionary = game_data[data_name]
+	var success_temp_save: bool = save_json(new_data, temp_data_path)
 	if not success_temp_save:
-		print("Failed to create temporary copy for: ", data_name)
+		print("Failed to create temporary file for: ", data_name)
 		return
 	
-	# Step 2: Edit copied JSON to make new JSON (already done in memory)
-	# The changes are already in Data.game_data[data_name]
-	
-	# Step 3: Copied JSON overwrites _backup
-	var success_backup: bool = save_json(current_data, backup_data_path)
-	if not success_backup:
-		print("Failed to create backup for: ", data_name)
-		# Clean up temp file
-		var temp_dir: DirAccess = DirAccess.open("res://data/")
-		if temp_dir:
-			temp_dir.remove(temp_data_path)
+	# Step 2: Verify temp file was written correctly
+	var temp_data: Dictionary = load_json_file(temp_data_path)
+	if temp_data.is_empty() and not new_data.is_empty():
+		print("Temp file verification failed for: ", data_name)
 		return
 	
-	# Step 4: Edited JSON overwrites current
-	var success_current: bool = save_json(game_data[data_name], current_data_path)
+	# Step 3: Move current to backup (only if current exists and is valid)
+	if FileAccess.file_exists(current_data_path):
+		var current_data: Dictionary = load_json_file(current_data_path)
+		if not current_data.is_empty():
+			var success_backup: bool = save_json(current_data, backup_data_path)
+			if not success_backup:
+				print("Failed to create backup for: ", data_name)
+				return
+	
+	# Step 4: Move temp to current
+	var success_current: bool = save_json(new_data, current_data_path)
 	if not success_current:
 		print("Failed to save current data for: ", data_name)
 		return
@@ -112,7 +202,7 @@ func clear_data() -> void: # Resets all current and backup files to default
 	var quests_ref_path: String = _get_current_path("quests").replace("_current", "")
 	var quests_ref_data: Dictionary = load_json_file(quests_ref_path)
 	save_json(quests_ref_data, _get_current_path("quests"))
-	save_json(quests_ref_data, _get_current_path("quests").replace("_current", "_backup"))
+	save_json(quests_ref_data, _get_backup_path("quests"))
 	game_data["quests"] = quests_ref_data.duplicate(true)
 	
 	print("All data have been reset to defaults.")

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cifc518lollhl" path="res://scenes/levels/level_3.tscn" id="3_bfxgj"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/tiles.tres" id="3_m7ahb"]
 [ext_resource type="PackedScene" uid="uid://c2egw80ivqb1j" path="res://scenes/npcs/steve.tscn" id="7_oc4kc"]
-[ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/player_detectors.gd" id="7_s8va5"]
+[ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="7_s8va5"]
 [ext_resource type="Texture2D" uid="uid://cxjsf1r5s3fh2" path="res://assets/textures/godot.png" id="9_dga24"]
 [ext_resource type="PackedScene" uid="uid://drv2an0hti84j" path="res://scenes/projectiles/fireball_pickup.tscn" id="9_excbq"]
 [ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawnpoint.tscn" id="9_qxy0u"]
@@ -68,12 +68,3 @@ shape = SubResource("RectangleShape2D_ootpb")
 [node name="FireballBook" parent="." instance=ExtResource("9_excbq")]
 position = Vector2(7, 224)
 scale = Vector2(0.446467, 0.446467)
-
-[connection signal="body_entered" from="PortalLevel2" to="PortalLevel2" method="_on_body_entered"]
-[connection signal="body_exited" from="PortalLevel2" to="PortalLevel2" method="_on_body_exited"]
-[connection signal="mouse_entered" from="PortalLevel2" to="PortalLevel2" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="PortalLevel2" to="PortalLevel2" method="_on_mouse_exited"]
-[connection signal="body_entered" from="PortalLevel3" to="PortalLevel3" method="_on_body_entered"]
-[connection signal="body_exited" from="PortalLevel3" to="PortalLevel3" method="_on_body_exited"]
-[connection signal="mouse_entered" from="PortalLevel3" to="PortalLevel3" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="PortalLevel3" to="PortalLevel3" method="_on_mouse_exited"]

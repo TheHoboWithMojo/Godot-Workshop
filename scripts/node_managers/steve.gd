@@ -4,10 +4,11 @@ extends CharacterBody2D
 @export var collision_on: bool = true
 @export var hostile: bool = false
 @export var debugging: bool
+@export var repulsion_strength: float = 5000.0
 @export var base_speed: float = 3500.0
 @export var base_damage: float = 10.0
 @export var base_health: float = 30
-@export var perception: float = 50.0
+@export var perception: float = 200.0
 @export var exp_on_kill: int = 10
 
 ########## NODES #######################
@@ -23,10 +24,14 @@ extends CharacterBody2D
 
 ####### RUNTIME VARIABLES ##############
 @onready var nomen: String = "steve"
-@onready var faction: int = Factions.factions.NEW_CALIFORNIA_REPUBLIC
+@onready var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
 @onready var master: Object
 
+signal player_entered_area
+
 func _ready() -> void:
+	player_entered_area.connect(_on_player_entered_bubble)
+	
 	for timeline: DialogicTimeline in timelines:
 		Dialogic.preload_timeline(timeline)
 		
@@ -38,53 +43,18 @@ func _ready() -> void:
 	master = Being.create_being(self)
 	
 	master.toggle_collision(collision_on)
-		
-func _process(_delta: float) -> void:
-	converse()
+
+func _on_player_entered_bubble(bubble: Area2D) -> void:
+	while Global.is_touching_player(bubble):
+		if Input.is_action_just_pressed("interact"):
+			Dialogue.start("npc")
+			break
+		await get_tree().process_frame
 
 #var first_time_hostile: bool = true
 func _physics_process(delta: float) -> void:
 	if master.is_hostile():
-		var vector_to_player: Vector2 =  Global.get_vector_to_player(self)
-		var direction: Vector2 = vector_to_player.normalized()
-		var detection_range: float = perception * 10
-		
-		if vector_to_player.length() < detection_range:
-			velocity = direction * master.speed * delta * Global.speed_mult
-			if velocity.length() > 0:
-				master.play_animation("run")
-			if direction.x < 0:
-				master.flip_sprite(true)
-			else:
-				master.flip_sprite(false)
-			
-			move_and_slide()
-	else:
-		master.play_animation("idle")
-
-func converse() -> void:
-	if master.is_touching_player:
-		if Global.player_touching_node == Global.cursor_touching_node:
-			if Input.is_action_just_pressed("interact"):
-				Dialogue.start("npc")
-			
-func _on_area_body_entered(body: Node2D) -> void:
-	if body == Global.player:
-		master.is_touching_player = true
-		Global.player_touching_node = area
-	
-	if master.is_hostile():
-		while master.is_touching_player:
+		master.approach_player(delta, perception, repulsion_strength)
+		if master.is_touching_player:
 			Player.damage(master._damage)
-			await Global.delay(self, 0.1) # avoid overload
-
-func _on_area_body_exited(body: Node2D) -> void:
-	if body == Global.player:
-		master.is_touching_player = false
-		Global.player_touching_node = null
-
-func _on_area_mouse_entered() -> void:
-	Global.cursor_touching_node = area
-
-func _on_area_mouse_exited() -> void:
-	Global.cursor_touching_node = null
+	move_and_slide()

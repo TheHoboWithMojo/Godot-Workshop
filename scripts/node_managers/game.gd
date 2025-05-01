@@ -80,8 +80,8 @@ func load_data() -> void:
 		if Data.is_data_cleared != true:
 			await Data.data_cleared
 	Data.load_game_data() # Load _current data into the game
-	Player.change_stat("health = %s" % [Player.get_stat("max_health")]) # Ensure health is set to max (in case it saved with 0 health)
-	current_level = load(Data.game_data.reload_data.last_level).instantiate()
+	if not Data.is_data_loaded:
+		await Data.data_loaded
 	
 func boot_dialogic() -> void:
 	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets
@@ -94,8 +94,6 @@ func connect_signals() -> void:
 	
 func ready_up() -> void:
 	# Wait for ALL SIGNALS BEFORE STARTING
-	if not Data.is_data_loaded:
-		await Data.data_loaded
 	if not is_level_loaded:
 		await level_loaded
 	is_ready_to_start = true

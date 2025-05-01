@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c2egw80ivqb1j"]
+[gd_scene load_steps=31 format=3 uid="uid://c2egw80ivqb1j"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/steve.gd" id="1_xsdk0"]
 [ext_resource type="Resource" uid="uid://c81oivvmsqqk0" path="res://dialogic/styles/alt.tres" id="2_6ikfg"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="4_daltg"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]
 [ext_resource type="Resource" uid="uid://pqv0ekhju17r" path="res://dialogic/timelines/npc.dtl" id="5_ojn1p"]
+[ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="6_aygba"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="9_6ikfg"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="11_aygba"]
 
@@ -164,8 +165,11 @@ position = Vector2(6.5, 1.5)
 scale = Vector2(0.393528, -0.360268)
 shape = SubResource("RectangleShape2D_rv78h")
 
-[node name="Area" type="Area2D" parent="."]
+[node name="Area" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 position = Vector2(1, 0)
+script = ExtResource("6_aygba")
+parent = NodePath("..")
+detect_mouse = false
 
 [node name="Collision" type="CollisionShape2D" parent="Area"]
 position = Vector2(5.5, 1.5)
@@ -186,9 +190,3 @@ offset_bottom = 232.0
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_aygba")
-
-[connection signal="mouse_exited" from="." to="Area" method="_on_mouse_exited"]
-[connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]
-[connection signal="body_exited" from="Area" to="." method="_on_area_body_exited"]
-[connection signal="mouse_entered" from="Area" to="." method="_on_area_mouse_entered"]
-[connection signal="mouse_exited" from="Area" to="." method="_on_area_mouse_exited"]

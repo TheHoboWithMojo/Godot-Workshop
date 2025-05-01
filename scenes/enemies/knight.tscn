@@ -1,6 +1,6 @@
 [gd_scene load_steps=26 format=3 uid="uid://15uoupcpxi20"]
 
-[ext_resource type="Script" uid="uid://brm0xjl72lqnv" path="res://scripts/node_managers/knight.gd" id="1_xxsvc"]
+[ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/enemy.gd" id="1_n53qi"]
 [ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="2_abqhh"]
 [ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_swm0g"]
 [ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="3_rv78h"]
@@ -145,8 +145,7 @@ animations = [{
 
 [node name="Knight" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
-script = ExtResource("1_xxsvc")
-nomen = "Knight"
+script = ExtResource("1_n53qi")
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Area")

@@ -17,6 +17,8 @@ func _on_body_entered(body: Node2D) -> void:
 		entered = true
 		body.master.take_damage(damage)
 		destroy()
+	elif not body == Global.player:
+		destroy()
 
 func _on_body_exited(_body: Node2D) -> void:
 	if not entered:

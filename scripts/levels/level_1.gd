@@ -11,9 +11,20 @@ extends Node2D
 @export var steve: CharacterBody2D
 @onready var enemies_dict: Dictionary[String, PackedScene] = {}
 
+signal player_entered_area
+
 func _ready() -> void:
 	init_dicts()
+	player_entered_area.connect(_on_player_entered_portal)
 	
+func _on_player_entered_portal(portal: Area2D) -> void: # open the portal if the player and cursor touch the portal
+	while Global.is_touching_player(portal):
+		if Global.is_touching_mouse(portal):
+			if Input.is_action_just_pressed("interact"):
+				Global.game_manager.level_changed.emit(self, linked_levels_dict[portal])
+				break
+		await get_tree().process_frame
+
 func init_dicts() -> void:
 	for enemy: PackedScene in enemies:
 		var enemy_name: String = Global.get_rawname(enemy)
@@ -25,12 +36,3 @@ func init_dicts() -> void:
 		
 	for portal: Area2D in linked_levels_dict:
 		portal.add_to_group("interactable")
-		
-func _process(_delta: float) -> void:
-	if Global.player_touching_node:
-		if Global.player_touching_node in linked_levels_dict.keys():
-				open_portal(Global.player_touching_node)
-		
-func open_portal(portal: Area2D) -> void:
-	if Input.is_action_just_pressed("interact"):
-		Global.game_manager.level_changed.emit(self, linked_levels_dict[portal])

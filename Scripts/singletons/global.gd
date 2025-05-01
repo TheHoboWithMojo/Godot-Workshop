@@ -15,10 +15,14 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var speed_mult: float = 1.0
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
-@onready var player_touching_node: Area2D = null
-@onready var cursor_touching_node: Area2D = null
+@onready var player_touching_node: Variant = null
+@onready var mouse_touching_node: Variant = null
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
+@onready var delta: float = 0.0
 
+func _process(_delta: float) -> void:
+	delta = _delta
+	
 # Stat Constraints
 var stat_constraints: Dictionary = {
 	"speed": {
@@ -40,6 +44,12 @@ var stat_constraints: Dictionary = {
 # =============================================
 func _ready() -> void:
 	game_reloaded.connect(_on_game_reloaded)
+	
+func is_touching_player(node: Node) -> bool:
+	return node == Global.player_touching_node
+	
+func is_touching_mouse(node: Node) -> bool:
+	return node == Global.mouse_touching_node
 
 func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player = get_node(PLAYER_PATH)
