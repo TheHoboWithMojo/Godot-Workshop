@@ -13,8 +13,7 @@ var _exp_on_kill: int = 0
 var _alive: bool = true
 var _hostile: bool = false
 var _debugging: bool = false
-var _character: bool = false # in the characters dict?
-var is_touching_player: bool = false
+var is_character: bool = false # in the characters dict?
 var vincible: bool = true
 # Nodes
 var _sprite: AnimatedSprite2D = null
@@ -115,17 +114,19 @@ var hostile: bool:
 
 # Use a dictionary for optional parameters
 func _init(params: Dictionary = {}) -> void:
-	# First set debugging properties
+	
 	_debugging = params.get("debugging", false)
+	
 	_slave = params.get("slave", null)
-	_nomen = params.get("nomen", "unnamed")
 	
 	if _slave == null:
-		Debug.throw_error(self, "init", "Could not initiate slave")
+		Debug.throw_error(self, "init", "Could not initiate being")
 		return
-
-	if "character" in _slave and _nomen in Data.game_data["characters"].keys():
-		_character = true
+	
+	_nomen = params.get("nomen", "")
+	
+	if _nomen and Dialogue.character_exists(_nomen):
+		is_character = true
 		if not Data.game_data["characters"][_nomen]["alive"]:
 			_slave.queue_free()
 			return
@@ -136,11 +137,8 @@ func _init(params: Dictionary = {}) -> void:
 		print("[Being] Constructor called by ", _slave.name)
 	
 	_faction = params.get("faction", -1)
-	if not Factions.faction_exists(_faction) and _faction != -1:
-		Debug.throw_error(self, "_init", "Faction %s does not exist" % [_faction])
-		_faction = -1
-	else:
-		_slave.add_to_group(Factions.FACTIONS.keys()[_faction])
+	if Factions.faction_exists(_faction):
+		_slave.add_to_group(Factions.get_faction(_faction))
 		
 	# Store node components and track missing ones
 	_sprite = params.get("sprite", null)
@@ -203,35 +201,36 @@ func heal(amount: float) -> void:
 	health += amount
 
 func approach_player(delta: float, perception: float, repulsion_strength: float) -> void:
-	var vector_to_player: Vector2 =  Global.get_vector_to_player(_slave)
-	var direction: Vector2 = vector_to_player.normalized()
-	
-	if vector_to_player.length() < perception:
-		_slave.velocity = direction * _speed * delta * Global.speed_mult
-		if _slave.velocity.length() > 0:
-			play_animation("run")
+	if _alive:
+		var vector_to_player: Vector2 =  Global.get_vector_to_player(_slave)
+		var direction: Vector2 = vector_to_player.normalized()
+		
+		if vector_to_player.length() < perception:
+			_slave.velocity = direction * _speed * delta * Global.speed_mult
+			if _slave.velocity.length() > 0:
+				play_animation("run")
+			else:
+				play_animation("idle")
+			if direction.x < 0:
+				flip_sprite(true)
+			else:
+				flip_sprite(false)
+			if Global.is_touching_player(_slave) and Global.get_vector_to_player(_slave).length() < 10:
+				var repulsion_vector: Vector2 = -direction * repulsion_strength * delta
+				_slave.velocity += repulsion_vector
 		else:
+			_slave.velocity = Vector2.ZERO
 			play_animation("idle")
-		if direction.x < 0:
-			flip_sprite(true)
-		else:
-			flip_sprite(false)
-		if Global.is_touching_player(_slave):
-			print("hello")
-			var repulsion_vector: Vector2 = -direction * repulsion_strength * delta
-			_slave.velocity += repulsion_vector
-	else:
-		_slave.velocity = Vector2.ZERO
-		play_animation("idle")
 
 func die() -> void:
+	_slave.velocity = Vector2.ZERO
 	_slave.set_physics_process(false)
 	_slave.set_process(false)
 	
 	if _alive == true:
 		_alive = false # Stops from piling calls
 		
-		if _character:
+		if is_character:
 			Data.game_data["characters"][_nomen]["alive"] = false
 		
 		speed = 0
@@ -243,6 +242,10 @@ func die() -> void:
 		
 		if Factions.faction_exists(_faction):
 			Factions.log_decision(_faction, "killed a member.", -100)
+			if Factions.get_rep_status(_faction) == "hostile":
+				var allies: Array = get_tree().get_nodes_in_group(Factions.get_faction(_faction))
+				for ally: Node2D in allies:
+					ally.master.set_hostile(true)
 		
 		if _animator != null and _animator.is_playing():
 			await _animator.animation_finished
@@ -430,7 +433,7 @@ static func create_being(self_node: Node) -> Being:
 		
 	@warning_ignore("untyped_declaration")
 	var nomen = self_node.get("nomen")
-	if nomen != null and nomen != "":
+	if nomen != null:
 		params["nomen"] = nomen
 		
 	@warning_ignore("untyped_declaration")
@@ -445,8 +448,9 @@ static func create_being(self_node: Node) -> Being:
 		
 	@warning_ignore("untyped_declaration")
 	var faction = self_node.get("faction")
-	if Factions.faction_exists(faction):
-		params["faction"] = faction
+	if faction != null:
+		if Factions.faction_exists(faction):
+			params["faction"] = faction
 	
 	@warning_ignore("untyped_declaration")
 	var vincible_ = self_node.get("vincible")

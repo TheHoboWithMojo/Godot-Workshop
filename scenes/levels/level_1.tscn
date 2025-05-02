@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=4 uid="uid://dkmfae421te6a"]
 
-[ext_resource type="Script" uid="uid://dd8gh6rhn2g1o" path="res://scripts/levels/level_1.gd" id="1_dopym"]
+[ext_resource type="Script" uid="uid://dd8gh6rhn2g1o" path="res://scripts/levels/level.gd" id="1_dopym"]
 [ext_resource type="PackedScene" uid="uid://bu4uplrikwht3" path="res://scenes/levels/level_2.tscn" id="2_m7ahb"]
 [ext_resource type="PackedScene" uid="uid://cifc518lollhl" path="res://scenes/levels/level_3.tscn" id="3_bfxgj"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/tiles.tres" id="3_m7ahb"]
@@ -16,7 +16,7 @@ size = Vector2(33, 49)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ootpb"]
 size = Vector2(33, 50)
 
-[node name="Level1" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints", "linked_levels_dict", "steve")]
+[node name="Level1" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints", "linked_levels_dict")]
 script = ExtResource("1_dopym")
 tiles = NodePath("Tiles")
 checkpoints = [NodePath("SpawnPoint"), NodePath("SpawnPoint2")]
@@ -24,7 +24,6 @@ linked_levels_dict = {
 NodePath("PortalLevel2"): ExtResource("2_m7ahb"),
 NodePath("PortalLevel3"): ExtResource("3_bfxgj")
 }
-steve = NodePath("Steve")
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -51,6 +50,7 @@ position = Vector2(128, 15)
 [node name="PortalLevel2" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
 script = ExtResource("7_s8va5")
 parent = NodePath("..")
+multiple_areas = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PortalLevel2"]
 position = Vector2(-79.5, -55.5)
@@ -60,6 +60,7 @@ shape = SubResource("RectangleShape2D_u5sy4")
 position = Vector2(0, -1)
 script = ExtResource("7_s8va5")
 parent = NodePath("..")
+multiple_areas = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PortalLevel3"]
 position = Vector2(96, -55)

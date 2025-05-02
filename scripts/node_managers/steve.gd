@@ -1,9 +1,10 @@
 extends CharacterBody2D
-######## STATS #####################
 @export var active: bool = true
 @export var collision_on: bool = true
 @export var hostile: bool = false
 @export var debugging: bool
+
+@export_group("Stats")
 @export var repulsion_strength: float = 5000.0
 @export var base_speed: float = 3500.0
 @export var base_damage: float = 10.0
@@ -11,13 +12,14 @@ extends CharacterBody2D
 @export var perception: float = 200.0
 @export var exp_on_kill: int = 10
 
-########## NODES #######################
+@export_group("Nodes")
 @export var sprite: AnimatedSprite2D
 @export var collider: CollisionShape2D
 @export var area: Area2D
 @export var health_bar: TextureProgressBar
 @export var audio: AudioStreamPlayer2D
 
+@export_group("Character")
 @export var style: DialogicStyle
 @export var character: DialogicCharacter
 @export var timelines: Array[DialogicTimeline]
@@ -30,7 +32,7 @@ extends CharacterBody2D
 signal player_entered_area
 
 func _ready() -> void:
-	player_entered_area.connect(_on_player_entered_bubble)
+	player_entered_area.connect(_check_for_dialog)
 	
 	for timeline: DialogicTimeline in timelines:
 		Dialogic.preload_timeline(timeline)
@@ -44,17 +46,16 @@ func _ready() -> void:
 	
 	master.toggle_collision(collision_on)
 
-func _on_player_entered_bubble(bubble: Area2D) -> void:
-	while Global.is_touching_player(bubble):
+func _check_for_dialog() -> void:
+	while Global.is_touching_player(self):
 		if Input.is_action_just_pressed("interact"):
 			Dialogue.start("npc")
 			break
 		await get_tree().process_frame
 
-#var first_time_hostile: bool = true
 func _physics_process(delta: float) -> void:
 	if master.is_hostile():
 		master.approach_player(delta, perception, repulsion_strength)
-		if master.is_touching_player:
+		if Global.is_touching_player(self):
 			Player.damage(master._damage)
 	move_and_slide()

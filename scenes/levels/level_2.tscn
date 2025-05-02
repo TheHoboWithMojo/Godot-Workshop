@@ -1,13 +1,13 @@
 [gd_scene load_steps=6 format=4 uid="uid://bu4uplrikwht3"]
 
-[ext_resource type="Script" uid="uid://civhfk7m7jl31" path="res://scripts/levels/level_2.gd" id="1_d6fun"]
+[ext_resource type="Script" uid="uid://dd8gh6rhn2g1o" path="res://scripts/levels/level.gd" id="1_l37oo"]
 [ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/enemies/knight.tscn" id="2_71baw"]
 [ext_resource type="TileSet" uid="uid://d0btesf5evuvi" path="res://assets/tiles.tres" id="2_if4l3"]
 [ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawnpoint.tscn" id="4_fiq81"]
 [ext_resource type="PackedScene" uid="uid://ipkbgynn416e" path="res://scenes/projectiles/orb_pickup.tscn" id="5_l37oo"]
 
 [node name="Level2" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
-script = ExtResource("1_d6fun")
+script = ExtResource("1_l37oo")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_71baw")])
 checkpoints = [NodePath("SpawnPoint")]

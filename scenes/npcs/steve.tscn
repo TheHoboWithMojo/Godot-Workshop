@@ -170,6 +170,7 @@ position = Vector2(1, 0)
 script = ExtResource("6_aygba")
 parent = NodePath("..")
 detect_mouse = false
+emit_area_as_argument = false
 
 [node name="Collision" type="CollisionShape2D" parent="Area"]
 position = Vector2(5.5, 1.5)

@@ -64,8 +64,15 @@ func string_to_enum(string: String, enum_reference: Variant) -> int:
 	string = string.to_snake_case().to_upper()
 	return enum_reference[string]
 
-func enum_to_camelcase(value: int, enum_reference: Variant) -> String:
-	return enum_reference.keys()[value].to_lower()
+func enum_to_camelcase(index: int, enum_reference: Variant) -> String:
+	return enum_reference.keys()[index].to_lower()
+	
+func enum_to_title(index: int, enum_reference: Variant) -> String:
+	var title: String = ""
+	var words: PackedStringArray = enum_to_camelcase(index, enum_reference).split("_")
+	for word: String in words:
+		title += word.capitalize() + " "
+	return title.strip_edges()
 
 func swap_scenes(self_node: Node, new_scene: PackedScene) -> void:
 	self_node.queue_free()

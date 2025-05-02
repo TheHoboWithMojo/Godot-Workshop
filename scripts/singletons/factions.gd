@@ -69,6 +69,9 @@ func get_rep_status(faction: int) -> String:
 		
 func faction_exists(faction: int) -> bool:
 	return faction in FACTIONS.values()
+	
+func get_faction(faction: int) -> String:
+	return Global.enum_to_title(faction, FACTIONS)
 		
 func get_rep_num(faction: int) -> int:
 	if faction_exists(faction):

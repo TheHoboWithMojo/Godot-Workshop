@@ -30,6 +30,9 @@ func _is_timeline_repeatable(timeline: String) -> bool:
 
 func _is_timeline_running() -> bool:
 	return Dialogic.current_timeline != null
+	
+func character_exists(nomen: String) -> bool:
+	return nomen in Data.game_data["characters"].keys()
 
 func _ready() -> void:
 	Dialogic.signal_event.connect(_on_dialogic_signal)
