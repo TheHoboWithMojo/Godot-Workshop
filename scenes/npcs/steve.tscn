@@ -1,193 +1,62 @@
-[gd_scene load_steps=31 format=3 uid="uid://c2egw80ivqb1j"]
+[gd_scene load_steps=12 format=3 uid="uid://c2egw80ivqb1j"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/steve.gd" id="1_xsdk0"]
-[ext_resource type="Resource" uid="uid://c81oivvmsqqk0" path="res://dialogic/styles/alt.tres" id="2_6ikfg"]
-[ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_tdk7l"]
-[ext_resource type="Resource" uid="uid://doh70t5q7p001" path="res://dialogic/characters/steve.dch" id="3_aygba"]
-[ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="3_yvwvd"]
-[ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="4_daltg"]
+[ext_resource type="Resource" uid="uid://dtggg7ri521b4" path="res://dialogic/characters/steve.dch" id="3_aygba"]
+[ext_resource type="Resource" uid="uid://mjqoqipd2845" path="res://dialogic/timelines/opening.dtl" id="4_7153j"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]
-[ext_resource type="Resource" uid="uid://pqv0ekhju17r" path="res://dialogic/timelines/npc.dtl" id="5_ojn1p"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="6_aygba"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="9_6ikfg"]
+[ext_resource type="Texture2D" uid="uid://gsh35box3r66" path="res://assets/rogues.png" id="9_ysohf"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="11_aygba"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rv78h"]
-size = Vector2(53.3634, 80.4956)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ysohf"]
+size = Vector2(81.3157, 88.8228)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_xsdk0"]
-radius = 63.2409
+[sub_resource type="CircleShape2D" id="CircleShape2D_ysohf"]
+radius = 40.0001
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_k2txo"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(0, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mvyd6"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(48, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_14u3r"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(96, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3cm67"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(144, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w8y5l"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(192, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nw3uw"]
-atlas = ExtResource("2_tdk7l")
-region = Rect2(240, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rv78h"]
-atlas = ExtResource("3_yvwvd")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7n8xq"]
-atlas = ExtResource("3_yvwvd")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4wlns"]
-atlas = ExtResource("3_yvwvd")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tl2vt"]
-atlas = ExtResource("3_yvwvd")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hwkja"]
-atlas = ExtResource("4_daltg")
-region = Rect2(0, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0tygy"]
-atlas = ExtResource("4_daltg")
-region = Rect2(64, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sptji"]
-atlas = ExtResource("4_daltg")
-region = Rect2(128, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v4e37"]
-atlas = ExtResource("4_daltg")
-region = Rect2(192, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1h837"]
-atlas = ExtResource("4_daltg")
-region = Rect2(256, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gl1un"]
-atlas = ExtResource("4_daltg")
-region = Rect2(320, 32, 64, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_rv78h"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k2txo")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mvyd6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_14u3r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3cm67")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w8y5l")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nw3uw")
-}],
-"loop": false,
-"name": &"die",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rv78h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7n8xq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4wlns")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tl2vt")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hwkja")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0tygy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sptji")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_v4e37")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1h837")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gl1un")
-}],
-"loop": true,
-"name": &"run",
-"speed": 5.0
-}]
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ikfg"]
+atlas = ExtResource("9_ysohf")
+region = Rect2(32, 64, 32, 32)
 
 [node name="Steve" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
 script = ExtResource("1_xsdk0")
 sprite = NodePath("Sprite")
 collider = NodePath("Collider")
-area = NodePath("Area")
+area = NodePath("Bubble")
 health_bar = NodePath("HealthBar")
 audio = NodePath("Audio")
-style = ExtResource("2_6ikfg")
 character = ExtResource("3_aygba")
-timelines = Array[ExtResource("4_r5v4l")]([ExtResource("5_ojn1p")])
+timelines = Array[ExtResource("4_r5v4l")]([ExtResource("4_7153j")])
 
 [node name="Collider" type="CollisionShape2D" parent="."]
-position = Vector2(6.5, 1.5)
+position = Vector2(-4.76837e-07, 0)
 scale = Vector2(0.393528, -0.360268)
-shape = SubResource("RectangleShape2D_rv78h")
+shape = SubResource("RectangleShape2D_ysohf")
 
-[node name="Area" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-position = Vector2(1, 0)
+[node name="Bubble" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
+position = Vector2(-40, 0)
+scale = Vector2(-0.799999, 1)
 script = ExtResource("6_aygba")
 parent = NodePath("..")
 detect_mouse = false
 emit_area_as_argument = false
 
-[node name="Collision" type="CollisionShape2D" parent="Area"]
-position = Vector2(5.5, 1.5)
-scale = Vector2(0.393528, -0.360268)
-shape = SubResource("CircleShape2D_xsdk0")
-
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(8, 0)
-sprite_frames = SubResource("SpriteFrames_rv78h")
-animation = &"die"
-autoplay = "idle"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bubble"]
+position = Vector2(-50.0001, 0)
+scale = Vector2(1, 0.75)
+shape = SubResource("CircleShape2D_ysohf")
 
 [node name="HealthBar" parent="." instance=ExtResource("9_6ikfg")]
-offset_left = -8.0
-offset_top = 14.0
-offset_right = 852.0
-offset_bottom = 232.0
+offset_left = -16.0
+offset_top = 16.0
+offset_right = 853.0
+offset_bottom = 269.0
+scale = Vector2(0.0368332, 0.0316821)
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_aygba")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_6ikfg")

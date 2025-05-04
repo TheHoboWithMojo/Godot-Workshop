@@ -13,7 +13,7 @@ extends CharacterBody2D
 @export var exp_on_kill: int = 10
 
 @export_group("Nodes")
-@export var sprite: AnimatedSprite2D
+@export var sprite: Sprite2D
 @export var collider: CollisionShape2D
 @export var area: Area2D
 @export var health_bar: TextureProgressBar
@@ -36,8 +36,6 @@ func _ready() -> void:
 	
 	for timeline: DialogicTimeline in timelines:
 		Dialogic.preload_timeline(timeline)
-		
-	preload("res://dialogic/styles/alt.tres")
 	
 	add_to_group("interactable")
 	add_to_group("npc")
@@ -49,7 +47,7 @@ func _ready() -> void:
 func _check_for_dialog() -> void:
 	while Global.is_touching_player(self):
 		if Input.is_action_just_pressed("interact"):
-			Dialogue.start("npc")
+			Dialogue.start("opening")
 			break
 		await get_tree().process_frame
 

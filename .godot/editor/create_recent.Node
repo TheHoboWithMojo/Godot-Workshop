@@ -1,3 +1,8 @@
+TileMapLayer
+Camera2D
+Sprite2D
+CollisionShape2D
+Area2D
 TextureProgressBar
 MarginContainer
 ColorRect
@@ -6,10 +11,5 @@ VBoxContainer
 HBoxContainer
 Control
 Container
-CollisionShape2D
-Area2D
 Marker2D
-Camera2D
 SubViewportContainer
-SubViewport
-CanvasLayer

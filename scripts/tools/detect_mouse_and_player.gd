@@ -28,7 +28,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == Global.player:
-		Global.mouse_touching_node = null
+		Global.player_touching_node = null
 		if parent.has_signal("player_exited_area"):
 			if emit_area_as_argument:
 				parent.player_exited_area.emit(self)

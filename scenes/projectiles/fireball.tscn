@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c3auaxssrpxle" path="res://scenes/projectiles/fireball.png" id="2_cb14k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t07v1"]
-size = Vector2(850.952, 319.107)
+size = Vector2(850.952, 354.563)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bphau"]
 atlas = ExtResource("2_cb14k")
@@ -88,13 +88,13 @@ audio = NodePath("Audio")
 collider = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 0.5)
 scale = Vector2(0.0282037, 0.0282037)
 shape = SubResource("RectangleShape2D_t07v1")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(-0.0762167, -0.0399797)
 rotation = -3.13821
-scale = Vector2(0.0282037, 0.0282037)
+scale = Vector2(-0.0284531, 0.0283764)
 sprite_frames = SubResource("SpriteFrames_s73vv")
 autoplay = "default"
 

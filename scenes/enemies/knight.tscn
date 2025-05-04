@@ -1,148 +1,20 @@
-[gd_scene load_steps=27 format=3 uid="uid://15uoupcpxi20"]
+[gd_scene load_steps=9 format=3 uid="uid://15uoupcpxi20"]
 
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/enemy.gd" id="1_n53qi"]
-[ext_resource type="Texture2D" uid="uid://bprcrigl2rny4" path="res://assets/texture pack/Entities/Npc's/Knight/Idle/Idle-Sheet.png" id="2_abqhh"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="2_lja41"]
-[ext_resource type="Texture2D" uid="uid://db4kurfmybyb3" path="res://assets/texture pack/Entities/Npc's/Knight/Death/Death-Sheet.png" id="2_swm0g"]
-[ext_resource type="Texture2D" uid="uid://vn43pr4ebso7" path="res://assets/texture pack/Entities/Npc's/Knight/Run/Run-Sheet.png" id="3_rv78h"]
+[ext_resource type="Texture2D" uid="uid://b1kiqdu0bwjs4" path="res://assets/monsters.png" id="5_p2k2a"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="6_n53qi"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="7_lja41"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rv78h"]
-size = Vector2(48.2811, 80.4956)
+size = Vector2(32, 32)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n53qi"]
-radius = 20.2237
+radius = 32.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_k2txo"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(0, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mvyd6"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(48, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_14u3r"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(96, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3cm67"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(144, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w8y5l"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(192, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nw3uw"]
-atlas = ExtResource("2_swm0g")
-region = Rect2(240, 0, 48, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rv78h"]
-atlas = ExtResource("2_abqhh")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7n8xq"]
-atlas = ExtResource("2_abqhh")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4wlns"]
-atlas = ExtResource("2_abqhh")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tl2vt"]
-atlas = ExtResource("2_abqhh")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hwkja"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(0, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0tygy"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(64, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sptji"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(128, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v4e37"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(192, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1h837"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(256, 32, 64, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gl1un"]
-atlas = ExtResource("3_rv78h")
-region = Rect2(320, 32, 64, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_rv78h"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k2txo")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mvyd6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_14u3r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3cm67")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w8y5l")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nw3uw")
-}],
-"loop": false,
-"name": &"die",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rv78h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7n8xq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4wlns")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tl2vt")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hwkja")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0tygy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sptji")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_v4e37")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1h837")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gl1un")
-}],
-"loop": true,
-"name": &"run",
-"speed": 5.0
-}]
+[sub_resource type="AtlasTexture" id="AtlasTexture_n53qi"]
+atlas = ExtResource("5_p2k2a")
+region = Rect2(96, 128, 32, 32)
 
 [node name="Knight" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
@@ -154,12 +26,10 @@ health_bar = NodePath("HealthBar")
 audio = NodePath("Audio")
 
 [node name="Collider" type="CollisionShape2D" parent="."]
-position = Vector2(7.5, 1.5)
-scale = Vector2(0.393528, -0.360268)
+position = Vector2(4.76837e-07, -4.76837e-07)
 shape = SubResource("RectangleShape2D_rv78h")
 
 [node name="Area" type="Area2D" parent="." node_paths=PackedStringArray("parent")]
-position = Vector2(8, 0)
 script = ExtResource("2_lja41")
 parent = NodePath("..")
 detect_mouse = false
@@ -167,17 +37,14 @@ detect_mouse = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area"]
 shape = SubResource("CircleShape2D_n53qi")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(8, 0)
-sprite_frames = SubResource("SpriteFrames_rv78h")
-animation = &"die"
-autoplay = "idle"
-
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("7_lja41")
 
 [node name="HealthBar" parent="." instance=ExtResource("6_n53qi")]
-offset_left = -7.0
-offset_top = 14.0
-offset_right = 853.0
-offset_bottom = 232.0
+offset_left = -16.0
+offset_top = 16.0
+offset_right = 844.0
+offset_bottom = 234.0
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_n53qi")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b1ojke28nhgec" path="res://scripts/node_managers/projectile_pickup.gd" id="1_kpxhg"]
 [ext_resource type="PackedScene" uid="uid://cp8eugxsx1ocq" path="res://scenes/projectiles/fireball.tscn" id="2_uo1hm"]
-[ext_resource type="Texture2D" uid="uid://d13atk41mae64" path="res://assets/texture pack/books.jpg" id="3_0r8ej"]
+[ext_resource type="Texture2D" uid="uid://d13atk41mae64" path="res://assets/books.jpg" id="3_0r8ej"]
 [ext_resource type="AudioStream" uid="uid://ugr5cy3vg55m" path="res://assets/sounds/pickup.mp3" id="4_jpncy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cy74l"]

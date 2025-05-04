@@ -85,7 +85,7 @@ func load_data() -> void:
 	
 func boot_dialogic() -> void:
 	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets
-	preload("res://dialogic/styles/default.tres") # Load generic dialogic style
+	preload("res://dialogic/styles/tryme.tres") # Load generic dialogic style
 	
 func connect_signals() -> void:
 	mob_died.connect(_on_mob_death)
@@ -189,7 +189,9 @@ func autosave() -> void:
 		if not _currently_autosaving:
 			_currently_autosaving = true
 			await Global.delay(self, 10)
+			Global.speed_mult = 0.0
 			Data.save_data_changes()
+			Global.speed_mult = 1.0
 # =========================================================================
 # ENEMY MANAGEMENT
 # =========================================================================

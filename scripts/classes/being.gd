@@ -16,7 +16,7 @@ var _debugging: bool = false
 var is_character: bool = false # in the characters dict?
 var vincible: bool = true
 # Nodes
-var _sprite: AnimatedSprite2D = null
+var _sprite: Sprite2D = null
 var _collider: CollisionShape2D = null
 var _area: Area2D = null
 var _animator: AnimationPlayer = null
@@ -207,20 +207,14 @@ func approach_player(delta: float, perception: float, repulsion_strength: float)
 		
 		if vector_to_player.length() < perception:
 			_slave.velocity = direction * _speed * delta * Global.speed_mult
-			if _slave.velocity.length() > 0:
-				play_animation("run")
-			else:
-				play_animation("idle")
-			if direction.x < 0:
-				flip_sprite(true)
-			else:
-				flip_sprite(false)
+			
+			_sprite.flip_h = (-PI/2 <= direction.angle() and direction.angle() <= PI/2)
+			
 			if Global.is_touching_player(_slave) and Global.get_vector_to_player(_slave).length() < 10:
 				var repulsion_vector: Vector2 = -direction * repulsion_strength * delta
 				_slave.velocity += repulsion_vector
 		else:
 			_slave.velocity = Vector2.ZERO
-			play_animation("idle")
 
 func die() -> void:
 	_slave.velocity = Vector2.ZERO
@@ -235,57 +229,38 @@ func die() -> void:
 		
 		speed = 0
 		
+		_health_bar.set_value(0)
+		
 		if _audio != null:
 			_audio.play()
-			
-		play_animation("die")
 		
 		if Factions.faction_exists(_faction):
 			Factions.log_decision(_faction, "killed a member.", -100)
 			if Factions.get_rep_status(_faction) == "hostile":
-				var allies: Array = get_tree().get_nodes_in_group(Factions.get_faction(_faction))
+				var allies: Array = _slave.get_tree().get_nodes_in_group(Factions.get_faction(_faction))
 				for ally: Node2D in allies:
 					ally.master.set_hostile(true)
 		
-		if _animator != null and _animator.is_playing():
-			await _animator.animation_finished
-		
-		elif _sprite != null and _sprite.is_playing():
-			await _sprite.animation_finished
-		
 		Global.game_manager.mob_died.emit()
 		Player.log_kill(_exp_on_kill)
+		await Global.delay(_slave, 1.0)
 		_slave.queue_free()
-
-func revive(revive_health: float = 100.0) -> void:
-	_alive = true
-	health = revive_health
 
 func is_alive() -> bool:
 	return _alive
 
 func is_hostile() -> bool:
 	return _hostile
+	
+func set_hostile(toggle: bool) -> void:
+	_hostile = toggle
 
 # ===== Sprite Component Functions =====
-
-func show_damage_effect() -> bool:
-	if _sprite == null:
-		return false
-	# Visual damage effect code
-	return true
-
-func show_healing_effect() -> bool:
-	if _sprite == null:
-		return false
-	# Visual healing effect code
-	return true
-
-func set_sprite_visible(_visible: bool) -> bool:
-	if _sprite == null:
-		return false
-	_sprite.visible = _visible
-	return true
+func toggle_visible(_visible: bool) -> bool:
+	if _sprite != null:
+		_sprite.visible = _visible
+		return true
+	return false
 
 func flip_sprite(flip_h: bool) -> bool:
 	if _sprite == null:
@@ -294,92 +269,42 @@ func flip_sprite(flip_h: bool) -> bool:
 	return true
 
 # ===== Collider Component Functions =====
-
-func move_to(_position: Vector2) -> bool:
-	if _collider == null:
-		return false
-	# Movement code here
-	return true
-
-func detect_collisions() -> bool:
-	if _collider == null:
-		return false
-	# Collision detection code
-	return true
-
 func toggle_collision(enabled: bool) -> bool:
-	if _collider == null:
-		return false
-	_collider.disabled = !enabled
-	return true
-
+	if _collider != null:
+		_collider.disabled = !enabled
+		return true
+	return false
 # ===== Area Component Functions =====
-
 func toggle_monitoring(enabled: bool) -> bool:
-	if _area == null:
-		return false
-	_area.monitoring = enabled
-	_area.monitorable = enabled
-	return true
+	if _area != null:
+		_area.monitoring = enabled
+		_area.monitorable = enabled
+		return true
+	return false
 
 func get_overlapping_bodies() -> Array:
-	if _area == null:
-		return []
-	return _area.get_overlapping_bodies()
+	if _area != null:
+		return _area.get_overlapping_bodies()
+	return []
 
 # ===== Animation Player Component Functions =====
-
 func play_animation(anim_name: String) -> bool:
-	if _animator == null and _sprite == null:
-		return false
-	
-	# Check AnimationPlayer first
 	if _animator != null and _animator.has_animation(anim_name):
 		_animator.play(anim_name)
 		return true
-	
-	# Check AnimatedSprite2D
-	if _sprite != null and anim_name in _sprite.sprite_frames.get_animation_names():
-		_sprite.play(anim_name)
-		return true
-	
 	return false
 
-func stop_animation() -> bool:
-	if _animator == null and _sprite == null:
-		return false
-	
-	var stopped: bool = false
-	
-	if _animator != null and _animator.is_playing():
-		_animator.stop()
-		stopped = true
-	
-	if _sprite != null and _sprite.is_playing():
-		_sprite.stop()
-		stopped = true
-	
-	return stopped
-
 func is_playing_animation() -> bool:
-	if _animator == null and _sprite == null:
-		return false
-	
-	if _animator != null and _animator.is_playing():
-		return true
-	
-	if _sprite != null and _sprite.is_playing():
-		return true
-	
+	if _animator != null:
+		return _animator.is_playing()
 	return false
 
 func get_current_animation() -> String:
-	if _animator == null:
-		return ""
-	return _animator.current_animation
+	if _animator != null:
+		return _animator.current_animation
+	return ""
 
 # ===== Static Functions =====
-
 static func create_being(self_node: Node) -> Being:
 	var params: Dictionary = {} # Keep track of what variables and nodes the slave has
 	
@@ -387,7 +312,7 @@ static func create_being(self_node: Node) -> Being:
 	params["slave"] = slave
 	
 	# Add available components to params
-	var sprite: AnimatedSprite2D = self_node.get("sprite")
+	var sprite: Sprite2D = self_node.get("sprite")
 	if sprite:
 		params["sprite"] = sprite
 		

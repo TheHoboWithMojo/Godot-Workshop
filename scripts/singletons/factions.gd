@@ -50,6 +50,77 @@ func log_decision(faction: int, decision: String, rep_change: int) -> void:
 	else:
 		Data.throw_error(self, "Faction " + str(faction) + " not found!")
 		
+
+func print_overview() -> void:
+	var output: String = ""
+	
+	# Find the longest faction name for proper formatting
+	var longest_name_length: int = 0
+	for faction_enum: int in FACTIONS.values():
+		var faction_name: String = get_faction(faction_enum)
+		longest_name_length = max(longest_name_length, faction_name.length())
+	
+	# Add some padding
+	longest_name_length += 2
+	
+	# Create the header with dynamic width
+	var header: String = "| %-*s | %-10s | %-5s |" % [longest_name_length, "FACTION", "STATUS", "REP"]
+	var divider: String = "-".repeat(header.length())
+	
+	output += divider + "\n"
+	output += header + "\n"
+	output += divider + "\n"
+	
+	# Process each faction with consistent formatting
+	for faction_enum: int in FACTIONS.values():
+		var faction_name: String = get_faction(faction_enum)
+		var rep: int = get_rep_num(faction_enum)
+		var status: String = get_rep_status(faction_enum)
+		
+		output += "| %-*s | %-10s | %5d |" % [longest_name_length, faction_name, status, rep] + "\n"
+	
+	output += divider + "\n\n"
+	
+	# Add decisions section with better formatting
+	output += "FACTION DECISIONS:\n"
+	output += divider + "\n"
+	
+	for faction_enum: int in FACTIONS.values():
+		var faction_name: String = get_faction(faction_enum)
+		var decisions: Array = Data.game_data["factions_data"][faction_enum]["decisions"]
+		
+		if decisions.size() > 0:
+			output += faction_name + ":\n"
+			
+			# Sort decisions by impact (absolute value of rep change)
+			# Expanded sorting logic instead of one-liner
+			var sorted_decisions: Array = decisions.duplicate()
+			
+			# Custom sorting function to sort by absolute value of reputation change
+			for i: int in range(sorted_decisions.size()):
+				for j: int in range(i + 1, sorted_decisions.size()):
+					var impact_i: int = abs(sorted_decisions[i][1])
+					var impact_j: int = abs(sorted_decisions[j][1])
+					
+					# If impact_j is greater than impact_i, swap the elements
+					if impact_j > impact_i:
+						var temp: Array = sorted_decisions[i]
+						sorted_decisions[i] = sorted_decisions[j]
+						sorted_decisions[j] = temp
+			
+			# Show all decisions for this faction
+			for entry: Array in sorted_decisions:
+				var decision: String = entry[0]
+				var rep_change: int = entry[1]
+				var times: int = entry[2]
+				
+				var _sign: String = "+" if rep_change > 0 else ""
+				output += "\tx%d %s (%s%d)\n" % [times, decision, _sign, rep_change]
+			
+			output += "\n"
+	
+	print(output)
+	
 func get_rep_status(faction: int) -> String:
 	if faction_exists(faction):
 		var rep: int = Data.game_data["factions_data"][faction]["rep"]

@@ -1,30 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=4 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
-[ext_resource type="Script" uid="uid://cdv1c4xdmk5kk" path="res://addons/top_down_camera/td_camera_2d.gd" id="3_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/tools/debug_menu.tscn" id="6_p57ef"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_wrm1d")
 use_save_data = false
 autosaving = false
-enemies_per_spawn = 1
-MOB_CAP = 2
+spawn_enemies = false
+SECONDS_PER_SPAWN = 2.0
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3
 motion_mode = 1
 
-[node name="PlayerCamera" type="Camera2D" parent="Player"]
-unique_name_in_owner = true
+[node name="Camera" type="Camera2D" parent="Player"]
 zoom = Vector2(3, 3)
 position_smoothing_enabled = true
-script = ExtResource("3_lbhrr")
-min_zoom = 4.0
-zoom_speed = 0.3
-camera_distance_limit = 100.0
-metadata/_custom_type_script = "uid://cdv1c4xdmk5kk"
 
 [node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
 visible = false

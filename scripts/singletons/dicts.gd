@@ -14,8 +14,7 @@ var stats: Dictionary = {
 	"speed": {
 		"speed_mult": 1.00,
 		"speed": 10000.0,
-		"attack_speed_mult": 1.00,
-		"attack_speed": 5.0,
+		"attack_speed_mult": 3.00,
 	},
 	"health": {
 		"max_health": 100.0,
@@ -182,7 +181,7 @@ var characters: Dictionary = {
 }
 
 var timelines: Dictionary = {
-	"npc": {
+	"opening": {
 		"completed": false,
 		"repeatable": false,
 		"characters": [characters.steve]

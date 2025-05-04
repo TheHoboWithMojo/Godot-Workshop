@@ -13,7 +13,7 @@ extends CharacterBody2D
 @export var exp_on_kill: int = 10
 
 @export_group("Nodes")
-@export var sprite: AnimatedSprite2D
+@export var sprite: Sprite2D
 @export var collider: CollisionShape2D
 @export var area: Area2D
 @export var health_bar: TextureProgressBar
@@ -28,5 +28,6 @@ func _physics_process(delta: float) -> void:
 	if master.is_hostile():
 		master.approach_player(delta, perception, repulsion_strength)
 		if Global.is_touching_player(self):
+			print("touching")
 			Player.damage(master._damage)
 	move_and_slide()

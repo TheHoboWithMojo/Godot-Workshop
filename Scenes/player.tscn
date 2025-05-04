@@ -1,95 +1,41 @@
-[gd_scene load_steps=10 format=3 uid="uid://ckmkhqqqnhrgc"]
+[gd_scene load_steps=7 format=3 uid="uid://ckmkhqqqnhrgc"]
 
 [ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://scripts/node_managers/player.gd" id="1_cvnsp"]
-[ext_resource type="Texture2D" uid="uid://rbp65w7omd12" path="res://assets/textures/player.png" id="2_dqkch"]
+[ext_resource type="Texture2D" uid="uid://gsh35box3r66" path="res://assets/rogues.png" id="2_qhqgy"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="3_qhqgy"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqkch"]
+atlas = ExtResource("2_qhqgy")
+region = Rect2(128, 0, 32, 32)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cvnsp"]
-size = Vector2(25, 31)
+size = Vector2(32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qlg0r"]
-atlas = ExtResource("2_dqkch")
-region = Rect2(0, 0, 612, 612)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tuyoq"]
-atlas = ExtResource("2_dqkch")
-region = Rect2(612, 0, 612, 612)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fjrip"]
-atlas = ExtResource("2_dqkch")
-region = Rect2(1224, 0, 612, 612)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
-atlas = ExtResource("2_dqkch")
-region = Rect2(1836, 0, 612, 612)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_ur7pv"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qlg0r")
-}],
-"loop": false,
-"name": &"die",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qlg0r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tuyoq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fjrip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_smehm")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qlg0r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tuyoq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fjrip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_smehm")
-}],
-"loop": true,
-"name": &"run",
-"speed": 5.0
-}]
+[sub_resource type="CircleShape2D" id="CircleShape2D_qhqgy"]
+radius = 32.0
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "health_bar", "direction_tracker")]
 script = ExtResource("1_cvnsp")
-sprite = NodePath("AnimatedSprite2D")
-collider = NodePath("CollisionShape2D")
+sprite = NodePath("Sprite")
+collider = NodePath("Collider")
 health_bar = NodePath("HealthBar")
 direction_tracker = NodePath("Marker2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.5, -0.5)
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_dqkch")
+
+[node name="Collider" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_cvnsp")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(1, -4)
-scale = Vector2(0.0563725, 0.0563725)
-sprite_frames = SubResource("SpriteFrames_ur7pv")
-animation = &"die"
-autoplay = "idle"
-
 [node name="HealthBar" parent="." instance=ExtResource("3_qhqgy")]
-offset_left = -14.0
-offset_top = 13.0
-offset_right = 846.0
-offset_bottom = 231.0
+offset_left = -16.0
+offset_top = 16.0
+offset_right = 844.0
+offset_bottom = 234.0
 
 [node name="Marker2D" type="Marker2D" parent="."]
+
+[node name="Bubble" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bubble"]
+shape = SubResource("CircleShape2D_qhqgy")
