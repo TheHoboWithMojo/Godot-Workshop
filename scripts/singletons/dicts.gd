@@ -178,6 +178,12 @@ var characters: Dictionary = {
 		"resource": "res://dialogic/characters/steve.dch",
 		"faction": Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC,
 		},
+	"bob": {
+		"name": "bob",
+		"alive": true,
+		"resource": "res://dialogic/characters/bob.dch",
+		"faction": Factions.FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE
+		},
 }
 
 var timelines: Dictionary = {
@@ -185,5 +191,10 @@ var timelines: Dictionary = {
 		"completed": false,
 		"repeatable": false,
 		"characters": [characters.steve]
+	},
+	"bob_greeting": {
+		"completed": false,
+		"repeatable": true,
+		"characters": [characters.bob]
 	}
 }

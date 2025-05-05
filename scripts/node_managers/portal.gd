@@ -1,9 +1,10 @@
 extends Area2D
 
 @export var send_from: Node2D
-@export var send_to: PackedScene
+@export var send_to_path: String
 @export var require_mouse: bool = true
 @export var require_player: bool = true
+@onready var spawn_at: Vector2
 
 func _ready() -> void:
 	if require_player:
@@ -20,17 +21,17 @@ func load_zone() -> void:
 	if require_mouse and require_player:
 		while Global.player_touching_node == self and Global.mouse_touching_node == self:
 			if Input.is_action_just_pressed("interact"):
-				Global.game_manager.level_changed.emit(send_from, send_to)
+				Global.game_manager.level_changed.emit(send_from, send_to_path)
 			await get_tree().process_frame
 	elif require_mouse:
 		while Global.mouse_touching_node == self:
 			if Input.is_action_just_pressed("interact"):
-				Global.game_manager.level_changed.emit(send_from, send_to)
+				Global.game_manager.level_changed.emit(send_from, send_to_path)
 			await get_tree().process_frame
 	elif require_player:
 		while Global.player_touching_node == self:
 			if Input.is_action_just_pressed("interact"):
-				Global.game_manager.level_changed.emit(send_from, send_to)
+				Global.game_manager.level_changed.emit(send_from, send_to_path)
 			await get_tree().process_frame
 
 # the signals below only connect of their respective bools are on

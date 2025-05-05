@@ -1,9 +1,8 @@
-res://assets/textures/azul
-res://dialogic/styles
-res://dialogic/timelines
 res://dialogic/characters
-res://assets/textures/79 1bit-portraits
+res://dialogic/timelines
+res://scenes/npcs
 res://assets
+res://dialogic/styles
 res://assets/textures/32rogues/32rogues
 res://assets/texture pack
 res://scenes
@@ -12,7 +11,6 @@ res://assets/textures/Bullets
 res://assets/textures
 res://scripts/singletons
 res://
-res://assets/texture pack/Entities/Npc's/Knight/Idle
 res://Scenes
 C:/Users/evanl/OneDrive/Godot
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop

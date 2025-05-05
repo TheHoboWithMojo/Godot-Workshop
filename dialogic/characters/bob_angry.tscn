@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://cjlkh03k04kjn"]
+
+[ext_resource type="Script" uid="uid://evwlo3vjksct" path="res://dialogic/characters/custom_layered_portrait.gd" id="1_uubi5"]
+[ext_resource type="Texture2D" uid="uid://dhc2mt01bqm4d" path="res://assets/textures/Pixel-Portraits-Free/Pixel-Portraits-Free/Masculine_B/Masculine_B_angry.png" id="2_xdpun"]
+[ext_resource type="Texture2D" uid="uid://bof02i5jelmuw" path="res://assets/textures/Pixel-Portraits-Free/Pixel-Portraits-Free/Masculine_A/Hair_A_masculine_A-base.png" id="3_jktx5"]
+[ext_resource type="Texture2D" uid="uid://c7311fhc1ogr0" path="res://assets/textures/Pixel-Portraits-Free/Pixel-Portraits-Free/Accessories/Glasses_C.png" id="4_427yq"]
+[ext_resource type="Texture2D" uid="uid://b3kymsw1nppkr" path="res://assets/textures/Pixel-Portraits-Free/Pixel-Portraits-Free/Masculine_A/Beard_E_masculine_A-base.png" id="5_i5kse"]
+
+[node name="LayeredPortrait" type="CanvasGroup"]
+script = ExtResource("1_uubi5")
+
+[node name="Layer1" type="Sprite2D" parent="."]
+texture = ExtResource("2_xdpun")
+
+[node name="Group1" type="Node2D" parent="."]
+
+[node name="Layer1" type="Sprite2D" parent="Group1"]
+texture = ExtResource("3_jktx5")
+
+[node name="Layer2" type="Sprite2D" parent="Group1"]
+texture = ExtResource("4_427yq")
+
+[node name="Layer3" type="Sprite2D" parent="Group1"]
+texture = ExtResource("5_i5kse")

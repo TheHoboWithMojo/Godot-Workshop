@@ -87,7 +87,7 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 			var tile_data: TileData = tilemap.get_cell_tile_data(tile_pos)
 			
 			# Check if the tile has the specified property
-			if tile_data and tile_data.get_custom_data(property_name):
+			if tile_data and tile_data.has_custom_data(property_name):
 				# Convert tile position to world position
 				var world_pos: Vector2 = tilemap.map_to_local(tile_pos)
 				world_pos = tilemap.to_global(world_pos)

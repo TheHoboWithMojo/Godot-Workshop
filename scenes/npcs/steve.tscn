@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://c2egw80ivqb1j"]
+[gd_scene load_steps=13 format=3 uid="uid://c2egw80ivqb1j"]
 
-[ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/steve.gd" id="1_xsdk0"]
+[ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_xsdk0"]
+[ext_resource type="Resource" uid="uid://b4ogivyjpmdke" path="res://dialogic/styles/alt.tres" id="2_ysohf"]
 [ext_resource type="Resource" uid="uid://dtggg7ri521b4" path="res://dialogic/characters/steve.dch" id="3_aygba"]
 [ext_resource type="Resource" uid="uid://mjqoqipd2845" path="res://dialogic/timelines/opening.dtl" id="4_7153j"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]
@@ -27,6 +28,7 @@ collider = NodePath("Collider")
 area = NodePath("Bubble")
 health_bar = NodePath("HealthBar")
 audio = NodePath("Audio")
+style = ExtResource("2_ysohf")
 character = ExtResource("3_aygba")
 timelines = Array[ExtResource("4_r5v4l")]([ExtResource("4_7153j")])
 

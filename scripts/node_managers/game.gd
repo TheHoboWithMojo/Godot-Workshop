@@ -209,13 +209,21 @@ func _on_mob_death() -> void:
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================
-func _on_level_changed(old_level: Node, new_level: PackedScene) -> void:
+func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 	_spawn_enemies = false
 	clear_enemies()
-	current_level = new_level.instantiate()
+	current_level = load(new_level_path).instantiate()
 	add_child(current_level)
 	update_level_data()
+	
+	var old_level_number: String = Global.get_rawname(old_level)[Global.get_rawname(old_level).length()-1] # get the old level number
+	var new_spawn_position: Vector2 = current_level.find_child("PortalToLevel%s" % [old_level_number]).find_child("SpawnPoint").global_position
+	Global.player.global_position = new_spawn_position
+	Global.player_camera.global_position = new_spawn_position
+	Global.player_camera.reset_smoothing()
+	
 	old_level.queue_free()
+	
 	if spawn_enemies:
 		_spawn_enemies = true
 # =========================================================================

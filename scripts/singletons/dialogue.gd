@@ -1,18 +1,23 @@
 extends Node
 
-func start(timeline: String) -> void:
+func start(timeline: Variant) -> void:
+	var timeline_name: String
+	if timeline is DialogicTimeline:
+		timeline_name = timeline.resource_path.replace("res://dialogic/timelines/", "").replace(".dtl", "")
+	else:
+		timeline_name = timeline
 	if _is_timeline_running():
-		Debug.throw_error(self, "start_dialog", "A timeline is already running! Cannot start a new one")
+		Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
 		return
-	if timeline in Dicts.timelines.keys():
-		if _is_timeline_completed(timeline) and not _is_timeline_repeatable(timeline):
-			Debug.throw_error(self, "start_dialog", "The timeline " + timeline + " has been played and is not repeatable")
+	if timeline_name in Dicts.timelines.keys():
+		if _is_timeline_completed(timeline_name) and not _is_timeline_repeatable(timeline_name):
+			Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " has been played and is not repeatable")
 			return
 		
-		Data.game_data["timelines"][timeline]["completed"] = true
-		Dialogic.start(timeline)
+		Data.game_data["timelines"][timeline_name]["completed"] = true
+		Dialogic.start(timeline_name)
 	else:
-		Debug.throw_error(self, "start_dialog", "The timeline " + timeline + " does not exist")
+		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " does not exist")
 		
 func aggro_conversers()  -> void:
 	if _is_timeline_running():

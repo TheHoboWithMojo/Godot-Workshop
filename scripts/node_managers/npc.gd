@@ -26,7 +26,7 @@ extends CharacterBody2D
 
 ####### RUNTIME VARIABLES ##############
 @onready var nomen: String = "steve"
-@onready var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
+@export var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
 @onready var master: Object
 
 signal player_entered_area
@@ -47,8 +47,8 @@ func _ready() -> void:
 func _check_for_dialog() -> void:
 	while Global.is_touching_player(self):
 		if Input.is_action_just_pressed("interact"):
-			Dialogue.start("opening")
-			break
+			Dialogue.start(timelines[0])
+			await Dialogic.timeline_ended
 		await get_tree().process_frame
 
 func _physics_process(delta: float) -> void:
