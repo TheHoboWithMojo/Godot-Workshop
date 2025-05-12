@@ -182,7 +182,7 @@ func resize_container(container: DialogicNode_PortraitContainer, rect_size: Vari
 			tween.finished.connect(save_position_container.bind(container))
 	else:
 		container.position = container.position + relative_position_change
-		container.size = final_rect_resize
+		container.set_size(final_rect_resize)
 		save_position_container(container)
 
 	position_changed.emit({&'change':'resized', &'container_node':container})
@@ -231,7 +231,7 @@ func load_position_container(position_id: String) -> DialogicNode_PortraitContai
 	container.container_ids = info.container_ids
 	container.position = info.position
 	container.rotation = info.rotation
-	container.size = info.size
+	container.set_size(info.size)
 	container.pivot_mode = info.pivot_mode
 	container.pivot_value = info.pivot_value
 	container.origin_anchor = info.origin_anchor

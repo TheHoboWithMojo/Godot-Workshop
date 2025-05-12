@@ -4,3 +4,5 @@
 
 [node name="Portal" type="Area2D"]
 script = ExtResource("1_v0xau")
+require_mouse = null
+require_player = null

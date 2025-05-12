@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/enemy.gd" id="1_n53qi"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="2_lja41"]
 [ext_resource type="Texture2D" uid="uid://b1kiqdu0bwjs4" path="res://assets/monsters.png" id="5_p2k2a"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="6_n53qi"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="6_n53qi"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="7_lja41"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rv78h"]

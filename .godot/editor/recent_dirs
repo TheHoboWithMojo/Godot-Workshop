@@ -1,3 +1,10 @@
+res://scripts/classes
+res://scripts/quests
+res://Scenes
+res://scenes
+res://scripts/singletons
+res://
+C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons
 res://dialogic/characters
 res://dialogic/timelines
 res://scenes/npcs
@@ -5,13 +12,9 @@ res://assets
 res://dialogic/styles
 res://assets/textures/32rogues/32rogues
 res://assets/texture pack
-res://scenes
 res://scenes/projectiles
 res://assets/textures/Bullets
 res://assets/textures
-res://scripts/singletons
-res://
-res://Scenes
 C:/Users/evanl/OneDrive/Godot
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop
 res://Scripts

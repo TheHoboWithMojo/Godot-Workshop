@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c6ewpodeko760"]
 
-[ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://scenes/health_bar_empty.png" id="1_y3kqx"]
-[ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://scenes/health_bar_full.png" id="2_6opq1"]
+[ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://scenes/npc_builders/health_bar_empty.png" id="1_y3kqx"]
+[ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://scenes/npc_builders/health_bar_full.png" id="2_6opq1"]
 
 [node name="HealthBar" type="TextureProgressBar"]
 offset_right = 860.0

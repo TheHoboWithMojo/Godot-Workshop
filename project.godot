@@ -24,6 +24,7 @@ Player="*res://scripts/singletons/player.gd"
 Dialogue="*res://scripts/singletons/dialogue.gd"
 Dicts="*res://scripts/singletons/dicts.gd"
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
+Levels="*res://scripts/singletons/levels.gd"
 
 [debug]
 
@@ -69,6 +70,7 @@ text/autopauses={}
 [display]
 
 window/size/always_on_top=true
+window/stretch/mode="viewport"
 
 [editor_plugins]
 

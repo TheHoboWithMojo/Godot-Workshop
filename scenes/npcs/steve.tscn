@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c2egw80ivqb1j"]
+[gd_scene load_steps=14 format=3 uid="uid://c2egw80ivqb1j"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_xsdk0"]
 [ext_resource type="Resource" uid="uid://b4ogivyjpmdke" path="res://dialogic/styles/alt.tres" id="2_ysohf"]
@@ -6,8 +6,9 @@
 [ext_resource type="Resource" uid="uid://mjqoqipd2845" path="res://dialogic/timelines/opening.dtl" id="4_7153j"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_r5v4l"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="6_aygba"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="9_6ikfg"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="9_6ikfg"]
 [ext_resource type="Texture2D" uid="uid://gsh35box3r66" path="res://assets/rogues.png" id="9_ysohf"]
+[ext_resource type="PackedScene" uid="uid://rpenfcmg3cck" path="res://scenes/npc_builders/proximity_text.tscn" id="10_6ikfg"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="11_aygba"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ysohf"]
@@ -18,7 +19,7 @@ radius = 40.0001
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6ikfg"]
 atlas = ExtResource("9_ysohf")
-region = Rect2(32, 64, 32, 32)
+region = Rect2(128, 192, 32, 32)
 
 [node name="Steve" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "area", "health_bar", "audio")]
 motion_mode = 1
@@ -27,7 +28,8 @@ sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("Bubble")
 health_bar = NodePath("HealthBar")
-audio = NodePath("Audio")
+audio = NodePath("DeathSound")
+nomen = "steve"
 style = ExtResource("2_ysohf")
 character = ExtResource("3_aygba")
 timelines = Array[ExtResource("4_r5v4l")]([ExtResource("4_7153j")])
@@ -57,8 +59,14 @@ offset_right = 853.0
 offset_bottom = 269.0
 scale = Vector2(0.0368332, 0.0316821)
 
-[node name="Audio" type="AudioStreamPlayer2D" parent="."]
+[node name="DeathSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_aygba")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = SubResource("AtlasTexture_6ikfg")
+
+[node name="ProximityText" parent="." node_paths=PackedStringArray("character") instance=ExtResource("10_6ikfg")]
+offset_top = 28.0
+offset_bottom = 28.0
+message = "Hey, you! Get away from me."
+character = NodePath("..")

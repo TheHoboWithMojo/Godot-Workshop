@@ -1,0 +1,41 @@
+[gd_scene load_steps=12 format=3 uid="uid://dbbxc8xwqu2v7"]
+
+[ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/default/player.tscn" id="1_ebmjs"]
+[ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
+[ext_resource type="PackedScene" uid="uid://xlngqto47i3x" path="res://scenes/quest_manager.tscn" id="4_yds56"]
+[ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="5_hd4xh"]
+[ext_resource type="Script" uid="uid://bs1bur0v0hwtg" path="res://scripts/quests/tutorial.gd" id="5_pi5r2"]
+[ext_resource type="Resource" uid="uid://bduxfko0a5bnu" path="res://dialogic/timelines/bob_greeting.dtl" id="6_2eyy5"]
+[ext_resource type="Script" uid="uid://d2ep6ro2a1otk" path="res://addons/dialogic/Resources/character.gd" id="6_dogt3"]
+[ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/default/debug_menu.tscn" id="6_p57ef"]
+[ext_resource type="Resource" uid="uid://dtggg7ri521b4" path="res://dialogic/characters/steve.dch" id="7_f32yu"]
+[ext_resource type="Resource" uid="uid://mjqoqipd2845" path="res://dialogic/timelines/opening.dtl" id="7_pm80q"]
+[ext_resource type="Resource" uid="uid://c0occdqto1q22" path="res://dialogic/characters/bob.dch" id="8_0leiu"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_wrm1d")
+use_save_data = false
+autosaving = false
+spawn_enemies = false
+SECONDS_PER_SPAWN = 2.0
+
+[node name="Player" parent="." instance=ExtResource("1_ebmjs")]
+process_mode = 3
+motion_mode = 1
+
+[node name="Camera" type="Camera2D" parent="Player"]
+zoom = Vector2(3, 3)
+position_smoothing_enabled = true
+
+[node name="DebugMenu" parent="." instance=ExtResource("6_p57ef")]
+visible = false
+scale = Vector2(0.25, 0.25)
+
+[node name="QuestManager" parent="." instance=ExtResource("4_yds56")]
+script = null
+
+[node name="Tutorial" type="Node" parent="QuestManager"]
+script = ExtResource("5_pi5r2")
+nomen = "tutorial"
+characters = Array[ExtResource("6_dogt3")]([ExtResource("7_f32yu"), ExtResource("8_0leiu")])
+related_timelines = Array[ExtResource("5_hd4xh")]([ExtResource("7_pm80q"), ExtResource("6_2eyy5")])

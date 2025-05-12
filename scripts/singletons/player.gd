@@ -1,4 +1,5 @@
 extends Node2D
+
 # Stat Constraints
 var stat_constraints: Dictionary = {
 	"speed": {
@@ -14,6 +15,9 @@ var stat_constraints: Dictionary = {
 		"crit_mult": {"min": 0.0, "max": Global.FLOAT_LIMIT}
 	}
 }
+
+var choices: Array[String]
+
 # Functions Related to Player Stats and Behavior
 func aggro_conversers() -> void:
 	for node: Node2D in Global.player.current_conversers:

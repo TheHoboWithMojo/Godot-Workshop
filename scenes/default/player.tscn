@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dpd8perakj03r" path="res://scripts/node_managers/player.gd" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://gsh35box3r66" path="res://assets/rogues.png" id="2_qhqgy"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="3_qhqgy"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="3_qhqgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dqkch"]
 atlas = ExtResource("2_qhqgy")

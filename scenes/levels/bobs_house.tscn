@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://dd8gh6rhn2g1o" path="res://scripts/levels/level.gd" id="1_l37oo"]
 [ext_resource type="PackedScene" uid="uid://15uoupcpxi20" path="res://scenes/enemies/knight.tscn" id="2_71baw"]
 [ext_resource type="Texture2D" uid="uid://b733rjgpx4uks" path="res://assets/Floors.png" id="3_l37oo"]
-[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/spawnpoint.tscn" id="4_fiq81"]
+[ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/level_builders/spawnpoint.tscn" id="4_fiq81"]
 [ext_resource type="TileSet" uid="uid://1uu7oek1n5i5" path="res://assets/doorsAndWindows.tres" id="5_qpwj6"]
-[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/portal.tscn" id="6_qpwj6"]
+[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="6_qpwj6"]
 [ext_resource type="PackedScene" uid="uid://dx0g2h0m5mmsi" path="res://scenes/npcs/bob.tscn" id="7_ibugp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ibugp"]
@@ -26,11 +26,14 @@ sources/0 = SubResource("TileSetAtlasSource_ibugp")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ibugp"]
 size = Vector2(32, 56)
 
-[node name="Level2" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
+[node name="BobsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "checkpoints")]
 script = ExtResource("1_l37oo")
 tiles = NodePath("Tiles")
 enemies = Array[PackedScene]([ExtResource("2_71baw")])
-checkpoints = [NodePath("PortalToLevel1/SpawnPoint")]
+checkpoints = [NodePath("PortalToDesert/SpawnPoint")]
+
+[node name="Bob" parent="." instance=ExtResource("7_ibugp")]
+position = Vector2(-80, 8)
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -41,17 +44,16 @@ tile_set = SubResource("TileSet_8qukl")
 tile_map_data = PackedByteArray("AAD///v/AAAEAAEAAAD///z/AAAEAAIAAAD///3/AAAEAAMAAAAAAPv/AAAFAAEAAAAAAPz/AAAFAAIAAAAAAP3/AAAFAAMAAAD9//r/AAAAAAQAAAD9//v/AAAAAAUAAAD9//z/AAAAAAYAAAD9//3/AAAAAAcAAAD+//r/AAABAAQAAAD+//v/AAABAAUAAAD+//z/AAABAAYAAAD+//3/AAABAAcAAAABAPr/AAAAAAQAAAABAPv/AAAAAAUAAAABAPz/AAAAAAYAAAABAP3/AAAAAAcAAAACAPr/AAABAAQAAAACAPv/AAABAAUAAAACAPz/AAABAAYAAAACAP3/AAABAAcAAAA=")
 tile_set = ExtResource("5_qpwj6")
 
-[node name="PortalToLevel1" parent="." node_paths=PackedStringArray("send_from") instance=ExtResource("6_qpwj6")]
+[node name="PortalToDesert" parent="." node_paths=PackedStringArray("send_from", "spawn_point") instance=ExtResource("6_qpwj6")]
 position = Vector2(0, -48)
 send_from = NodePath("..")
-send_to_path = "res://scenes/levels/level_1.tscn"
+spawn_point = NodePath("SpawnPoint")
+require_mouse = true
+require_player = true
 
-[node name="IBubble" type="CollisionShape2D" parent="PortalToLevel1"]
+[node name="IBubble" type="CollisionShape2D" parent="PortalToDesert"]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_ibugp")
 
-[node name="SpawnPoint" parent="PortalToLevel1" instance=ExtResource("4_fiq81")]
+[node name="SpawnPoint" parent="PortalToDesert" instance=ExtResource("4_fiq81")]
 position = Vector2(0, 48)
-
-[node name="Bob" parent="PortalToLevel1" instance=ExtResource("7_ibugp")]
-position = Vector2(-80, 56)

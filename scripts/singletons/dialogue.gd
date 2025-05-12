@@ -1,6 +1,8 @@
 extends Node
 
-func start(timeline: Variant) -> void:
+signal dialogue_started
+
+func start(timeline: Variant) -> bool:
 	var timeline_name: String
 	if timeline is DialogicTimeline:
 		timeline_name = timeline.resource_path.replace("res://dialogic/timelines/", "").replace(".dtl", "")
@@ -8,16 +10,21 @@ func start(timeline: Variant) -> void:
 		timeline_name = timeline
 	if _is_timeline_running():
 		Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
-		return
+		return false
 	if timeline_name in Dicts.timelines.keys():
 		if _is_timeline_completed(timeline_name) and not _is_timeline_repeatable(timeline_name):
 			Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " has been played and is not repeatable")
-			return
-		
+			return false
+
 		Data.game_data["timelines"][timeline_name]["completed"] = true
 		Dialogic.start(timeline_name)
+		if not Dialogic.current_timeline:
+			await Dialogic.timeline_started
+			dialogue_started.emit()
+		return true
 	else:
 		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " does not exist")
+		return false
 		
 func aggro_conversers()  -> void:
 	if _is_timeline_running():

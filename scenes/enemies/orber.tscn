@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://5wd6f8wnvh8e"]
 
 [ext_resource type="Script" uid="uid://8dyyakf5ba63" path="res://scripts/node_managers/enemy.gd" id="1_fpgvi"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="2_kk8ke"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="2_kk8ke"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="3_hsak4"]
 [ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="4_n1enc"]
 [ext_resource type="Texture2D" uid="uid://b1kiqdu0bwjs4" path="res://assets/monsters.png" id="5_skfjl"]

@@ -1,3 +1,8 @@
+Node
+Panel
+ColorRect
+RichTextLabel
+Control
 Sprite2D
 CollisionShape2D
 AudioStreamPlayer2D
@@ -7,8 +12,3 @@ CharacterBody2D
 TileMapLayer
 Camera2D
 TextureProgressBar
-MarginContainer
-ColorRect
-Label
-VBoxContainer
-HBoxContainer

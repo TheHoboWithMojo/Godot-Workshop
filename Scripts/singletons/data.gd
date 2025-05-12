@@ -73,6 +73,7 @@ func load_game_data() -> void:
 					Global.player.current_projectile = Global.player.projectiles[0]
 			
 		if game_data["reload_data"].has("last_level"):
+			pass
 			Global.game_manager.current_level = load(game_data["reload_data"]["last_level"]).instantiate()
 	
 	# Convert faction keys from string to int

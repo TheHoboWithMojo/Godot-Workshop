@@ -20,12 +20,12 @@ extends CharacterBody2D
 @export var audio: AudioStreamPlayer2D
 
 @export_group("Character")
+@export var nomen: String
 @export var style: DialogicStyle
 @export var character: DialogicCharacter
 @export var timelines: Array[DialogicTimeline]
 
 ####### RUNTIME VARIABLES ##############
-@onready var nomen: String = "steve"
 @export var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
 @onready var master: Object
 
@@ -47,8 +47,8 @@ func _ready() -> void:
 func _check_for_dialog() -> void:
 	while Global.is_touching_player(self):
 		if Input.is_action_just_pressed("interact"):
-			Dialogue.start(timelines[0])
-			await Dialogic.timeline_ended
+			if await Dialogue.start(timelines[0]):
+				await Dialogic.timeline_ended
 		await get_tree().process_frame
 
 func _physics_process(delta: float) -> void:

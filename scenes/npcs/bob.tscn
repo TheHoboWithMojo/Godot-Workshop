@@ -1,20 +1,22 @@
-[gd_scene load_steps=12 format=3 uid="uid://dx0g2h0m5mmsi"]
+[gd_scene load_steps=14 format=3 uid="uid://dx0g2h0m5mmsi"]
 
 [ext_resource type="Texture2D" uid="uid://gsh35box3r66" path="res://assets/rogues.png" id="1_oa7eu"]
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_rfhwt"]
 [ext_resource type="Resource" uid="uid://ce75prlq4ehsa" path="res://dialogic/styles/tryme.tres" id="2_nhn1x"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/health_bar.tscn" id="2_wrpqe"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="2_wrpqe"]
 [ext_resource type="Resource" uid="uid://c0occdqto1q22" path="res://dialogic/characters/bob.dch" id="3_67vla"]
 [ext_resource type="Script" uid="uid://crbiu6d310ubx" path="res://addons/dialogic/Resources/timeline.gd" id="4_ocv26"]
 [ext_resource type="Resource" uid="uid://bduxfko0a5bnu" path="res://dialogic/timelines/bob_greeting.dtl" id="5_ayg8k"]
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="8_ayg8k"]
+[ext_resource type="PackedScene" uid="uid://rpenfcmg3cck" path="res://scenes/npc_builders/proximity_text.tscn" id="9_1nb8i"]
+[ext_resource type="AudioStream" uid="uid://bx67c10ea4vcv" path="res://assets/sounds/death.mp3" id="9_tmepx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wrpqe"]
 size = Vector2(32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rfhwt"]
 atlas = ExtResource("1_oa7eu")
-region = Rect2(32, 160, 32, 32)
+region = Rect2(0, 192, 32, 32)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6wsvj"]
 radius = 32.0
@@ -26,7 +28,8 @@ sprite = NodePath("Sprite")
 collider = NodePath("Collider")
 area = NodePath("IBubble")
 health_bar = NodePath("HealthBar")
-audio = NodePath("AudioStreamPlayer2D")
+audio = NodePath("DeathSound")
+nomen = "bob"
 style = ExtResource("2_nhn1x")
 character = ExtResource("3_67vla")
 timelines = Array[ExtResource("4_ocv26")]([ExtResource("5_ayg8k")])
@@ -53,4 +56,11 @@ emit_area_as_argument = false
 [node name="Collider" type="CollisionShape2D" parent="IBubble"]
 shape = SubResource("CircleShape2D_6wsvj")
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="DeathSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_tmepx")
+
+[node name="ProximityText" parent="." node_paths=PackedStringArray("character") instance=ExtResource("9_1nb8i")]
+offset_top = 28.0
+offset_bottom = 28.0
+message = "hello!"
+character = NodePath("..")
