@@ -34,18 +34,17 @@ gdscript/warnings/inferred_declaration=1
 [dialogic]
 
 directories/dch_directory={
-"bob": "res://dialogic/characters/bob.dch",
-"steve": "res://dialogic/characters/steve.dch"
+"doc_mitchell": "res://dialogic/characters/DocMitchell/doc_mitchell.dch"
 }
 directories/dtl_directory={
-"bob_greeting": "res://dialogic/timelines/bob_greeting.dtl",
-"boot": "res://dialogic/timelines/boot.dtl",
-"opening": "res://dialogic/timelines/opening.dtl"
+"youreawake": "res://dialogic/timelines/youreawake.dtl"
 }
 layout/style_list=["res://dialogic/styles/alt.tres", "res://dialogic/styles/default.tres", "res://dialogic/styles/tryme.tres"]
 layout/default_style=""
 glossary/default_case_sensitive=true
-variables={}
+variables={
+"player_name": ""
+}
 extensions_folder="res://addons/dialogic_additions"
 text/letter_speed=0.01
 text/initial_text_reveal_skippable=true

@@ -20,10 +20,9 @@ extends CharacterBody2D
 @export var audio: AudioStreamPlayer2D
 
 @export_group("Character")
-@export var nomen: String
-@export var style: DialogicStyle
-@export var character: DialogicCharacter
-@export var timelines: Array[DialogicTimeline]
+@export var character: Dicts.CHARACTERS
+@onready var nomen: String = Dicts.characters[character]["name"]
+@export var timelines: Array[Dicts.TIMELINES]
 
 ####### RUNTIME VARIABLES ##############
 @export var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
@@ -32,23 +31,27 @@ extends CharacterBody2D
 signal player_entered_area
 
 func _ready() -> void:
+	$Texture/NameTag.set_text(nomen)
 	player_entered_area.connect(_check_for_dialog)
 	
-	for timeline: DialogicTimeline in timelines:
-		Dialogic.preload_timeline(timeline)
+	for timeline: Dicts.TIMELINES in timelines:
+		Dialogic.preload_timeline(Dicts.timelines[timeline]["resource"])
 	
 	add_to_group("interactable")
 	add_to_group("npc")
 		
-	master = Being.create_being(self)
+	master = Being.new(self)
 	
 	master.toggle_collision(collision_on)
 
+var first_time_talked_to: bool = true
 func _check_for_dialog() -> void:
 	while Global.is_touching_player(self):
 		if Input.is_action_just_pressed("interact"):
-			if await Dialogue.start(timelines[0]):
-				await Dialogic.timeline_ended
+			if first_time_talked_to:
+				first_time_talked_to = false
+				if await Dialogue.start(timelines[0]):
+					await Dialogic.timeline_ended
 		await get_tree().process_frame
 
 func _physics_process(delta: float) -> void:

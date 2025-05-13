@@ -2,29 +2,21 @@ extends Node
 
 signal dialogue_started
 
-func start(timeline: Variant) -> bool:
-	var timeline_name: String
-	if timeline is DialogicTimeline:
-		timeline_name = timeline.resource_path.replace("res://dialogic/timelines/", "").replace(".dtl", "")
-	else:
-		timeline_name = timeline
+func start(timeline: Dicts.TIMELINES) -> bool:
+	var timeline_path: String = Dicts.timelines[timeline]["resource"]
 	if _is_timeline_running():
-		Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
+		#Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
 		return false
-	if timeline_name in Dicts.timelines.keys():
-		if _is_timeline_completed(timeline_name) and not _is_timeline_repeatable(timeline_name):
-			Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " has been played and is not repeatable")
-			return false
-
-		Data.game_data["timelines"][timeline_name]["completed"] = true
-		Dialogic.start(timeline_name)
+	if _is_timeline_completed(timeline) and not _is_timeline_repeatable(timeline):
+		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_path + " has been played and is not repeatable")
+		return false
+	else:
+		Data.game_data["timelines"][str(timeline)]["completed"] = true
+		Dialogic.start(timeline_path)
 		if not Dialogic.current_timeline:
 			await Dialogic.timeline_started
 			dialogue_started.emit()
 		return true
-	else:
-		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_name + " does not exist")
-		return false
 		
 func aggro_conversers()  -> void:
 	if _is_timeline_running():
@@ -34,10 +26,10 @@ func aggro_conversers()  -> void:
 				if npc.name.to_lower() == character.name:
 					npc.master.hostile = true
 		
-func _is_timeline_completed(timeline: String) -> bool:
-	return Data.game_data["timelines"][timeline]["completed"] == true
+func _is_timeline_completed(timeline: Dicts.TIMELINES) -> bool:
+	return Data.game_data["timelines"][str(timeline)]["completed"] == true
 
-func _is_timeline_repeatable(timeline: String) -> bool:
+func _is_timeline_repeatable(timeline: Dicts.TIMELINES) -> bool:
 	return Dicts.timelines[timeline]["repeatable"] == true
 
 func _is_timeline_running() -> bool:
@@ -58,22 +50,24 @@ func _on_dialogic_signal(command: String) -> void:
 var total_mobs: int = 0
 func _on_dialogue_start() -> void:
 	Global.speed_mult = 0.0
-	Global.player.set_physics_process(false)
-	Global.player.can_shoot = false
-	
-	total_mobs = Global.game_manager.total_mobs # Store actual mob count
-	Global.game_manager.total_mobs = Global.game_manager.MOB_CAP # Sets mob count to max to stop spawning
-	
-	for being: Node2D in Global.get_beings():
-		being.master.vincible = false
+	if Global.player and Global.game_manager:
+		Global.player.set_physics_process(false)
+		Global.player.can_shoot = false
+		
+		total_mobs = Global.game_manager.total_mobs # Store actual mob count
+		Global.game_manager.total_mobs = Global.game_manager.MOB_CAP # Sets mob count to max to stop spawning
+		
+		for being: Node2D in Global.get_beings():
+			being.master.vincible = false
 
 func _on_dialogue_end() -> void:
-	Global.player.set_physics_process(true)
-	Global.player.can_shoot = true
-	Global.game_manager.total_mobs = total_mobs # Restores actual mob count
-	
-	for being: Node2D in Global.get_beings():
-		being.master.vincible = true
+	if Global.player and Global.game_manager:
+		Global.player.set_physics_process(true)
+		Global.player.can_shoot = true
+		Global.game_manager.total_mobs = total_mobs # Restores actual mob count
+		
+		for being: Node2D in Global.get_beings():
+			being.master.vincible = true
 	
 	Global.speed_mult = 1.0
 	

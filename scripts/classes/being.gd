@@ -3,7 +3,8 @@ extends Node2D
 
 # Name and stats
 var _nomen: String = ""
-var _faction: int = -1
+var _faction: Factions.FACTIONS
+var _character: Dicts.CHARACTERS
 var _health: float = 0.0
 var _speed: float = 0.0
 var _damage: float = 0.0
@@ -15,17 +16,17 @@ var _hostile: bool = false
 var _debugging: bool = false
 var is_character: bool = false # in the characters dict?
 var vincible: bool = true
+
 # Nodes
+var _slave: Node
 var _sprite: Sprite2D = null
 var _collider: CollisionShape2D = null
 var _area: Area2D = null
-var _animator: AnimationPlayer = null
-var _slave: Node
 var _health_bar: TextureProgressBar = null
 var _audio: AudioStreamPlayer2D = null
 
 # Missing nodes
-var _missing_components: Dictionary = {}
+var _missing_components: Array[String]
 
 # Functions for each node type (for debug printing)
 const SPRITE_FUNCTIONS: Dictionary[String, String] = {
@@ -45,13 +46,6 @@ const AREA_FUNCTIONS: Dictionary[String, String] = {
 	"setup_interaction_area": "Configure the interaction area",
 	"set_area_monitoring": "Enable or disable area monitoring",
 	"get_overlapping_bodies": "Get list of bodies overlapping with this being"
-}
-
-const ANIMATOR_FUNCTIONS: Dictionary[String, String] = {
-	"play_animation": "Play a specific animation",
-	"stop_animation": "Stop the current animation",
-	"is_playing_animation": "Check if an animation is currently playing",
-	"get_current_animation": "Get the name of the current animation"
 }
 
 # ===== Properties =====
@@ -113,83 +107,75 @@ var hostile: bool:
 # ===== Initialization =====
 
 # Use a dictionary for optional parameters
-func _init(params: Dictionary = {}) -> void:
-	
-	_debugging = params.get("debugging", false)
-	
-	_slave = params.get("slave", null)
-	
+func _init(self_node: Node) -> void:
+	_debugging = self_node.get("debugging")
+	_slave = self_node
+
 	if _slave == null:
 		Debug.throw_error(self, "init", "Could not initiate being")
 		return
-	
-	_nomen = params.get("nomen", "")
-	
-	if _nomen and Dialogue.character_exists(_nomen):
+
+	if "character" in _slave:
+		_character = _slave.character
 		is_character = true
-		if not Data.game_data["characters"][_nomen]["alive"]:
+		_nomen = Dicts.characters[_character]["name"]
+		_faction = Dicts.characters[_character]["faction"]
+		_slave.add_to_group(Factions.get_faction(_faction))
+		if not Data.game_data["characters"][str(_character)]["alive"]:
 			_slave.queue_free()
 			return
-	
+
 	_slave.add_to_group("beings")
-		
+
 	if _debugging:
 		print("[Being] Constructor called by ", _slave.name)
-	
-	_faction = params.get("faction", -1)
-	if Factions.faction_exists(_faction):
-		_slave.add_to_group(Factions.get_faction(_faction))
-		
-	# Store node components and track missing ones
-	_sprite = params.get("sprite", null)
+
+	_sprite = _slave.get("sprite")
 	if _sprite == null:
-		_missing_components["sprite"] = SPRITE_FUNCTIONS
-		
-	_collider = params.get("collider", null)
+		_missing_components.append("sprite")
+
+	_collider = _slave.get("collider")
 	if _collider == null:
-		_missing_components["collider"] = COLLIDER_FUNCTIONS
-		
-	_area = params.get("area", null)
+		_missing_components.append("collider")
+
+	_area = _slave.get("area")
 	if _area == null:
-		_missing_components["area"] = AREA_FUNCTIONS
-		
-	_animator = params.get("animator", null)
-	if _animator == null:
-		_missing_components["animator"] = ANIMATOR_FUNCTIONS
-		
-	_audio = params.get("audio", null)
+		_missing_components.append("area")
+
+	_audio = _slave.get("audio")
 	if _audio == null:
-		_missing_components["audio"] = ANIMATOR_FUNCTIONS
-	
-	health = params.get("base_health", 0.0) # If no health in entity, assume its non living
-	
-	_health_bar = params.get("health_bar", null)
+		_missing_components.append("audio")
+
+	_health_bar = _slave.get("health_bar")
 	if _health_bar == null:
-		_missing_components["health_bar"] = ANIMATOR_FUNCTIONS
+		_missing_components.append("health_bar")
 	else:
 		_health_bar.min_value = 0.0
-		_health_bar.max_value = health
-		_health_bar.set_value(health)
-		
-	vincible = params.get("vincible", true)
-	hostile = params.get("hostile", false)
-	speed = params.get("base_speed", 0.0)
-	damage = params.get("base_damage", 0.0)
-	_exp_on_kill = params.get("exp_on_kill", 0.0)
-	
+
+	if _slave.get("vincible"):
+		vincible = _slave.get("vincible")
+
+	if _slave.get("hostile"):
+		hostile = _slave.get("hostile")
+
+	if _slave.get("base_speed"):
+		speed = _slave.get("base_speed")
+
+	if _slave.get("base_damage"):
+		damage = _slave.get("base_damage")
+
+	if _slave.get("exp_on_kill"):
+		_exp_on_kill = _slave.get("exp_on_kill")
+
 	_print_missing_components()
 
 # ===== Component Management =====
-
 func _print_missing_components() -> void:
-	if _missing_components.size() > 0:
-		if _debugging:
-			print("[Being] Warning: Missing components:")
-			for component: Variant in _missing_components:
-				print("  - %s component missing. Unavailable functions:" % component)
-				for func_name: String in _missing_components[component]:
-					print("    • %s: %s" % [func_name, _missing_components[component][func_name]])
-
+	if _debugging and _missing_components.size() > 0:
+		print("[Being] Warning: Missing essential components:")
+		for component: String in _missing_components:
+			print("  - %s component is missing." % component)
+			
 # ===== Health Management =====
 
 func take_damage(amount: float) -> void:
@@ -286,100 +272,3 @@ func get_overlapping_bodies() -> Array:
 	if _area != null:
 		return _area.get_overlapping_bodies()
 	return []
-
-# ===== Animation Player Component Functions =====
-func play_animation(anim_name: String) -> bool:
-	if _animator != null and _animator.has_animation(anim_name):
-		_animator.play(anim_name)
-		return true
-	return false
-
-func is_playing_animation() -> bool:
-	if _animator != null:
-		return _animator.is_playing()
-	return false
-
-func get_current_animation() -> String:
-	if _animator != null:
-		return _animator.current_animation
-	return ""
-
-# ===== Static Functions =====
-static func create_being(self_node: Node) -> Being:
-	var params: Dictionary = {} # Keep track of what variables and nodes the slave has
-	
-	var slave: Node = self_node # Save slave path for direct manipulation
-	params["slave"] = slave
-	
-	# Add available components to params
-	var sprite: Sprite2D = self_node.get("sprite")
-	if sprite:
-		params["sprite"] = sprite
-		
-	var collider: CollisionShape2D = self_node.get("collider")
-	if collider:
-		params["collider"] = collider
-		
-	var area: Area2D = self_node.get("area")
-	if area:
-		params["area"] = area
-		
-	var animator: AnimationPlayer = self_node.get("animator")
-	if animator:
-		params["animator"] = animator
-	
-	var health_bar: TextureProgressBar = self_node.get("health_bar")
-	if health_bar:
-		params["health_bar"] = health_bar
-		
-	var audio: AudioStreamPlayer2D= self_node.get("audio")
-	if audio:
-		params["audio"] = audio
-	
-	@warning_ignore("untyped_declaration")
-	var base_health = self_node.get("base_health")
-	if base_health != null:
-		params["base_health"] = base_health
-		
-	@warning_ignore("untyped_declaration")
-	var base_speed = self_node.get("base_speed")
-	if base_speed != null:
-		params["base_speed"] = base_speed
-		
-	@warning_ignore("untyped_declaration")
-	var base_damage = self_node.get("base_damage")
-	if base_damage != null:
-		params["base_damage"] = base_damage
-		
-	@warning_ignore("untyped_declaration")
-	var exp_on_kill = self_node.get("exp_on_kill")
-	if exp_on_kill != null:
-		params["exp_on_kill"] = exp_on_kill
-		
-	@warning_ignore("untyped_declaration")
-	var nomen = self_node.get("nomen")
-	if nomen != null:
-		params["nomen"] = nomen
-		
-	@warning_ignore("untyped_declaration")
-	var hostile_ = self_node.get("hostile")
-	if hostile_ != null:
-		params["hostile"] = hostile_
-		
-	@warning_ignore("untyped_declaration")
-	var debugging = self_node.get("debugging")
-	if debugging != null:
-		params["debugging"] = debugging
-		
-	@warning_ignore("untyped_declaration")
-	var faction = self_node.get("faction")
-	if faction != null:
-		if Factions.faction_exists(faction):
-			params["faction"] = faction
-	
-	@warning_ignore("untyped_declaration")
-	var vincible_ = self_node.get("vincible")
-	if vincible_ != null:
-		params["vincible"] = vincible_
-		
-	return Being.new(params)

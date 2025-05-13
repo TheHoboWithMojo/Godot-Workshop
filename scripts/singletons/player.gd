@@ -56,6 +56,9 @@ func add_perk(perk_name: String) -> void:
 		
 	if _update_toggle_buff(perk_name, Data.game_data["perks"]):
 		print(perk_name, " boolean buff was added!")
+		
+func change_name(nomen: String) -> void:
+	Global.player.nametag.set_text(nomen)
 
 func change_stat(buff_string: String, debug: bool = false) -> void:
 	var buffs: Array = _parse_buff_string(buff_string)

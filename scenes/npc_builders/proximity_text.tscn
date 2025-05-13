@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://rpenfcmg3cck"]
 
-[ext_resource type="Script" uid="uid://b8644kd3rkacx" path="res://scenes/npcs/fading_remark.gd" id="1_pm8ki"]
+[ext_resource type="Script" uid="uid://b8644kd3rkacx" path="res://scenes/npc_builders/fading_remark.gd" id="1_pm8ki"]
 [ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="2_aofba"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pm8ki"]

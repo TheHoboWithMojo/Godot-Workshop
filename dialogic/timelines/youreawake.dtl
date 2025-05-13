@@ -1,0 +1,19 @@
+Skip?
+- Yes
+	[end_timeline]
+- No
+\doc_mitchell: "Whoa there. Easy there, easy...\
+You've been out cold a couple of days now.\
+Why don't you just relax a second, get your bearings?"
+\doc_mitchell: "Let's see what the damage is.\
+How about your name? Can you tell me your name?"
+[text_input text="Can you tell me your name?:" var="player_name"]
+\doc_mitchell: "I can't say it's what I'd have picked for you, but if that's your name, that's your name.\
+I'm Doc Mitchell. Welcome to Goodsprings."
+\doc_mitchell: "Now, I hope you don't mind, but I had to go rooting around there in your noggin to pull all the bits of lead out."
+\doc_mitchell: I take pride in my needlework, but you'd better tell me if I left anything out of place."
+\doc_mitchell: "How'd I do?"
+\doc_mitchell: "Well, you got most of your faculties intact.\
+Head still on your shoulders and all that."
+\doc_mitchell: "I reckon you could use a bit more rest, but if you're up for it, why don't you walk down to the end of the room, over by that Vigor Tester machine there?"
+\doc_mitchell: "Take it slow now. It ain't a race."

@@ -1,11 +1,12 @@
 extends Node
-func _process(_delta: float) -> void:
-	if Data.is_data_loaded:
-		if Global.frames % 60 == 0:
-			for being: Node2D in get_tree().get_nodes_in_group("beings"):
-				if being.master._faction in Factions.FACTIONS.values():
-					if Factions.get_rep_status(being.master._faction) == "hostile":
-						being.master.hostile = true
+func _ready() -> void:
+	Global.game_manager.level_loaded.connect(_on_level_loaded)
+	
+func _on_level_loaded() -> void: # check for hostility when entering level
+	for being: Node2D in get_tree().get_nodes_in_group("beings"):
+		if Factions.faction_exists(being.master._faction):
+			if Factions.get_rep_status(being.master._faction) == "hostile":
+				being.master.hostile = true
 
 # Wrapper function to update any faction data
 func update_faction_data(faction: FACTIONS, property: String, value: Variant) -> void:
@@ -192,5 +193,6 @@ enum FACTIONS {
 	CRIMSON_CARAVAN,
 	JACOBSTOWN,
 	WESTSIDE_COOPERATIVE,
-	BROTHERHOOD_OUTCASTS
+	BROTHERHOOD_OUTCASTS,
+	GOODSPRINGS,
 }

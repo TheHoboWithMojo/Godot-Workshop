@@ -15,6 +15,7 @@ extends CharacterBody2D
 @export var projectiles: Array[PackedScene]
 @export var health_bar: TextureProgressBar
 @export var direction_tracker: Marker2D
+@export var nametag: RichTextLabel
 
 func _ready() -> void:
 	await Global.active_and_ready(self, active)
@@ -23,6 +24,8 @@ func _ready() -> void:
 	
 	if Global.game_manager.use_save_data:
 		load_saved_stats()
+		
+	health_bar.set_visible(false)
 
 @onready var speed: float = default_speed
 @onready var health: float = default_health
@@ -130,7 +133,8 @@ func check_for_achievements() -> void: #UPDATE SO EVERY PERK HAS A REQ LIST IN D
 		Player.add_perk("asshole")
 
 func _flip_sprite(_sprite: Variant, _orientation_angle: float) -> void:
-	_sprite.flip_h = (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
+	if sprite:
+		_sprite.flip_h = (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
 	
 func _get_direction(x_or_y: String) -> float:
 	if x_or_y.to_lower() == "x":

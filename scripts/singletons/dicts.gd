@@ -75,9 +75,18 @@ var perks: Dictionary = {
 }
 
 var reload_data: Dictionary = {
-	"last_level": "res://scenes/levels/desert.tscn", # these are set to level one values by default
-	"last_position": Vector2(7.0, 15.0),
+	"last_level": "res://scenes/levels/doc_mitchell's_house/doc_mitchell's_house.tscn", # these are set to level one values by default
+	"last_position": Vector2(0, 0),
 	"acquired_weapons": [],
+}
+
+enum LEVELS {DOC_MITCHELLS_HOUSE}
+
+func get_level_path(level: LEVELS) -> String:
+	return levels[level]
+
+var levels: Dictionary[LEVELS, String] = {
+	LEVELS.DOC_MITCHELLS_HOUSE: "res://scenes/levels/doc_mitchell's_house/doc_mitchell's_house.tscn"
 }
 
 # FACTIONS
@@ -85,6 +94,10 @@ var factions_data: Dictionary = {
 	Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC: {
 		"rep": 50,
 		"decisions": []
+	},
+	Factions.FACTIONS.GOODSPRINGS: {
+	"rep": 50,
+	"decisions": []
 	},
 	Factions.FACTIONS.CAESERS_LEGION: {
 		"rep": 50,
@@ -171,30 +184,62 @@ var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing cs
 }
 
 # Dialogue
+enum CHARACTERS {DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE}
+
+func get_character(character: CHARACTERS) -> DialogicCharacter:
+	return load(characters[character]["resource"])
+
 var characters: Dictionary = {
-	"steve": {
-		"name": "steve",
+	CHARACTERS.DOC_MITCHELL: {
+		"name": "doc_mitchell",
 		"alive": true,
-		"resource": "res://dialogic/characters/steve.dch",
-		"faction": Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"style": "res://dialogic/styles/default.tres",
+		"faction": Factions.FACTIONS.GOODSPRINGS
 		},
-	"bob": {
-		"name": "bob",
+	CHARACTERS.SUNNY_SMILES: {
+		"name": "sunny_smiles",
 		"alive": true,
-		"resource": "res://dialogic/characters/bob.dch",
-		"faction": Factions.FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.CHET: {
+		"name": "chet",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.RINGO: {
+		"name": "ringo",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.OLD_MAN_PETE: {
+		"name": "old_man_pete",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.TAMMY: {
+		"name": "tammy",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
 		},
 }
 
+enum TIMELINES {YOUREAWAKE}
+
+func get_timeline(timeline: TIMELINES) -> DialogicTimeline:
+	return load(timelines[timeline]["resource"])
+
 var timelines: Dictionary = {
-	"opening": {
+	TIMELINES.YOUREAWAKE: {
+		"name": "youre_awake",
 		"completed": false,
 		"repeatable": false,
-		"characters": [characters.steve]
-	},
-	"bob_greeting": {
-		"completed": false,
-		"repeatable": true,
-		"characters": [characters.bob]
-	}
+		"characters": [CHARACTERS.DOC_MITCHELL],
+		"resource": "res://dialogic/timelines/youreawake.dtl"
+},
 }

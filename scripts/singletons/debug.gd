@@ -1,8 +1,12 @@
 # Holds advanced printing functions
 extends Node
 # Public Functions:
-func throw_error(self_node: Node, function_name: String, reason: String, input: Variant = null) -> void:
-	var file_name: String = self_node.get_script().resource_path.get_file()
+func throw_error(self_node_or_file_name: Variant, function_name: String, reason: String, input: Variant = null) -> void:
+	var file_name: String
+	if self_node_or_file_name is Node:
+		file_name = self_node_or_file_name.get_script().resource_path.get_file()
+	else:
+		file_name= self_node_or_file_name
 	var caller_script_name: String = get_stack()[-1].source.get_file()
 	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
 	if input == null:

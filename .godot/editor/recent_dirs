@@ -1,3 +1,9 @@
+res://dialogic/characters/DocMitchell
+res://dialogic/timelines
+res://dialogic/characters
+res://scenes/levels
+res://scenes/npc_builders
+res://scenes/default
 res://scripts/classes
 res://scripts/quests
 res://Scenes
@@ -5,8 +11,6 @@ res://scenes
 res://scripts/singletons
 res://
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons
-res://dialogic/characters
-res://dialogic/timelines
 res://scenes/npcs
 res://assets
 res://dialogic/styles
@@ -17,6 +21,4 @@ res://assets/textures/Bullets
 res://assets/textures
 C:/Users/evanl/OneDrive/Godot
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop
-res://Scripts
 C:/Users/evanl/OneDrive/Godot/projects/rpg
-res://Dialogic/Timelines

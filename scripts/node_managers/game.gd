@@ -84,8 +84,7 @@ func load_data() -> void:
 		await Data.data_loaded
 	
 func boot_dialogic() -> void:
-	Dialogic.start("res://dialogic/timelines/boot.dtl") # Start a blank timeline to load dialogic assets
-	preload("res://dialogic/styles/tryme.tres") # Load generic dialogic style
+	pass
 	
 func connect_signals() -> void:
 	mob_died.connect(_on_mob_death)
@@ -96,6 +95,7 @@ func ready_up() -> void:
 	# Wait for ALL SIGNALS BEFORE STARTING
 	if not is_level_loaded:
 		await level_loaded
+	await Dialogue.start(Dicts.TIMELINES.YOUREAWAKE)
 	is_ready_to_start = true
 	ready_to_start.emit()
 # =========================================================================
@@ -229,10 +229,14 @@ func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 # HELPER FUNCTIONS
 # =========================================================================
 func update_level_data() -> void:
-	current_tile_map = current_level.tiles
-	spawnable_enemies = current_level.enemies
-	enemy_spawnpoints = current_level.enemy_spawnpoints
-	checkpoints = current_level.checkpoints_dict
+	if "tiles" in current_level:
+		current_tile_map = current_level.tiles
+	if "enemies" in current_level:
+		spawnable_enemies = current_level.enemies
+	if "spawnpoints" in current_level:
+		enemy_spawnpoints = current_level.enemy_spawnpoints
+	if "checkpoints" in current_level:
+		checkpoints = current_level.checkpoints_dict
 	Data.game_data.reload_data.last_level = current_level.scene_file_path
 	is_level_loaded = true
 	level_loaded.emit()

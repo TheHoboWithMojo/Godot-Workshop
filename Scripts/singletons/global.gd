@@ -71,6 +71,8 @@ func get_rawname(scene_or_node_or_path: Variant) -> String:
 		return scene_or_node_or_path.resource_path.get_file().get_basename()
 	elif scene_or_node_or_path is String:
 		return scene_or_node_or_path.get_file().get_basename()
+	elif scene_or_node_or_path is Resource:
+		return scene_or_node_or_path.resource_path.get_file().get_basename()
 	else:
 		Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
 		return ""
