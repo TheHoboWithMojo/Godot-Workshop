@@ -22,7 +22,6 @@ Factions="*res://scripts/singletons/factions.gd"
 Debug="*res://scripts/singletons/debug.gd"
 Player="*res://scripts/singletons/player.gd"
 Dialogue="*res://scripts/singletons/dialogue.gd"
-Dicts="*res://scripts/singletons/dicts.gd"
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 Levels="*res://scripts/singletons/levels.gd"
 
@@ -43,7 +42,9 @@ layout/style_list=["res://dialogic/styles/alt.tres", "res://dialogic/styles/defa
 layout/default_style=""
 glossary/default_case_sensitive=true
 variables={
-"player_name": ""
+"int": 0,
+"player_name": "",
+"remaining_points": 20
 }
 extensions_folder="res://addons/dialogic_additions"
 text/letter_speed=0.01

@@ -15,17 +15,17 @@ func _ready():
 
 func sync_all_sheets():
 	print("Starting sync of all sheets...")
-	for sheet_name in Dicts.spreadsheets.keys():
-		if Dicts.spreadsheets[sheet_name]["id"] != "":
+	for sheet_name in Data.spreadsheets.keys():
+		if Data.spreadsheets[sheet_name]["id"] != "":
 			print("Processing sheet: ", sheet_name)
 			await _sync_csv(sheet_name)
 			await sheet_completed
 	print("All sheets processed!")
 
 func _sync_csv(sheet_name: String):
-	if Dicts.spreadsheets.has(sheet_name):
+	if Data.spreadsheets.has(sheet_name):
 		current_sync = sheet_name
-		var metadata_url = "https://docs.google.com/spreadsheets/d/%s/edit" % Dicts.spreadsheets[sheet_name].id
+		var metadata_url = "https://docs.google.com/spreadsheets/d/%s/edit" % Data.spreadsheets[sheet_name].id
 		await _make_initial_request(metadata_url, true)
 
 func _make_initial_request(url: String, is_metadata: bool = false) -> void:
@@ -84,7 +84,7 @@ func _process_metadata(body: PackedByteArray) -> void:
 	var title_end = html_content.find(" - Google Sheets")
 	spreadsheet_name = html_content.substr(title_start, title_end - title_start)
 	
-	var csv_url = "https://docs.google.com/spreadsheets/d/%s/export?format=csv" % Dicts.spreadsheets[current_sync].id
+	var csv_url = "https://docs.google.com/spreadsheets/d/%s/export?format=csv" % Data.spreadsheets[current_sync].id
 	await _make_initial_request(csv_url, false)
 
 func _save_csv_and_json(body: PackedByteArray) -> void:

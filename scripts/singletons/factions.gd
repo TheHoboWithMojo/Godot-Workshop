@@ -1,6 +1,7 @@
 extends Node
 func _ready() -> void:
-	Global.game_manager.level_loaded.connect(_on_level_loaded)
+	if Global.game_manager:
+		Global.game_manager.level_loaded.connect(_on_level_loaded)
 	
 func _on_level_loaded() -> void: # check for hostility when entering level
 	for being: Node2D in get_tree().get_nodes_in_group("beings"):
@@ -195,4 +196,87 @@ enum FACTIONS {
 	WESTSIDE_COOPERATIVE,
 	BROTHERHOOD_OUTCASTS,
 	GOODSPRINGS,
+}
+
+var factions_data: Dictionary = {
+	FACTIONS.NEW_CALIFORNIA_REPUBLIC: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.GOODSPRINGS: {
+	"rep": 50,
+	"decisions": []
+	},
+	FACTIONS.CAESERS_LEGION: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.BROTHERHOOD_OF_STEEL: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.GREAT_KHANS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.GUN_RUNNERS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.BOOMERS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.ENCLAVE_REMNANTS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.WHITE_GLOVE_SOCIETY: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.OMERTAS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.CHAIRMEN: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.KINGS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.POWDER_GANGERS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.FIENDS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.VAN_GRAFFS: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.CRIMSON_CARAVAN: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.JACOBSTOWN: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.WESTSIDE_COOPERATIVE: {
+		"rep": 50,
+		"decisions": []
+	},
+	FACTIONS.BROTHERHOOD_OUTCASTS: {
+		"rep": 50,
+		"decisions": []
+	}
 }

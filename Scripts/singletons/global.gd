@@ -61,9 +61,6 @@ func swap_scenes(self_node: Node, new_scene: PackedScene) -> void:
 	self_node.queue_free()
 	get_tree().get_parent().add_child(new_scene.instantiate())
 	
-func get_interactable_nodes() -> Array[Node]:
-	return get_tree().get_nodes_in_group("interactable")
-	
 func get_rawname(scene_or_node_or_path: Variant) -> String:
 	if scene_or_node_or_path is Node:
 		return scene_or_node_or_path.name
@@ -123,3 +120,21 @@ func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
 	else:
 		Debug.throw_error(self, "get_vector_to_player_camera", "Player camera path has changed")
 		return Vector2.ZERO
+		
+func get_collider(node: Node2D) -> CollisionShape2D:
+	match(node.get_class()):
+		"CollisionShape2D":
+			return node
+		"Sprite2D":
+			return node.get_node("Body/Collider")
+		"AnimatedSprite2D":
+			return node.get_node("Body/Collider")
+		"Area2D":
+			return node.get_node("Collider")
+		"Node2D":
+			return node.get_node("Collider")
+		"Node":
+			return node.get_node("Collider")
+		"StaticBody2D":
+			return node.get_node("Collider")
+	return null

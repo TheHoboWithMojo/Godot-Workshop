@@ -10,10 +10,11 @@ radius = 32.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(32, 32)
 
-[node name="NPC" type="CharacterBody2D" node_paths=PackedStringArray("collider", "area", "health_bar")]
+[node name="NPC" type="CharacterBody2D" node_paths=PackedStringArray("collider", "ibubble", "health_bar")]
+motion_mode = 1
 script = ExtResource("1_vnwdf")
 collider = NodePath("Collider")
-area = NodePath("IBubble")
+ibubble = NodePath("IBubble")
 health_bar = NodePath("HealthBar")
 
 [node name="IBubble" type="Area2D" parent="." node_paths=PackedStringArray("parent")]

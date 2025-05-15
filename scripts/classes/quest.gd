@@ -22,14 +22,14 @@ func _init(self_node: Node) -> void:
 	caller = self_node
 	nomen = caller.name
 	
-	for character: Dicts.CHARACTERS in caller.characters:
-		characters.append(Dicts.get_character(character))
+	for character: Dialogue.CHARACTERS in caller.characters:
+		characters.append(Dialogue.get_character(character))
 		
-	for related_timeline: Dicts.TIMELINES in caller.related_timelines:
-		related_timelines.append(Dicts.get_timeline(related_timeline))
+	for related_timeline: Dialogue.TIMELINES in caller.related_timelines:
+		related_timelines.append(Dialogue.get_timeline(related_timeline))
 		
-	for level: Dicts.LEVELS in caller.related_levels:
-		related_levels.append(Dicts.get_level_path(level))
+	for level: Levels.LEVELS in caller.related_levels:
+		related_levels.append(Levels.get_level_path(level))
 
 	mainplot = Plot.new()
 	mainplot.quest = self
@@ -41,12 +41,13 @@ func _init(self_node: Node) -> void:
 
 func _on_timeline_started() -> void: # notify the caller if a related timeline has been played (have to reconvert to enum form)
 	if Dialogic.current_timeline in related_timelines:
-		var timeline: int = Global.string_to_enum(Global.get_rawname(Dialogic.current_timeline), Dicts.TIMELINES)
+		var timeline: int = Global.string_to_enum(Global.get_rawname(Dialogic.current_timeline), Dialogue.TIMELINES)
 		caller._on_related_timeline_played(timeline)
 
 func _on_level_loaded() -> void:
-	if Global.game_manager.current_level.scene_file_path in related_levels:
-		caller._on_related_level_loaded(Global.game_manager.current_level)
+	var current_level: Node = Levels.get_current_level()
+	if current_level.scene_file_path in related_levels:
+		caller._on_related_level_loaded(current_level)
 
 func new_sideplot(_nomen: String) -> Plot:
 	var sideplot: Plot = Plot.new(_nomen)
@@ -194,5 +195,5 @@ class Objective:
 	func is_complete() -> bool:
 		return completed
 		
-	func pair_waypoint(vector: Vector2):
+	func pair_waypoint(vector: Vector2) -> void:
 		plot.waypoints[self] = vector

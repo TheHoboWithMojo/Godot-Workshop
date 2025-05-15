@@ -19,7 +19,7 @@ extends CharacterBody2D
 @export var health_bar: TextureProgressBar
 @export var audio: AudioStreamPlayer2D
 
-@onready var master: Object = Being.create_being(self)
+@onready var master: Object = Being.new(self)
 
 func _ready() -> void:
 	master.toggle_collision(collision_on)

@@ -95,7 +95,7 @@ func ready_up() -> void:
 	# Wait for ALL SIGNALS BEFORE STARTING
 	if not is_level_loaded:
 		await level_loaded
-	await Dialogue.start(Dicts.TIMELINES.YOUREAWAKE)
+	await Dialogue.start(Dialogue.TIMELINES.YOUREAWAKE)
 	is_ready_to_start = true
 	ready_to_start.emit()
 # =========================================================================

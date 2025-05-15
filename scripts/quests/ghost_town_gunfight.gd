@@ -1,17 +1,17 @@
 extends Node
-@onready var characters: Array[Dicts.CHARACTERS] = [
-	Dicts.CHARACTERS.DOC_MITCHELL,
-	Dicts.CHARACTERS.SUNNY_SMILES,
-	Dicts.CHARACTERS.CHET,
-	Dicts.CHARACTERS.RINGO,
-	Dicts.CHARACTERS.TAMMY,
-	Dicts.CHARACTERS.OLD_MAN_PETE
+@onready var characters: Array[Dialogue.CHARACTERS] = [
+	Dialogue.CHARACTERS.DOC_MITCHELL,
+	Dialogue.CHARACTERS.SUNNY_SMILES,
+	Dialogue.CHARACTERS.CHET,
+	Dialogue.CHARACTERS.RINGO,
+	Dialogue.CHARACTERS.TAMMY,
+	Dialogue.CHARACTERS.OLD_MAN_PETE
 ]
 
-@onready var related_timelines: Array[Dicts.TIMELINES] = [
+@onready var related_timelines: Array[Dialogue.TIMELINES] = [
 ]
 
-@onready var related_levels: Array[Dicts.LEVELS] = [
+@onready var related_levels: Array[Levels.LEVELS] = [
 	
 ]
 

@@ -1,13 +1,13 @@
 extends Node
 
-@onready var characters: Array[Dicts.CHARACTERS] = [
-	Dicts.CHARACTERS.SUNNY_SMILES,
+@onready var characters: Array[Dialogue.CHARACTERS] = [
+	Dialogue.CHARACTERS.SUNNY_SMILES,
 ]
 
-@onready var related_timelines: Array[Dicts.TIMELINES] = [
+@onready var related_timelines: Array[Dialogue.TIMELINES] = [
 ]
 
-@onready var related_levels: Array[Dicts.LEVELS] = [
+@onready var related_levels: Array[Levels.LEVELS] = [
 	
 ]
 

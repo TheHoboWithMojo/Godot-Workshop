@@ -16,6 +16,79 @@ var stat_constraints: Dictionary = {
 	}
 }
 
+var stats: Dictionary = {
+	"speed": {
+		"speed_mult": 1.00,
+		"speed": 10000.0,
+		"attack_speed_mult": 3.00,
+	},
+	"special": {
+		"strength": 5,
+		"perception": 5,
+		"endurance": 5,
+		"charisma": 5,
+		"intelligence": 5,
+		"agility": 5,
+		"luck": 5
+	},
+	"health": {
+		"max_health": 100.0,
+		"health": 100.0,
+		"health_regen": 0.05
+	},
+	"crit": {
+		"crit_chance": 0.01,
+		"crit_mult": 2.0
+	},
+	"exp": {
+		"exp": 0.0,
+		"exp_mult": 1.0
+	},
+	"personality": {
+		"bravery": 5,
+		"intelligence": 5,
+		"snarkiness": 5,
+		"charisma": 5,
+		"cruelty": 5,
+		"selflessness": 5,
+		"selfishness": 5,
+	},
+	"accomplishments": {
+		"enemies_killed": 0,
+	},
+	"damage":{
+		"fire_damage_mult": 1.0,
+		"melee_damage_mult": 1.0,
+		"explosive_damage_mult": 1.0,
+		"persuasion_damage": 0,
+	}
+}
+
+var perks: Dictionary = {
+	"heavy_handed":
+		{
+		"reqs": {"level": 5, "bravery": 10},
+		"buffs": "melee_damage_mult + 0.05",
+		},
+	"experienced":
+		{
+		"reqs": {"level": 2, "intelligence": 5},
+		"buffs": "exp_mult + 0.05",
+		},
+	"asshole":
+		{
+		"reqs": {"level": 5, "cruelty": 10},
+		"buffs": "none",
+		"abilities": "none" # write the function name that adds the functionality so you can call it here
+		},
+	"politician":
+		{
+		"reqs": {"level": 1, "charisma": 10},
+		"buffs": "persuasion_damage + 0.05",
+		"abilities": "none"
+		},
+}
+
 var choices: Array[String]
 
 # Functions Related to Player Stats and Behavior

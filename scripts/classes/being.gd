@@ -4,7 +4,7 @@ extends Node2D
 # Name and stats
 var _nomen: String = ""
 var _faction: Factions.FACTIONS
-var _character: Dicts.CHARACTERS
+var _character: Dialogue.CHARACTERS
 var _health: float = 0.0
 var _speed: float = 0.0
 var _damage: float = 0.0
@@ -21,9 +21,11 @@ var vincible: bool = true
 var _slave: Node
 var _sprite: Sprite2D = null
 var _collider: CollisionShape2D = null
-var _area: Area2D = null
+var ibubble: Area2D = null
 var _health_bar: TextureProgressBar = null
 var _audio: AudioStreamPlayer2D = null
+var _navigator: NavigationAgent2D = NavigationAgent2D.new()
+var _navigation_target: Vector2 = Vector2.ZERO
 
 # Missing nodes
 var _missing_components: Array[String]
@@ -118,8 +120,8 @@ func _init(self_node: Node) -> void:
 	if "character" in _slave:
 		_character = _slave.character
 		is_character = true
-		_nomen = Dicts.characters[_character]["name"]
-		_faction = Dicts.characters[_character]["faction"]
+		_nomen = Dialogue.characters[_character]["name"]
+		_faction = Dialogue.characters[_character]["faction"]
 		_slave.add_to_group(Factions.get_faction(_faction))
 		if not Data.game_data["characters"][str(_character)]["alive"]:
 			_slave.queue_free()
@@ -133,14 +135,29 @@ func _init(self_node: Node) -> void:
 	_sprite = _slave.get("sprite")
 	if _sprite == null:
 		_missing_components.append("sprite")
-
+		
 	_collider = _slave.get("collider")
 	if _collider == null:
 		_missing_components.append("collider")
 
-	_area = _slave.get("area")
-	if _area == null:
-		_missing_components.append("area")
+	ibubble = _slave.get("ibubble")
+	if ibubble == null:
+		_missing_components.append("ibubble")
+	else:
+		_slave.add_child(_navigator)
+		if _debugging:
+			_navigator.set_debug_enabled(true)
+			print("agents avoidance layers: ", _navigator.get_avoidance_layers())
+			print("agents navigation map: ", _navigator.get_navigation_map())
+			
+		_navigator.set_avoidance_enabled(true)
+		_navigator.set_path_desired_distance(5.0)
+		_navigator.set_target_desired_distance(5.0)
+		#_navigator.set_path_postprocessing(1) # PATH_POSTPROCESSING_EDGECENTERED
+		_navigator.velocity_computed.connect(_on_navigator_velocity_computed)
+		_navigator.set_radius(Global.get_collider(ibubble).shape.radius)
+		_navigation_target = _slave.global_position
+		displacement = Global.get_collider(ibubble).shape.radius
 
 	_audio = _slave.get("audio")
 	if _audio == null:
@@ -185,22 +202,39 @@ func take_damage(amount: float) -> void:
 
 func heal(amount: float) -> void:
 	health += amount
-
-func approach_player(delta: float, perception: float, repulsion_strength: float) -> void:
-	if _alive:
-		var vector_to_player: Vector2 =  Global.get_vector_to_player(_slave)
-		var direction: Vector2 = vector_to_player.normalized()
 		
-		if vector_to_player.length() < perception:
-			_slave.velocity = direction * _speed * delta * Global.speed_mult
-			
-			_sprite.flip_h = (-PI/2 <= direction.angle() and direction.angle() <= PI/2)
-			
-			if Global.is_touching_player(_slave) and Global.get_vector_to_player(_slave).length() < 10:
-				var repulsion_vector: Vector2 = -direction * repulsion_strength * delta
-				_slave.velocity += repulsion_vector
-		else:
+func _on_navigator_velocity_computed(safe_velocity: Vector2) -> void:
+	_slave.velocity = safe_velocity
+
+@onready var displacement: float = 0.0 # set in init
+@onready var shifted: bool = false
+func seek(target: Variant = _navigation_target, up_down_left_right: String = "") -> void:
+	if _alive:
+		if target is Vector2:
+			_navigation_target = target
+		elif target is Node:
+			_navigation_target = target.global_position
+		if not shifted:
+			match(up_down_left_right): # shift the position WILL ONLY RUN ONCE ON NON PROCESS CALL
+				"left":
+					_navigation_target -= (1.2 * Vector2(displacement, 0))
+					shifted = true
+				"right":
+					_navigation_target += (1.2 * Vector2(displacement, 0))
+					shifted = true
+				"up":
+					_navigation_target += (1.2 * Vector2(0, displacement))
+					shifted = true
+				"down":
+					_navigation_target -= (1.2 * Vector2(displacement, 0))
+					shifted = true
+		_navigator.target_position = _navigation_target
+		if _navigator.is_navigation_finished():
 			_slave.velocity = Vector2.ZERO
+			shifted = false
+			return
+				
+		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * 50)
 
 func die() -> void:
 	_slave.velocity = Vector2.ZERO
@@ -211,7 +245,7 @@ func die() -> void:
 		_alive = false # Stops from piling calls
 		
 		if is_character:
-			Data.game_data["characters"][_nomen]["alive"] = false
+			Data.game_data["characters"][str(_character)]["alive"] = false
 		
 		speed = 0
 		
@@ -262,13 +296,13 @@ func toggle_collision(enabled: bool) -> bool:
 	return false
 # ===== Area Component Functions =====
 func toggle_monitoring(enabled: bool) -> bool:
-	if _area != null:
-		_area.monitoring = enabled
-		_area.monitorable = enabled
+	if ibubble != null:
+		ibubble.monitoring = enabled
+		ibubble.monitorable = enabled
 		return true
 	return false
 
 func get_overlapping_bodies() -> Array:
-	if _area != null:
-		return _area.get_overlapping_bodies()
+	if ibubble != null:
+		return ibubble.get_overlapping_bodies()
 	return []

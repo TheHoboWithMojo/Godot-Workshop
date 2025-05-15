@@ -2,8 +2,8 @@ extends Node
 
 signal dialogue_started
 
-func start(timeline: Dicts.TIMELINES) -> bool:
-	var timeline_path: String = Dicts.timelines[timeline]["resource"]
+func start(timeline: TIMELINES) -> bool:
+	var timeline_path: String = timelines[timeline]["resource"]
 	if _is_timeline_running():
 		#Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
 		return false
@@ -21,16 +21,16 @@ func start(timeline: Dicts.TIMELINES) -> bool:
 func aggro_conversers()  -> void:
 	if _is_timeline_running():
 		var timeline_name: String = Global.get_rawname(Dialogic.current_timeline.resource_path)
-		for character: Dictionary in Dicts.timelines[timeline_name]["characters"]:
+		for character: CHARACTERS in timelines[timeline_name]["characters"]:
 			for npc: Node2D in get_tree().get_nodes_in_group("npc"):
-				if npc.name.to_lower() == character.name:
+				if npc.name.to_lower() == get_character_name(character):
 					npc.master.hostile = true
 		
-func _is_timeline_completed(timeline: Dicts.TIMELINES) -> bool:
+func _is_timeline_completed(timeline: TIMELINES) -> bool:
 	return Data.game_data["timelines"][str(timeline)]["completed"] == true
 
-func _is_timeline_repeatable(timeline: Dicts.TIMELINES) -> bool:
-	return Dicts.timelines[timeline]["repeatable"] == true
+func _is_timeline_repeatable(timeline: TIMELINES) -> bool:
+	return timelines[timeline]["repeatable"] == true
 
 func _is_timeline_running() -> bool:
 	return Dialogic.current_timeline != null
@@ -71,3 +71,66 @@ func _on_dialogue_end() -> void:
 	
 	Global.speed_mult = 1.0
 	
+# Characters and Timelines Access
+
+enum CHARACTERS {DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE}
+var characters: Dictionary = {
+	CHARACTERS.DOC_MITCHELL: {
+		"name": "doc_mitchell",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"style": "res://dialogic/styles/default.tres",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.SUNNY_SMILES: {
+		"name": "sunny_smiles",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.CHET: {
+		"name": "chet",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.RINGO: {
+		"name": "ringo",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.OLD_MAN_PETE: {
+		"name": "old_man_pete",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+	CHARACTERS.TAMMY: {
+		"name": "tammy",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.GOODSPRINGS
+		},
+}
+func get_character(character: CHARACTERS) -> DialogicCharacter:
+	return load(characters[character]["resource"])
+	
+func get_character_name(character: CHARACTERS) -> String:
+	return Global.enum_to_camelcase(character, CHARACTERS)
+
+enum TIMELINES {YOUREAWAKE}
+var timelines: Dictionary = {
+	TIMELINES.YOUREAWAKE: {
+		"name": "youre_awake",
+		"completed": false,
+		"repeatable": false,
+		"characters": [CHARACTERS.DOC_MITCHELL],
+		"resource": "res://dialogic/timelines/youreawake.dtl",
+	},
+}
+func get_timeline(timeline: TIMELINES) -> DialogicTimeline:
+	return load(timelines[timeline]["resource"])
+	
+func get_timeline_name(timeline: TIMELINES) -> String:
+	return Global.enum_to_title(timeline, TIMELINES)

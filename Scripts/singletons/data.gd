@@ -11,6 +11,28 @@ signal data_cleared
 signal data_loaded
 signal data_saved
 
+@onready var reference_data: Dictionary[String, Dictionary] = {
+	"reload_data": reload_data,
+	"stats": Player.stats,
+	"factions_data": Factions.factions_data,
+	"perks": Player.perks,
+	"characters": Dialogue.characters,
+	"timelines": Dialogue.timelines,
+}
+var reload_data: Dictionary = {
+	"last_level": "res://scenes/levels/doc_mitchell's_house/doc_mitchell's_house.tscn", # these are set to level one values by default
+	"last_position": Vector2(0, 0),
+	"acquired_weapons": [],
+}
+var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing csvs
+	"items": {
+		"id": "1J16pLFRq0sskkJiUBQhY4QvSbcZ4VGSB00Zy3yi-1Vc",
+	},
+	"quests": {
+		"id": "1YyJAqxexIt5-x0fV528fsZG9R7tNW6V0nZjoHDgejpY",
+	},
+}
+
 # ----- Initialization -----
 func load_game_data() -> void:
 	print("Loading game data...")
@@ -20,7 +42,7 @@ func load_game_data() -> void:
 	game_data["quests"] = load_json_file(_get_current_path("quests"))
 	
 	# Load All Currents
-	for data_name: String in Dicts.reference_data.keys():
+	for data_name: String in reference_data.keys():
 		var current_data_path: String = _get_current_path(data_name)
 		var backup_data_path: String = _get_backup_path(data_name)
 		
@@ -48,7 +70,7 @@ func load_game_data() -> void:
 				save_json(backup_data, current_data_path)
 			else:
 				print("Using default data for %s" % data_name)
-				game_data[data_name] = Dicts.reference_data[data_name].duplicate(true)
+				game_data[data_name] = reference_data[data_name].duplicate(true)
 				# Save default data to both files
 				save_json(game_data[data_name], current_data_path)
 				save_json(game_data[data_name], backup_data_path)
@@ -109,7 +131,7 @@ func verify_data_integrity() -> bool:
 	var all_valid: bool = true
 	
 	# Check all data files
-	for data_name: String in Dicts.reference_data.keys():
+	for data_name: String in reference_data.keys():
 		var current_path: String = _get_current_path(data_name)
 		var backup_path: String = _get_backup_path(data_name)
 		
@@ -136,7 +158,7 @@ func save_data_changes() -> void:
 	_save_data_with_backup("quests")
 	
 	# Save all reference data with backup
-	for data_name: String in Dicts.reference_data.keys():
+	for data_name: String in reference_data.keys():
 		_save_data_with_backup(data_name)
 	
 	# Verify data integrity
@@ -191,13 +213,13 @@ func _save_data_with_backup(data_name: String) -> void:
 
 func clear_data() -> void: # Resets all current and backup files to default
 	# Reset reference data (perks, player_stats, faction_stats)
-	for data_name: String in Dicts.reference_data.keys():
+	for data_name: String in reference_data.keys():
 		var current_path: String = _get_current_path(data_name)
 		var backup_path: String = current_path.replace("_current", "_backup")
 		
-		save_json(Dicts.reference_data[data_name], current_path)
-		save_json(Dicts.reference_data[data_name], backup_path)
-		game_data[data_name] = Dicts.reference_data[data_name].duplicate(true)
+		save_json(reference_data[data_name], current_path)
+		save_json(reference_data[data_name], backup_path)
+		game_data[data_name] = reference_data[data_name].duplicate(true)
 	
 	# Reset quests (using reference data)
 	var quests_ref_path: String = _get_current_path("quests").replace("_current", "")
@@ -311,7 +333,7 @@ func load_json_file(path: String) -> Dictionary: # Quick function for loading a 
 
 # ----- Helper Functions -----
 func _sheet_exists(sheet_name: String) -> bool:
-	if sheet_name in Dicts.spreadsheets.keys() or sheet_name in Dicts.reference_data.keys():
+	if sheet_name in spreadsheets.keys() or sheet_name in reference_data.keys():
 		return true
 	Debug.throw_error(self, "_sheet_exists", "Sheet '%s' does not exist" % [sheet_name])
 	return false
