@@ -36,15 +36,15 @@ directories/dch_directory={
 "doc_mitchell": "res://dialogic/characters/DocMitchell/doc_mitchell.dch"
 }
 directories/dtl_directory={
+"picktags": "res://dialogic/timelines/picktags.dtl",
 "youreawake": "res://dialogic/timelines/youreawake.dtl"
 }
 layout/style_list=["res://dialogic/styles/alt.tres", "res://dialogic/styles/default.tres", "res://dialogic/styles/tryme.tres"]
 layout/default_style=""
 glossary/default_case_sensitive=true
 variables={
-"int": 0,
-"player_name": "",
-"remaining_points": 20
+"check": false,
+"player_name": ""
 }
 extensions_folder="res://addons/dialogic_additions"
 text/letter_speed=0.01

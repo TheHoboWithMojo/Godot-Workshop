@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cio5pn3i1jkkj"]
+
+[node name="QuestBox" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Box" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 1
+offset_right = 320.0
+offset_bottom = 64.0
+
+[node name="Quest" type="RichTextLabel" parent="Box"]
+custom_minimum_size = Vector2(320, 24)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Quest Name:"
+fit_content = true
+
+[node name="Objective" type="RichTextLabel" parent="Box"]
+custom_minimum_size = Vector2(240, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Description"
+fit_content = true

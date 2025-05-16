@@ -1,4 +1,5 @@
 extends CharacterBody2D
+@export_group("Tinker")
 @export var active: bool = true
 @export var collision_on: bool = true
 @export var hostile: bool = false
@@ -22,7 +23,7 @@ extends CharacterBody2D
 @export_group("Character")
 @export var character: Dialogue.CHARACTERS
 @onready var nomen: String = Dialogue.characters[character]["name"]
-@export var timelines: Array[Dialogue.TIMELINES]
+@export var timeline: Dialogue.TIMELINES
 
 ####### RUNTIME VARIABLES ##############
 @export var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
@@ -34,8 +35,7 @@ func _ready() -> void:
 	$Texture/NameTag.set_text(nomen)
 	player_entered_area.connect(_check_for_dialog)
 	
-	for timeline: Dialogue.TIMELINES in timelines:
-		Dialogic.preload_timeline(Dialogue.timelines[timeline]["resource"])
+	Dialogic.preload_timeline(Dialogue.timelines[timeline]["resource"])
 	
 	add_to_group("interactable")
 	add_to_group("npc")
@@ -44,16 +44,18 @@ func _ready() -> void:
 	
 	master.toggle_collision(collision_on)
 
+
 var first_time_talked_to: bool = true
 func _check_for_dialog() -> void:
-	if timelines:
+	if timeline:
 		while Global.is_touching_player(self):
 			if Input.is_action_just_pressed("interact"):
 				if first_time_talked_to:
 					first_time_talked_to = false
-					if await Dialogue.start(timelines[0]):
+					if await Dialogue.start(timeline):
 						await Dialogic.timeline_ended
 			await get_tree().process_frame
+
 
 func _physics_process(_delta: float) -> void:
 	master.seek()

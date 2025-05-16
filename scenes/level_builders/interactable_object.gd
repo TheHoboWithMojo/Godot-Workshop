@@ -12,6 +12,8 @@ extends StaticBody2D
 @onready var ibubble: Area2D = $IBubble
 @onready var scene: PackedScene
 
+signal player_touched_me
+
 func _ready() -> void:
 	ibubble_collider.reparent(ibubble)
 	await get_tree().process_frame
@@ -30,12 +32,14 @@ func interact() -> void:
 			return
 		if timeline and play_timeline:
 			while Global.is_touching_player(self):
+				player_touched_me.emit()
 				if Input.is_action_just_pressed("interact"):
 					if await Dialogue.start(timeline):
 						await Dialogic.timeline_ended
 				await get_tree().process_frame
 		if scene and play_scene:
 			while Global.is_touching_player(self):
+				player_touched_me.emit()
 				if Input.is_action_just_pressed("interact"):
 					var node: Node = scene.instantiate()
 					get_tree().root.add_child(node)

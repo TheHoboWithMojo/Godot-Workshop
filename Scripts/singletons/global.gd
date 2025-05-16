@@ -6,6 +6,7 @@ const FLOAT_LIMIT: float = 2147483647.0
 const PLAYER_PATH: String = "/root/Game/Player"
 const PLAYER_CAMERA_PATH: String = "/root/Game/Player/Camera"
 const GAME_MANAGER_PATH: String = "/root/Game"
+const QUEST_BOX_PATH: String = "/root/Game/Player/QuestBox"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
@@ -15,52 +16,83 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var speed_mult: float = 1.0
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
+@onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
+@onready var quest_box: Control = get_node(QUEST_BOX_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
-@onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 @onready var delta: float = 0.0
+@onready var can_fast_travel: bool = true
+
+
+func _ready() -> void:
+	game_reloaded.connect(_on_game_reloaded)
+
 
 func _process(_delta: float) -> void:
 	delta = _delta
+
+
 # =============================================
 # PUBLIC FUNCTIONS
 # =============================================
-func _ready() -> void:
-	game_reloaded.connect(_on_game_reloaded)
-	
+func set_fast_travel_enabled(value: bool) -> void:
+	can_fast_travel = value
+
+
+func is_fast_travel_enabled() -> bool:
+	return can_fast_travel
+
+
 func is_touching_player(node: Node) -> bool:
 	return node == Global.player_touching_node
-	
+
+
 func is_touching_mouse(node: Node) -> bool:
 	return node == Global.mouse_touching_node
+
 
 func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player = get_node(PLAYER_PATH)
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
+	quest_box = get_node(QUEST_BOX_PATH)
 	print("Global references reloaded!")
-	
+
+
 func get_beings() -> Array[Node]:
 	return get_tree().get_nodes_in_group("beings")
-	
+
+
 func string_to_enum(string: String, enum_reference: Variant) -> int:
 	string = string.to_snake_case().to_upper()
 	return enum_reference[string]
 
-func enum_to_camelcase(index: int, enum_reference: Variant) -> String:
+
+func enum_to_snakecase(index: int, enum_reference: Variant) -> String:
 	return enum_reference.keys()[index].to_lower()
-	
+
+
+func enum_to_camelcase(index: int, enum_reference: Variant) -> String:
+	var title: String = ""
+	var words: PackedStringArray = enum_to_snakecase(index, enum_reference).split("_")
+	for word: String in words:
+		title += word.capitalize()
+	return title.strip_edges()
+
+
 func enum_to_title(index: int, enum_reference: Variant) -> String:
 	var title: String = ""
-	var words: PackedStringArray = enum_to_camelcase(index, enum_reference).split("_")
+	var words: PackedStringArray = enum_to_snakecase(index, enum_reference).split("_")
 	for word: String in words:
 		title += word.capitalize() + " "
 	return title.strip_edges()
 
+
 func swap_scenes(self_node: Node, new_scene: PackedScene) -> void:
 	self_node.queue_free()
 	get_tree().get_parent().add_child(new_scene.instantiate())
-	
+
+
 func get_rawname(scene_or_node_or_path: Variant) -> String:
 	if scene_or_node_or_path is Node:
 		return scene_or_node_or_path.name
@@ -73,6 +105,7 @@ func get_rawname(scene_or_node_or_path: Variant) -> String:
 	else:
 		Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
 		return ""
+
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
 	var positions: Array[Vector2] = []
@@ -92,7 +125,8 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 				world_pos = tilemap.to_global(world_pos)
 				positions.append(world_pos)
 	return positions
-	
+
+
 # ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
 func active_and_ready(self_node: Node, active: bool = true) -> void:
 	if active: # Check is node is active and if the player exists
@@ -104,8 +138,10 @@ func active_and_ready(self_node: Node, active: bool = true) -> void:
 	else:
 		self_node.queue_free()
 
+
 func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
+
 
 func get_vector_to_player(self_node: Node2D) -> Vector2:
 	if player:
@@ -113,14 +149,16 @@ func get_vector_to_player(self_node: Node2D) -> Vector2:
 	else:
 		Debug.throw_error(self, "get_vector_to_player", "Player path has changed")
 		return Vector2.ZERO
-		
+
+
 func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
 	if player_camera:
 		return player_camera.global_position - self_node.global_position
 	else:
 		Debug.throw_error(self, "get_vector_to_player_camera", "Player camera path has changed")
 		return Vector2.ZERO
-		
+
+
 func get_collider(node: Node2D) -> CollisionShape2D:
 	match(node.get_class()):
 		"CollisionShape2D":

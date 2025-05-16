@@ -1,0 +1,50 @@
+\doc_mitchell: "All right. I'm gonna say a word. I want you to say the first thing that comes to mind."
+\doc_mitchell: Dog.
+	- Cat
+	- Feed
+	- Newspaper
+	- Train
+	- Kick
+	- Dinner
+\doc_mitchell: House
+- Shelter
+- Burglarize
+- Renovate
+- Target
+- investment
+- Demolish
+\doc_mitchell: Night.
+- Campfire
+- Dream
+- Shroud
+- Sleep
+- Treasure
+- Silencer
+\doc_mitchell: Bandit.
+- Bribe
+- Crush
+- Stab
+- Swiss Cheese
+- Vaporize
+- Reasonable
+\doc_mitchell: Light.
+- Dark
+- Heavy
+- Beam
+- Flash
+- Inspiration
+- Torch
+\doc_mitchell: Mother.
+- Caretaker
+- Genes
+- Cookie Jar
+- Tantrum
+- Tattle
+- Regret
+- Human Shield
+	set {check} = true
+if {check} == true:
+	\doc_mitchell: Hmm. Sometimes when you give tests like this, you learn more than you was hoping for. And I reckon that ain't always the best thing...
+\doc_mitchell: Well, that's all she wrote. I don't have nothing to compare it to, so maybe you'd better just have a look at the results. See if it all seems right to you.
+set {check} = false
+[end_timeline]

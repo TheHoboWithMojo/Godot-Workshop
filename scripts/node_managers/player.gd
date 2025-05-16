@@ -35,11 +35,12 @@ func _ready() -> void:
 
 func load_saved_stats() -> void:
 	# load commonly used stats and one time use stats to reduce calls to Player singleton
-	speed = Player.get_stat("speed")
-	health = Player.get_stat("health")
-	max_health = Player.get_stat("max_health")
-	speed_mult = Player.get_stat("speed_mult")
-	attack_speed_mult = Player.get_stat("attack_speed_mult")
+	speed = Player.get_stat(Player.STATS.SPEED)
+	health = Player.get_stat(Player.STATS.HEALTH)
+	max_health = Player.get_stat(Player.STATS.MAX_HEALTH)
+	speed_mult = Player.get_stat(Player.STATS.SPEED_MULT)
+	attack_speed_mult = Player.get_stat(Player.STATS.ATTACK_SPEED_MULT)
+
 	health_bar.min_value = 0.0
 	health_bar.max_value = max_health
 	
@@ -92,9 +93,6 @@ func _process(_delta: float) -> void:
 			shoot(orientation_angle)
 			health_bar.set_value(health)
 			
-			if Global.frames % 120 == 0:
-				check_for_achievements()
-				
 			if projectiles:
 				process_scroll()
 
@@ -127,10 +125,6 @@ func shoot(angle: float) -> void: # spawns a projectile at a given angle
 				new_projectile.velocity = direction*new_projectile.speed # Set projectile velocity
 				await Global.delay(self, 1/(attack_speed*attack_speed_mult))
 				_just_shot = false
-
-func check_for_achievements() -> void: #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
-	if Player.get_stat("enemies_killed") > 5:
-		Player.add_perk("asshole")
 
 func _flip_sprite(_sprite: Variant, _orientation_angle: float) -> void:
 	if sprite:

@@ -1,12 +1,13 @@
+res://scenes/levels/goodsprings
+res://scenes/default
+res://dialogic/timelines
 res://scenes
 res://scripts/node_managers
-res://dialogic/timelines
 res://scenes/level_builders
 res://dialogic/characters/DocMitchell
 res://dialogic/characters
 res://scenes/levels
 res://scenes/npc_builders
-res://scenes/default
 res://scripts/classes
 res://scripts/quests
 res://Scenes

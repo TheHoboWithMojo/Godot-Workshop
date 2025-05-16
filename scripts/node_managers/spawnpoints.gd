@@ -1,4 +1,5 @@
 extends Marker2D
+class_name SpawnPoint
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body == Global.player:

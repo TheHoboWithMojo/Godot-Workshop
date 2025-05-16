@@ -20,6 +20,12 @@ SECONDS_PER_SPAWN = 2.0
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3
 motion_mode = 1
+active = null
+collision_on = null
+default_speed = null
+default_health = null
+attack_speed = null
+projectiles = null
 
 [node name="Camera" type="Camera2D" parent="Player"]
 zoom = Vector2(3, 3)

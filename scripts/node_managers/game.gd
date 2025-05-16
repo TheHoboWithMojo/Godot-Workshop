@@ -3,6 +3,7 @@
 # Handles essential game operations (loading, saving, essential signals, tracking frames)
 # =========================================================================
 extends Node2D
+
 # =========================================================================
 # CONFIGURATION
 # =========================================================================
@@ -11,6 +12,7 @@ extends Node2D
 @export var track_frames: bool = true
 @export var use_save_data: bool = true
 @export var autosaving: bool = true
+
 # =========================================================================
 # CONSTANTS
 # =========================================================================
@@ -22,12 +24,13 @@ extends Node2D
 @export var SECONDS_PER_SPAWN: float = 10.0
 @export var SPAWN_RADIUS: float = 1000
 @export var ENTITY_LOADING_RADIUS: float = 500
+
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
 @onready var is_ready_to_start: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
-@onready var current_level: Node
+@onready var current_level: Level
 @onready var enemy_spawnpoints: Array[Vector2]
 @onready var checkpoints: Dictionary[String, Vector2]
 @onready var current_tile_map: TileMapLayer
@@ -38,9 +41,10 @@ extends Node2D
 # SIGNALS
 # =========================================================================
 signal ready_to_start # Nodes read this to know when to begin processing
-signal mob_died # Handles mob death
+signal mob_died # Handles mob deaths
 signal level_changed # Procks when new level is entered
 signal level_loaded
+
 # =========================================================================
 # CORE LIFECYCLE METHODS
 # =========================================================================
@@ -55,49 +59,60 @@ func _ready() -> void:
 		ready_up()
 	else:
 		queue_free()
-	
+
+
 func _process(_delta: float) -> void:
 	if track_frames:
 		count_frames()
 	
 	if total_mobs:
 		disable_unseen_enemies() # Stops processing enemies outside of view
-
+	
 	if spawn_enemies and total_mobs < MOB_CAP:
 		spawn(spawnable_enemies)
 	
 	if use_save_data and autosaving:
 		autosave()
+
+
 # =========================================================================
 # READY FUNCTIONS
 # =========================================================================
 func update_global_references() -> void:
 	Global.game_reloaded.emit()
-	
+
+
 func load_data() -> void:
 	if not use_save_data:
 		Data.clear_data()
 		if Data.is_data_cleared != true:
 			await Data.data_cleared
+	
 	Data.load_game_data() # Load _current data into the game
 	if not Data.is_data_loaded:
 		await Data.data_loaded
-	
+
+
 func boot_dialogic() -> void:
 	pass
-	
+
+
 func connect_signals() -> void:
 	mob_died.connect(_on_mob_death)
 	level_changed.connect(_on_level_changed)
 	print("Game Manager Signals Connected!")
-	
+
+
 func ready_up() -> void:
 	# Wait for ALL SIGNALS BEFORE STARTING
 	if not is_level_loaded:
 		await level_loaded
+	
 	await Dialogue.start(Dialogue.TIMELINES.YOUREAWAKE)
 	is_ready_to_start = true
 	ready_to_start.emit()
+
+
 # =========================================================================
 # PROCESS FUNCTIONS
 # =========================================================================
@@ -105,6 +120,7 @@ func count_frames() -> void:
 	Global.frames += 1
 	if Global.frames >= 100:
 		Global.frames = 0
+
 
 func disable_unseen_enemies() -> void:
 	var enemies: Array = get_current_enemies()
@@ -125,6 +141,7 @@ func disable_unseen_enemies() -> void:
 		enemy.set_process(_is_visible)
 		enemy.set_physics_process(_is_visible)
 		enemy.visible = _is_visible
+
 
 func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 	if spawn_enemies:
@@ -183,6 +200,7 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 			await Global.delay(self, SECONDS_PER_SPAWN)
 			_spawn_enemies = true
 
+
 var _currently_autosaving: bool = false
 func autosave() -> void:
 	if autosaving:
@@ -192,20 +210,26 @@ func autosave() -> void:
 			Global.speed_mult = 0.0
 			Data.save_data_changes()
 			Global.speed_mult = 1.0
+
+
 # =========================================================================
 # ENEMY MANAGEMENT
 # =========================================================================
 func get_current_enemies() -> Array:
 	return get_tree().get_nodes_in_group("enemies")
-	
+
+
 func clear_enemies() -> void:
 	if total_mobs > 0:
 		for enemy: Node2D in get_current_enemies():
 			enemy.queue_free()
 
+
 func _on_mob_death() -> void:
 	if total_mobs > 0:
 		total_mobs -= 1
+
+
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================
@@ -216,7 +240,7 @@ func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 	add_child(current_level)
 	update_level_data()
 	
-	var new_spawn_position: Vector2 = current_level.find_child("PortalTo%s" % [old_level.name]).spawn_point.global_position
+	var new_spawn_position: Vector2 = current_level.find_child("PortalTo" + old_level.name).spawn_point.global_position
 	Global.player.global_position = new_spawn_position
 	Global.player_camera.global_position = new_spawn_position
 	Global.player_camera.reset_smoothing()
@@ -225,18 +249,24 @@ func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 	
 	if spawn_enemies:
 		_spawn_enemies = true
+
+
 # =========================================================================
 # HELPER FUNCTIONS
 # =========================================================================
 func update_level_data() -> void:
 	if "tiles" in current_level:
 		current_tile_map = current_level.tiles
+	
 	if "enemies" in current_level:
 		spawnable_enemies = current_level.enemies
+	
 	if "spawnpoints" in current_level:
 		enemy_spawnpoints = current_level.enemy_spawnpoints
+	
 	if "checkpoints" in current_level:
 		checkpoints = current_level.checkpoints_dict
+	
 	Data.game_data.reload_data.last_level = current_level.scene_file_path
 	is_level_loaded = true
 	level_loaded.emit()

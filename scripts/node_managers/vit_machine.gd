@@ -15,7 +15,7 @@ extends Control
 func _ready() -> void:
 	confirm.set_visible(false)
 
-func _change_stat(stat: String, change: int) -> void:
+func _set_stat(stat: String, change: int) -> void:
 	var new_value: int
 	var label: RichTextLabel = null
 
@@ -62,67 +62,83 @@ func _change_stat(stat: String, change: int) -> void:
 		points -= change
 		count.set_text(str(points))
 		
-func _update_stats():
-	Player.change_stat("strength = %s" % [strength])
-	Player.change_stat("perception = %s" % [perception])
-	Player.change_stat("endurance = %s" % [endurance])
-	Player.change_stat("charisma = %s" % [charisma])
-	Player.change_stat("intelligence = %s" % [intelligence])
-	Player.change_stat("agility = %s" % [agility])
-	Player.change_stat("luck = %s" % [luck])
-	#Debug.print_game_data()
+func _update_stats() -> void:
+	Player.set_stat(Player.STATS.STRENGTH, strength)
+	Player.set_stat(Player.STATS.PERCEPTION, perception)
+	Player.set_stat(Player.STATS.ENDURANCE, endurance)
+	Player.set_stat(Player.STATS.CHARISMA, charisma)
+	Player.set_stat(Player.STATS.INTELLIGENCE, intelligence)
+	Player.set_stat(Player.STATS.AGILITY, agility)
+	Player.set_stat(Player.STATS.LUCK, luck)
+
 
 # Signal Handlers
 func _on_s_down_pressed() -> void:
-	_change_stat("s", -1)
+	_set_stat("s", -1)
+
 
 func _on_s_up_pressed() -> void:
-	_change_stat("s", 1)
+	_set_stat("s", 1)
+
 
 func _on_p_down_pressed() -> void:
-	_change_stat("p", -1)
+	_set_stat("p", -1)
+
 
 func _on_p_up_pressed() -> void:
-	_change_stat("p", 1)
+	_set_stat("p", 1)
+
 
 func _on_e_down_pressed() -> void:
-	_change_stat("e", -1)
+	_set_stat("e", -1)
+
 
 func _on_e_up_pressed() -> void:
-	_change_stat("e", 1)
+	_set_stat("e", 1)
+
 
 func _on_c_down_pressed() -> void:
-	_change_stat("c", -1)
+	_set_stat("c", -1)
+
 
 func _on_c_up_pressed() -> void:
-	_change_stat("c", 1)
+	_set_stat("c", 1)
+
 
 func _on_i_down_pressed() -> void:
-	_change_stat("i", -1)
+	_set_stat("i", -1)
+
 
 func _on_i_up_pressed() -> void:
-	_change_stat("i", 1)
+	_set_stat("i", 1)
+
 
 func _on_a_down_pressed() -> void:
-	_change_stat("a", -1)
+	_set_stat("a", -1)
+
 
 func _on_a_up_pressed() -> void:
-	_change_stat("a", 1)
+	_set_stat("a", 1)
+
 
 func _on_l_down_pressed() -> void:
-	_change_stat("l", -1)
+	_set_stat("l", -1)
+
 
 func _on_l_up_pressed() -> void:
-	_change_stat("l", 1)
+	_set_stat("l", 1)
+
 
 func _on_no_pressed() -> void:
 	confirm.set_visible(false)
 	special.set_visible(true)
 
+
 func _on_yes_pressed() -> void:
 	_update_stats()
 	self.set_visible(false)
 	self.queue_free()
+
 
 func _on_button_pressed() -> void:
 	special.set_visible(false)

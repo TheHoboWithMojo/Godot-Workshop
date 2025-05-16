@@ -105,8 +105,8 @@ func load_game_data() -> void:
 		for faction_number: String in factions_copy.keys():
 			game_data["factions_data"][int(faction_number)] = factions_copy[faction_number]
 			
-	if Player.get_stat("health") == 0:
-		Player.change_stat("health = 10") # Ensure health is set to a feasible value (in case it saved with 0 health)
+	if Player.get_stat(Player.STATS.HEALTH) == 0:
+		Player.set_stat(Player.STATS.HEALTH, 100.0) # Ensure health is set to a feasible value (in case it saved with 0 health)
 	
 	print("Game data loaded...")
 	is_data_loaded = true
