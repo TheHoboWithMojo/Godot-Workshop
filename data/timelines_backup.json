@@ -1,1 +1,1 @@
-{"1":{"name":"youre_awake","completed":false,"repeatable":false,"characters":[1],"resource":"res://dialogic/timelines/youreawake.dtl"},"2":{"name":"pick_tags","completed":false,"repeatable":false,"characters":[1],"resource":"res://dialogic/timelines/picktags.dtl"}}
+{"1":{"name":"youre_awake","completed":false,"repeatable":false,"characters":[1],"resource":"res://dialogic/timelines/youre_awake.dtl"},"2":{"name":"pick_tags","completed":false,"repeatable":false,"characters":[1],"resource":"res://dialogic/timelines/picktags.dtl"}}

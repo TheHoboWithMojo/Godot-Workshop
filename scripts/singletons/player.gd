@@ -134,7 +134,7 @@ func set_stat(stat: STATS, value: float, debugging: bool = false) -> void:
 		var new_value: float = float(_get_updated_stat(stat_category, stat, "=", value))
 		player_stats_changed.emit()
 		if debugging:
-			_print_stat_change(stat, original_value, value)
+			_print_stat_change(stat, original_value, new_value)
 
 
 func get_stat_name(stat: STATS) -> String:
@@ -208,6 +208,10 @@ func change_name(nomen: String) -> void:
 	Global.player.nametag.set_text(nomen)
 
 
+func is_occupied() -> bool:
+	return Global.is_in_menu() or Dialogue.is_dialogue_playing()
+
+
 func set_objective(objective: Quest.Objective) -> void:
 	var objective_box: RichTextLabel = Global.quest_box.get_node("Box/Objective")
 	objective_box.set_text(objective.nomen)
@@ -259,15 +263,15 @@ func _get_updated_stat(stat_category: STAT_CATEGORIES, stat: STATS, operator: St
 			"-": current_value -= value
 			"+": current_value += value
 			"=": current_value = value
-			"/": 
+			"/":
 				if value != 0:
 					current_value /= value
 				else:
 					Debug.throw_error(self, "_get_updated_stat", "Cannot divide by 0")
-		
+
 		var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
 		var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
 		Data.game_data["stats"][str(stat_category)][str(stat)] = constrained_value
-		
+
 		return constrained_value
 	return 0.0

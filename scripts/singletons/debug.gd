@@ -8,14 +8,14 @@ func throw_error(self_node_or_file_name: Variant, function_name: String, reason:
 		file_name = self_node_or_file_name.get_script().resource_path.get_file()
 	else:
 		file_name = self_node_or_file_name
-	
+
 	var caller_script_name: String = get_stack()[-1].source.get_file()
 	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
-	
+
 	if input == null:
 		print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
 		return
-	
+
 	print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
 
 
@@ -56,7 +56,7 @@ func get_methods_completion_times(argumentless_methods: Array[Callable] = [], ar
 		argument_methods[i].callv(arguments[i])
 		var time2: int = Time.get_ticks_msec()
 		print(argument_methods[i].get_method(), " took ", time2 - time1, " msec to complete.")
-	
+
 	# Process argumentless methods
 	for method: Callable in argumentless_methods:
 		var time1: int = Time.get_ticks_msec()
@@ -68,11 +68,11 @@ func get_methods_completion_times(argumentless_methods: Array[Callable] = [], ar
 # Helper Functions:
 func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str: String = "\t".repeat(indent)
-	
+
 	for key: Variant in dictionary.keys():
 		var value: Variant = dictionary[key]
 		var key_str: String = str(key)
-		
+
 		if value is Dictionary:
 			print(indent_str + key_str + ":")
 			_pretty_print_dict(value, indent + 1)
@@ -88,14 +88,14 @@ func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 
 func _pretty_print_array(array: Array, indent: int = 0) -> void:
 	var indent_str: String = "\t".repeat(indent)
-	
+
 	if array.size() == 0:
 		print(indent_str + "[]")
 		return
-	
+
 	for i: int in range(array.size()):
 		var value: Variant = array[i]
-		
+
 		if value is Dictionary:
 			print(indent_str + "[" + str(i) + "]:")
 			_pretty_print_dict(value, indent + 1)
@@ -112,11 +112,11 @@ func _pretty_print_array(array: Array, indent: int = 0) -> void:
 func _get_dict_as_string(dictionary: Dictionary, indent: int = 0) -> String:
 	var result: String = ""
 	var indent_str: String = "    ".repeat(indent)  # Using spaces for better display in UI
-	
+
 	for key: String in dictionary.keys():
 		var value: Variant = dictionary[key]
 		var key_str: String = str(key)
-		
+
 		if value is Dictionary:
 			result += indent_str + key_str + ":\n"
 			result += _get_dict_as_string(value, indent + 1)
@@ -128,20 +128,20 @@ func _get_dict_as_string(dictionary: Dictionary, indent: int = 0) -> String:
 				result += _get_array_as_string(value, indent + 1)
 		else:
 			result += indent_str + key_str + ": " + _format_value(value) + "\n"
-	
+
 	return result
 
 
 func _get_array_as_string(array: Array, indent: int = 0) -> String:
 	var result: String = ""
 	var indent_str: String = "    ".repeat(indent)  # Using spaces for better display in UI
-	
+
 	if array.size() == 0:
 		return indent_str + "[]\n"
-	
+
 	for i: int in range(array.size()):
 		var value: Variant = array[i]
-		
+
 		if value is Dictionary:
 			result += indent_str + "[" + str(i) + "]:\n"
 			result += _get_dict_as_string(value, indent + 1)
@@ -153,7 +153,7 @@ func _get_array_as_string(array: Array, indent: int = 0) -> String:
 				result += _get_array_as_string(value, indent + 1)
 		else:
 			result += indent_str + "[" + str(i) + "]: " + _format_value(value) + "\n"
-	
+
 	return result
 
 

@@ -1,18 +1,10 @@
 extends Node
 
-@onready var characters: Array[Dialogue.CHARACTERS] = [
-	Dialogue.CHARACTERS.DOC_MITCHELL
-]
+@onready var quest: Quests.QUESTS = Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD
 
-@onready var related_timelines: Array[Dialogue.TIMELINES] = [
-	Dialogue.TIMELINES.YOUREAWAKE,
-	Dialogue.TIMELINES.PICKTAGS
-]
-
-@onready var related_levels: Array[Levels.LEVELS] = [
-	Levels.LEVELS.DOC_MITCHELLS_HOUSE
-]
-
+@onready var characters: Array[Characters.CHARACTERS] = [Characters.CHARACTERS.DOC_MITCHELL]
+@onready var related_timelines: Array[Dialogue.TIMELINES] = [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS]
+@onready var related_levels: Array[Levels.LEVELS] = [Levels.LEVELS.DOC_MITCHELLS_HOUSE]
 @export var waypoints: Array[Area2D]
 
 enum CHOICES {}
@@ -28,7 +20,7 @@ enum CHOICES {}
 @onready var vit_machine: Node2D
 @onready var couch: Node2D
 @onready var door: Node2D
-@onready var doc_mitchell: Object
+@onready var doc_mitchell: Being
 
 
 func _ready() -> void:
@@ -47,32 +39,32 @@ func _on_related_level_loaded(level: Level) -> void:
 
 
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
-	if timeline == Dialogue.TIMELINES.YOUREAWAKE:
+	if timeline == Dialogue.TIMELINES.YOURE_AWAKE:
 		while Dialogic.current_timeline:
 			if Dialogic.VAR.player_name:
 				Player.change_name(Dialogic.VAR.player_name)
 				break
 			await get_tree().process_frame
-		
+
 		while Dialogic.current_timeline:
 			await get_tree().process_frame
-		
+
 		aint_that_a_kick_in_the_head.start()
 		doc_mitchell.seek(vit_machine, "right")
 		await vit_machine.player_touched_me
 		main.advance()
-		
+
 		await Player.player_stats_changed
 		main.advance()
-		
-		doc_mitchell.seek(couch, "up")
+
+		doc_mitchell.seek(couch, "above")
 		await doc_mitchell.seeking_complete()
 		doc_mitchell.set_timeline(Dialogue.TIMELINES.PICKTAGS)
-	
+
 	elif timeline == Dialogue.TIMELINES.PICKTAGS:
 		await Dialogic.timeline_ended
 		main.advance()
-		
+
 		doc_mitchell.seek(door, "right")
 		await doc_mitchell.seeking_complete()
 		Global.set_fast_travel_enabled(true)

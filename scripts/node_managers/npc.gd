@@ -1,5 +1,5 @@
 extends CharacterBody2D
-@export_group("Tinker")
+@export_group("Config")
 @export var active: bool = true
 @export var collision_on: bool = true
 @export var hostile: bool = false
@@ -13,41 +13,31 @@ extends CharacterBody2D
 @export var perception: float = 200.0
 @export var exp_on_kill: int = 10
 
-@export_group("Nodes")
-@export var sprite: Sprite2D
-@export var collider: CollisionShape2D
-@export var ibubble: Area2D
-@export var health_bar: TextureProgressBar
-@export var audio: AudioStreamPlayer2D
-
 @export_group("Character")
-@export var character: Dialogue.CHARACTERS
-@onready var nomen: String = Dialogue.characters[character]["name"]
+@export var faction: Factions.FACTIONS = Factions.FACTIONS.ERROR
+@export var character: Characters.CHARACTERS
 @export var timeline: Dialogue.TIMELINES
+@onready var nomen: String = Characters.get_character_name(character)
 
 ####### RUNTIME VARIABLES ##############
-@export var faction: Factions.FACTIONS = Factions.FACTIONS.NEW_CALIFORNIA_REPUBLIC
-@onready var master: Object
-
-signal player_entered_area
+@onready var sprite: Sprite2D = null
+@onready var audio: AudioStreamPlayer2D = null
+@onready var nametag: RichTextLabel = $Texture/NameTag
+@onready var collider: CollisionShape2D = $Collider
+@onready var ibubble: Area2D = $IBubble
+@onready var health_bar: TextureProgressBar = $HealthBar
+@onready var master: Being = Being.new(self)
 
 func _ready() -> void:
-	$Texture/NameTag.set_text(nomen)
-	player_entered_area.connect(_check_for_dialog)
-	
-	Dialogic.preload_timeline(Dialogue.timelines[timeline]["resource"])
-	
-	add_to_group("interactable")
-	add_to_group("npc")
-		
-	master = Being.new(self)
-	
-	master.toggle_collision(collision_on)
+	if not active:
+		queue_free()
+	nametag.set_text(nomen)
+	ibubble.player_entered_area.connect(_check_for_dialog)
 
 
 var first_time_talked_to: bool = true
 func _check_for_dialog() -> void:
-	if timeline:
+	if timeline and not Player.is_occupied():
 		while Global.is_touching_player(self):
 			if Input.is_action_just_pressed("interact"):
 				if first_time_talked_to:

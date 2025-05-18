@@ -28,8 +28,16 @@ tiles = NodePath("Tiles")
 [node name="DocMitchell" parent="." instance=ExtResource("2_mest6")]
 position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
-hostile = true
-faction = 20
+active = null
+collision_on = null
+hostile = null
+debugging = true
+repulsion_strength = null
+base_speed = null
+base_damage = null
+base_health = null
+perception = null
+exp_on_kill = null
 character = 1
 timeline = 1
 

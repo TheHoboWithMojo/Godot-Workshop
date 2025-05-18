@@ -1,3 +1,4 @@
+res://scripts/singletons
 res://scenes/levels/goodsprings
 res://scenes/default
 res://dialogic/timelines
@@ -11,7 +12,6 @@ res://scenes/npc_builders
 res://scripts/classes
 res://scripts/quests
 res://Scenes
-res://scripts/singletons
 res://
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons
 res://assets

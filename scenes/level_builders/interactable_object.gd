@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 @onready var first_interaction: bool = true
 @onready var interacting: bool = false
 func interact() -> void:
-	if not interacting:
+	if not interacting and not Player.is_occupied():
 		interacting = true
 		if play_timeline and play_scene:
 			Debug.throw_error(self, "interact", "object cannot play both a scene and timeline")

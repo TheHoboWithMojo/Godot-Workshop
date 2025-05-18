@@ -297,7 +297,7 @@ func clear(clear_flags := ClearFlags.FULL_CLEAR) -> void:
 				(subsystem as DialogicSubsystem).clear_game_state(clear_flags)
 
 	var timeline := current_timeline
-	
+
 	current_timeline = null
 	current_event_idx = -1
 	current_timeline_events = []

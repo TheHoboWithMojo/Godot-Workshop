@@ -21,14 +21,16 @@ Data="*res://scripts/singletons/data.gd"
 Factions="*res://scripts/singletons/factions.gd"
 Debug="*res://scripts/singletons/debug.gd"
 Player="*res://scripts/singletons/player.gd"
-Dialogue="*res://scripts/singletons/dialogue.gd"
+Dialogue="*res://scripts/node_managers/dialogue.gd"
 Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 Levels="*res://scripts/singletons/levels.gd"
+Quests="*res://scripts/singletons/quests.gd"
+Characters="*res://scripts/singletons/characters.gd"
 
 [debug]
 
-gdscript/warnings/untyped_declaration=1
-gdscript/warnings/inferred_declaration=1
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/inferred_declaration=2
 
 [dialogic]
 
@@ -37,7 +39,7 @@ directories/dch_directory={
 }
 directories/dtl_directory={
 "picktags": "res://dialogic/timelines/picktags.dtl",
-"youreawake": "res://dialogic/timelines/youreawake.dtl"
+"youre_awake": "res://dialogic/timelines/youre_awake.dtl"
 }
 layout/style_list=["res://dialogic/styles/alt.tres", "res://dialogic/styles/default.tres", "res://dialogic/styles/tryme.tres"]
 layout/default_style=""

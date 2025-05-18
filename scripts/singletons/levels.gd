@@ -9,7 +9,7 @@ var levels: Dictionary[LEVELS, String] = {
 
 func get_level_path(level: LEVELS) -> String:
 	return levels[level]
-	
+
 func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
 

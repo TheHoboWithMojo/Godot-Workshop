@@ -13,6 +13,6 @@ func _ready() -> void:
 		self.set_name(Levels.get_level_name(level)) # enforce naming conventions
 	else:
 		Debug.throw_error(self, "_ready", "Parent of Level node MUST be connected to the level singleton")
-		
+
 func get_level() -> Levels.LEVELS:
 	return level

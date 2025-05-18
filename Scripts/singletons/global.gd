@@ -22,6 +22,7 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
 @onready var can_fast_travel: bool = true
+@onready var in_menu: bool = false
 
 
 func _ready() -> void:
@@ -43,20 +44,47 @@ func is_fast_travel_enabled() -> bool:
 	return can_fast_travel
 
 
+func enter_menu() -> void:
+	print("menu entered")
+	set_paused(true)
+	in_menu = true
+
+
+func exit_menu() -> void:
+	print("menu exited")
+	set_paused(false)
+	in_menu = false
+
+
+@onready var total_mobs: int
+func set_paused(value: bool) -> void:
+	if player and game_manager:
+		set_fast_travel_enabled(!value)
+		player.set_physics_process(!value)
+		player.can_shoot = !value
+
+		for being: Node2D in get_beings():
+			being.master.set_vincible(!value)
+			being.master.set_paused(value)
+	if value:
+		speed_mult = 0.0
+		total_mobs = game_manager.total_mobs # Store actual mob count
+		game_manager.total_mobs = game_manager.MOB_CAP # Sets mob count to max to stop spawning
+	else:
+		speed_mult = 1.0
+		game_manager.total_mobs = total_mobs # Restores actual mob count
+
+
+func is_in_menu() -> bool:
+	return in_menu
+
+
 func is_touching_player(node: Node) -> bool:
-	return node == Global.player_touching_node
+	return node == player_touching_node
 
 
 func is_touching_mouse(node: Node) -> bool:
-	return node == Global.mouse_touching_node
-
-
-func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
-	player = get_node(PLAYER_PATH)
-	player_camera = get_node(PLAYER_CAMERA_PATH)
-	game_manager = get_node(GAME_MANAGER_PATH)
-	quest_box = get_node(QUEST_BOX_PATH)
-	print("Global references reloaded!")
+	return node == mouse_touching_node
 
 
 func get_beings() -> Array[Node]:
@@ -111,13 +139,13 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 	var positions: Array[Vector2] = []
 	# Get rectangle with used tiles
 	var used_rect: Rect2 = tilemap.get_used_rect()
-	
+
 	# Scan through all tiles in the used rect
 	for x: int in range(used_rect.position.x, used_rect.end.x):
 		for y: int in range(used_rect.position.y, used_rect.end.y):
 			var tile_pos: Vector2 = Vector2i(x, y)
 			var tile_data: TileData = tilemap.get_cell_tile_data(tile_pos)
-			
+
 			# Check if the tile has the specified property
 			if tile_data and tile_data.has_custom_data(property_name):
 				# Convert tile position to world position
@@ -130,11 +158,11 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 # ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
 func active_and_ready(self_node: Node, active: bool = true) -> void:
 	if active: # Check is node is active and if the player exists
-		if not Global.player:
-			await Global.game_reloaded # if theres no player wait for references to update
-			
-		if not Global.game_manager.is_ready_to_start:
-			await Global.game_manager.ready_to_start
+		if not player:
+			await game_reloaded # if theres no player wait for references to update
+
+		if not game_manager.is_ready_to_start:
+			await game_manager.ready_to_start
 	else:
 		self_node.queue_free()
 
@@ -176,3 +204,11 @@ func get_collider(node: Node2D) -> CollisionShape2D:
 		"StaticBody2D":
 			return node.get_node("Collider")
 	return null
+
+# SIGNALS
+func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
+	player = get_node(PLAYER_PATH)
+	player_camera = get_node(PLAYER_CAMERA_PATH)
+	game_manager = get_node(GAME_MANAGER_PATH)
+	quest_box = get_node(QUEST_BOX_PATH)
+	print("Global references reloaded!")

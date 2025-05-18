@@ -1,10 +1,18 @@
 extends Area2D
 # this script automatically connect signals. dont do it in the node menu
-@export var parent: Node2D # Ref the signal receiver
+@export var receiver: Node2D # Ref the signal receiver
+@export_group("Detection")
 @export var detect_player: bool = true
 @export var detect_mouse: bool = true
-@export var multiple_areas: bool = false # returns the specific area as the node, not the parent (good for levels with checkpoints)
-@export var emit_area_as_argument: bool = true # sends area as an argument into signals
+@export_group("Signal")
+@export var signal_receiver: bool = true # signals to receiver upon entry
+@export var set_touching_to_self: bool = false # sets player_touching to the detector, not the receiver (good for levels with multiple detectors)
+@export var emit_self_as_argument: bool = false # sends area as an argument into signals
+
+signal player_entered_area
+signal player_exited_area
+signal mouse_entered_area
+signal mouse_exited_area
 
 func _ready() -> void:
 	if detect_player:
@@ -14,42 +22,46 @@ func _ready() -> void:
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
 
+
 func _on_body_entered(body: Node2D) -> void:
 	if body == Global.player:
-		if multiple_areas:
+		if set_touching_to_self:
 			Global.player_touching_node = self
 		else:
-			Global.player_touching_node = parent
-		if parent.has_signal("player_entered_area"):
-			if emit_area_as_argument:
-				parent.player_entered_area.emit(self)
+			Global.player_touching_node = receiver
+		if signal_receiver:
+			if emit_self_as_argument:
+				player_entered_area.emit(self)
 			else:
-				parent.player_entered_area.emit()
+				player_entered_area.emit()
+
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == Global.player:
 		Global.player_touching_node = null
-		if parent.has_signal("player_exited_area"):
-			if emit_area_as_argument:
-				parent.player_exited_area.emit(self)
+		if signal_receiver:
+			if emit_self_as_argument:
+				player_exited_area.emit(self)
 			else:
-				parent.player_exited_area.emit()
-			
+				player_exited_area.emit()
+
+
 func _on_mouse_entered() -> void:
-	if multiple_areas:
+	if set_touching_to_self:
 		Global.mouse_touching_node = self
 	else:
-		Global.mouse_touching_node = parent
-	if parent.has_signal("mouse_entered_area"):
-		if emit_area_as_argument:
-			parent.mouse_entered_area.emit(self)
+		Global.mouse_touching_node = receiver
+	if signal_receiver:
+		if emit_self_as_argument:
+			mouse_entered_area.emit(self)
 		else:
-			parent.mouse_entered_area.emit()
+			mouse_entered_area.emit()
+
 
 func _on_mouse_exited() -> void:
 	Global.mouse_touching_node = null
-	if parent.has_signal("mouse_exited_area"):
-		if emit_area_as_argument:
-			parent.mouse_exited_area.emit(self)
+	if signal_receiver:
+		if emit_self_as_argument:
+			mouse_exited_area.emit(self)
 		else:
-			parent.mouse_exited_area.emit()
+			mouse_exited_area.emit()

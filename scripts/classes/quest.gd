@@ -20,24 +20,24 @@ func _init(self_node: Node, _nomen: String = "") -> void:
 		Debug.throw_error("quest.gd", "quest_init", "quest node must contain a CHOICES enum")
 		return
 	caller = self_node
-	
+
 	if not _nomen:
 		nomen = caller.name
 	else:
 		nomen = _nomen
-	
-	for character: Dialogue.CHARACTERS in caller.characters:
-		characters.append(Dialogue.get_character(character))
-		
+
+	for character: Characters.CHARACTERS in caller.characters:
+		characters.append(Characters.get_character(character))
+
 	for related_timeline: Dialogue.TIMELINES in caller.related_timelines:
 		related_timelines.append(Dialogue.get_timeline(related_timeline))
-		
+
 	for level: Levels.LEVELS in caller.related_levels:
 		related_levels.append(Levels.get_level_path(level))
-	
+
 	mainplot = Plot.new()
 	mainplot.quest = self
-	
+
 	Dialogic.timeline_started.connect(_on_timeline_started)
 	Global.game_manager.level_loaded.connect(_on_level_loaded)
 	caller.add_to_group("quests")
@@ -116,12 +116,12 @@ class Plot:
 	var nomen: String
 	var rewards: Array[String]
 	var completed: bool = false
-	
-	
+
+
 	func _init(_nomen: String = "main") -> void:
 		nomen = _nomen
-	
-	
+
+
 	func advance() -> bool: # moves forward in the plot
 		if quest.started:
 			if current_objective:
@@ -141,8 +141,8 @@ class Plot:
 				return true
 		Debug.throw_error("quest.gd", "advance", "Cannot advance the plot '%s' without first starting the quest '%s'" % [nomen, quest.nomen])
 		return false
-	
-	
+
+
 	func skip_to_objective(objective: Objective) -> bool: # move to a specific plot objective
 		if not objective in objectives:
 			Debug.throw_error("quest.gd", "skip_to", "event '%s' has not been declared" % [objective.nomen])
@@ -162,8 +162,8 @@ class Plot:
 			return true
 		current_objective = objective
 		return true
-	
-	
+
+
 	func complete() -> void:
 		for reward: String in rewards:
 			pass
@@ -171,32 +171,32 @@ class Plot:
 			quest.complete()
 		completed = true
 		print("quest '%s' completed!" % [nomen])
-	
-	
+
+
 	func new_objective(objective_name: String, description: String = "") -> Objective:
 		var _new_objective: Objective = Objective.new(objective_name, self)
 		objectives[_new_objective] = description.to_lower()
 		if not current_objective and quest.started:
 			current_objective = _new_objective
 		return _new_objective
-	
-	
+
+
 	func objective_complete(objective: Objective) -> bool:
 		return objectives.keys().find(objective) < objectives.keys().find(current_objective)
-	
-	
+
+
 	func overview() -> void:
 		print("\n'%s' (Quest: '%s'):" % [nomen.capitalize(), quest.nomen.capitalize()])
 		var new_dict: Dictionary[String, String] = {}
 		for objective: Objective in objectives:
 			new_dict[objective.nomen] = objectives[objective]
 		Debug.pretty_print_dict(new_dict)
-	
-	
+
+
 	func get_current_objective() -> String:
 		return current_objective.nomen
-	
-	
+
+
 	func is_complete() -> bool:
 		return completed
 
@@ -205,23 +205,23 @@ class Objective:
 	var nomen: String
 	var plot: Plot
 	var completed: bool = false
-	
-	
+
+
 	func _init(_nomen: String, _plot: Plot) -> void:
 		nomen = _nomen
 		plot = _plot
 		if plot.nomen == "main" and plot.objectives.size() == 0:
 			Player.set_objective(self)
-	
-	
+
+
 	func complete() -> void:
 		plot.advance()
 		completed = true
-	
-	
+
+
 	func is_complete() -> bool:
 		return completed
-	
-	
+
+
 	func pair_waypoint(vector: Vector2) -> void:
 		plot.waypoints[self] = vector

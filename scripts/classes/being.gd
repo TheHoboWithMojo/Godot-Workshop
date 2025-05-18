@@ -4,7 +4,7 @@ extends Node2D
 # Name and stats
 var _nomen: String = ""
 var _faction: Factions.FACTIONS
-var _character: Dialogue.CHARACTERS
+var _character: Characters.CHARACTERS
 var _health: float = 0.0
 var _speed: float = 0.0
 var _damage: float = 0.0
@@ -15,7 +15,8 @@ var _alive: bool = true
 var _hostile: bool = false
 var _debugging: bool = false
 var is_character: bool = false # in the characters dict?
-var vincible: bool = true
+var _vincible: bool = true
+var _paused: bool = false
 
 # Nodes
 var _slave: Node # node this class controls
@@ -28,9 +29,6 @@ var _navigator: NavigationAgent2D = NavigationAgent2D.new()
 var _navigation_target: Vector2 = Vector2.ZERO
 var _timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.ERROR
 var _missing_components: Array[String] # tracks missing nodes
-
-@onready var displacement: float = 0.0 # set in init
-@onready var shifted: bool = false
 
 # ===== Properties =====
 # Setter getter for health
@@ -69,120 +67,128 @@ var damage: float:
 			_damage = 0
 		elif value > 0:
 			_damage = value
-	
-var hostile: bool:
-	get:
-		return _hostile
-	set(value):
-		if _debugging:
-			print("[Being] %s Setting Hostile: %s" % [_nomen, value])
-			
-		if value == true:
-			_hostile = true
-			_slave.add_to_group("enemies")
-		else:
-			_hostile = false
-			_slave.remove_from_group("enemies")
-				
-		if _health_bar != null:
-			_health_bar.set_visible(hostile)
 
 
 # ===== Initialization =====
 # Use a dictionary for optional parameters
 func _init(self_node: Node) -> void:
-	_debugging = self_node.get("debugging")
 	_slave = self_node
 	if _slave == null:
 		Debug.throw_error(self, "init", "Could not initiate being")
 		return
-	
-	if "character" in _slave:
-		_character = _slave.character
-		is_character = true
-		_nomen = Dialogue.characters[_character]["name"]
-		_faction = Dialogue.characters[_character]["faction"]
-		_slave.add_to_group(Factions.get_faction_name(_faction))
-		if not Data.game_data["characters"][str(_character)]["alive"]:
-			_slave.queue_free()
-			return
-	
+
 	_slave.add_to_group("beings")
+	_debugging = self_node.get("debugging")
 	if _debugging:
 		print("[Being] Constructor called by ", _slave.name)
-		
+
+	_init_character()
+
+	_init_vars()
+
+	_init_nodes()
+
+	if _debugging and _missing_components.size() > 0:
+		_print_missing_components()
+
+
+func _init_character() -> void:
+	if "character" in _slave:
+		if _slave.character is Characters.CHARACTERS:
+			if not Characters.is_character_alive(_slave.character):
+				_slave.queue_free()
+				return
+			_character = _slave.character
+			is_character = true
+			_nomen = Characters.get_character_name(_character)
+			_faction = Characters.get_character_faction(_character)
+			_slave.add_to_group(Factions.get_faction_name(_faction))
+			_slave.add_to_group("interactable")
+			_slave.add_to_group("npc")
+
+
+func _init_vars() -> void:
+	if _slave.get("vincible"):
+		_vincible = _slave.get("vincible")
+
+	if _slave.get("hostile"):
+		_hostile = _slave.get("hostile")
+
+	if _slave.get("base_speed"):
+		speed = _slave.get("base_speed")
+
+	if _slave.get("base_damage"):
+		damage = _slave.get("base_damage")
+
+	if _slave.get("exp_on_kill"):
+		_exp_on_kill = _slave.get("exp_on_kill")
+
 	_timeline = _slave.get("timeline")
 	if not _timeline:
 		_missing_components.append("timeline")
-	
+	else:
+		Dialogue.preload_timeline(_timeline)
+
+
+func _init_nodes() -> void:
 	_sprite = _slave.get("sprite")
 	if _sprite == null:
 		_missing_components.append("sprite")
-		
+
 	_collider = _slave.get("collider")
 	if _collider == null:
 		_missing_components.append("collider")
-	
+	elif _slave.get("collision_on") != null:
+		set_collision(_slave.collision_on)
+
 	_ibubble = _slave.get("ibubble")
 	if _ibubble == null:
 		_missing_components.append("ibubble")
 	else:
-		_slave.add_child(_navigator)
-		if _debugging:
-			_navigator.set_debug_enabled(true)
-			print("[Being] agents avoidance layers: ", _navigator.get_avoidance_layers())
-			print("[Being] agents navigation map: ", _navigator.get_navigation_map())
-			
-		_navigator.set_avoidance_enabled(true)
-		_navigator.set_path_desired_distance(5.0)
-		_navigator.set_target_desired_distance(5.0)
-		#_navigator.set_path_postprocessing(1) # PATH_POSTPROCESSING_EDGECENTERED
-		_navigator.velocity_computed.connect(_on_navigator_velocity_computed)
-		_navigator.set_radius(Global.get_collider(_ibubble).shape.radius)
-		_navigation_target = _slave.global_position
-		displacement = Global.get_collider(_ibubble).shape.radius
-	
+		_create_navigator()
+
 	_audio = _slave.get("audio")
 	if _audio == null:
 		_missing_components.append("audio")
-	
+
 	_health_bar = _slave.get("health_bar")
 	if _health_bar == null:
 		_missing_components.append("health_bar")
 	else:
 		_health_bar.min_value = 0.0
-		_health_bar.set_visible(false)
-	
-	if _slave.get("vincible"):
-		vincible = _slave.get("vincible")
-	
-	if _slave.get("hostile"):
-		hostile = _slave.get("hostile")
-	
-	if _slave.get("base_speed"):
-		speed = _slave.get("base_speed")
-	
-	if _slave.get("base_damage"):
-		damage = _slave.get("base_damage")
-	
-	if _slave.get("exp_on_kill"):
-		_exp_on_kill = _slave.get("exp_on_kill")
-	
-	_print_missing_components()
+		_health_bar.max_value = _health
+		_health_bar.set_value(_health)
+		_health_bar.set_visible(_hostile)
+
+
+func _create_navigator() -> void:
+	_slave.add_child(_navigator)
+	if _debugging:
+		_navigator.set_debug_enabled(true)
+		print("[Being] agents avoidance layers: ", _navigator.get_avoidance_layers())
+		print("[Being] agents navigation map: ", _navigator.get_navigation_map())
+
+	_navigator.set_avoidance_enabled(true)
+	_navigator.set_path_desired_distance(5.0)
+	_navigator.set_target_desired_distance(5.0)
+	#_navigator.set_path_postprocessing(1) # PATH_POSTPROCESSING_EDGECENTERED
+	_navigator.velocity_computed.connect(_on_navigator_velocity_computed)
+	_navigator.set_radius(Global.get_collider(_ibubble).shape.radius)
+	_navigation_target = _slave.global_position
+	displacement = Global.get_collider(_ibubble).shape.radius
 
 
 # ===== Component Management =====
 func _print_missing_components() -> void:
-	if _debugging and _missing_components.size() > 0:
-		print("[Being] Warning: Missing essential components:")
-		for component: String in _missing_components:
-			print("  - %s" % component)
+	print("[Being] Warning: Missing essential components:")
+	for component: String in _missing_components:
+		print("  - %s" % component)
 
 
 # ===== Health Management =====
 func take_damage(amount: float) -> void:
-	if vincible:
-		hostile = true
+	if _vincible:
+		_hostile = true
 		health -= amount
 		if _health_bar:
 			_health_bar.set_visible(true)
@@ -192,73 +198,46 @@ func heal(amount: float) -> void:
 	health += amount
 
 
-func _on_navigator_velocity_computed(safe_velocity: Vector2) -> void:
-	_slave.velocity = safe_velocity
+func set_paused(value: bool) -> void:
+	_paused = value
+	set_vincible(value)
 
 
-func seek(target: Variant = _navigation_target, up_down_left_right: String = "") -> void:
-	if _alive:
-		if target is Vector2:
-			_navigation_target = target
-		elif target is Node:
-			_navigation_target = target.global_position
-		
-		if not shifted:
-			match(up_down_left_right): # shift the position WILL ONLY RUN ONCE ON NON PROCESS CALL
-				"left":
-					_navigation_target -= (1.2 * Vector2(displacement, 0))
-					shifted = true
-				"right":
-					_navigation_target += (1.2 * Vector2(displacement, 0))
-					shifted = true
-				"up":
-					_navigation_target -= (1.2 * Vector2(0, displacement))
-					shifted = true
-				"down":
-					_navigation_target += (1.2 * Vector2(displacement, 0))
-					shifted = true
-		
-		_navigator.target_position = _navigation_target
-		if _navigator.is_navigation_finished():
-			_slave.velocity = Vector2.ZERO
-			shifted = false
-			return
-				
-		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * 50)
+func is_paused() -> bool:
+	return _paused
+
+func set_vincible(value: bool) -> void:
+	_vincible = value
 
 
-func seeking_complete() -> void:
-	await _navigator.navigation_finished
+func is_vincible() -> bool:
+	return _vincible
 
 
 func die() -> void:
 	_slave.velocity = Vector2.ZERO
 	_slave.set_physics_process(false)
 	_slave.set_process(false)
-	
+
 	if _alive == true:
 		_alive = false # Stops from piling calls
-		
-		if is_character:
-			Data.game_data["characters"][str(_character)]["alive"] = false
-		
+
+		if _character:
+			Dialogue.set_alive(_character, false)
+
 		speed = 0
-		
+
 		_health_bar.set_value(0)
-		
+
 		if _audio != null:
 			_audio.play()
-		
-		if Factions.faction_exists(_faction):
-			Factions.log_decision(_faction, "killed a member.", -100)
-			if Factions.get_rep_status(_faction) == "hostile":
-				var allies: Array = _slave.get_tree().get_nodes_in_group(Factions.get_faction(_faction))
-				for ally: Node2D in allies:
-					ally.master.set_hostile(true)
-		
+
+		if _faction:
+			Factions.process_member_kill(_character)
+
 		Global.game_manager.mob_died.emit()
 		Player.log_kill(_exp_on_kill)
-		await Global.delay(_slave, 1.0)
+		await Global.delay(self, 1.0)
 		_slave.queue_free()
 
 
@@ -270,8 +249,14 @@ func is_hostile() -> bool:
 	return _hostile
 
 
-func set_hostile(toggle: bool) -> void:
-	_hostile = toggle
+func set_hostile(value: bool) -> void:
+	_hostile = value
+	if _health_bar:
+		_health_bar.set_visible(value)
+	if _hostile:
+		_slave.add_to_group("enemies")
+	else:
+		_slave.remove_from_group("enemies")
 
 
 func set_timeline(timeline: Dialogue.TIMELINES) -> void:
@@ -279,39 +264,49 @@ func set_timeline(timeline: Dialogue.TIMELINES) -> void:
 	_slave.timeline = _timeline
 
 
-# ===== Sprite Component Functions =====
-func toggle_visible(_visible: bool) -> bool:
-	if _sprite != null:
-		_sprite.visible = _visible
-		return true
-	return false
+func set_collision(value: bool) -> void:
+	if _collider:
+		_collider.set_disabled(!value)
 
 
-func flip_sprite(flip_h: bool) -> bool:
-	if _sprite == null:
-		return false
-	_sprite.flip_h = flip_h
-	return true
+func _on_navigator_velocity_computed(safe_velocity: Vector2) -> void:
+	_slave.velocity = safe_velocity
 
 
-# ===== Collider Component Functions =====
-func toggle_collision(enabled: bool) -> bool:
-	if _collider != null:
-		_collider.disabled = !enabled
-		return true
-	return false
+func seeking_complete() -> void:
+	if _navigator:
+		await _navigator.navigation_finished
+	else:
+		Debug.throw_error(_slave, "seeking_complete", "The being %s does not have a navigator" % [_nomen])
 
 
-# ===== Area Component Functions =====
-func toggle_monitoring(enabled: bool) -> bool:
-	if _ibubble != null:
-		_ibubble.monitoring = enabled
-		_ibubble.monitorable = enabled
-		return true
-	return false
-
-
-func get_overlapping_bodies() -> Array:
-	if _ibubble != null:
-		return _ibubble.get_overlapping_bodies()
-	return []
+# PROCESS FUNCTIONS
+var displacement: float = 0.0 # set in init
+var shifted: bool = false
+func seek(target: Variant = _navigation_target, up_down_left_right: String = "") -> void:
+	if typeof(target) != typeof(_navigation_target) or target != _navigation_target: # ALWAYS accept a target change
+		if target is Vector2:
+			_navigation_target = target
+		elif target is Node2D:
+			_navigation_target = target.global_position
+		if not shifted:
+			match(up_down_left_right): # shift will only occur on change of target
+				"left":
+					_navigation_target -= (1.2 * Vector2(displacement, 0))
+					shifted = true
+				"right":
+					_navigation_target += (1.2 * Vector2(displacement, 0))
+					shifted = true
+				"above":
+					_navigation_target -= (1.2 * Vector2(0, displacement))
+					shifted = true
+				"below":
+					_navigation_target += (1.2 * Vector2(displacement, 0))
+					shifted = true
+	if _alive and not _paused:
+		_navigator.target_position = _navigation_target
+		if _navigator.is_navigation_finished():
+			_slave.velocity = Vector2.ZERO
+			shifted = false
+			return
+		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * 50)

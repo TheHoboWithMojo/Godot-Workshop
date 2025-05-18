@@ -13,7 +13,9 @@ extends Control
 @onready var luck: int = 5
 
 func _ready() -> void:
+	Global.enter_menu()
 	confirm.set_visible(false)
+
 
 func _set_stat(stat: String, change: int) -> void:
 	var new_value: int
@@ -61,7 +63,7 @@ func _set_stat(stat: String, change: int) -> void:
 		label.set_text(str(new_value))
 		points -= change
 		count.set_text(str(points))
-		
+
 func _update_stats() -> void:
 	Player.set_stat(Player.STATS.STRENGTH, strength)
 	Player.set_stat(Player.STATS.PERCEPTION, perception)
@@ -137,6 +139,7 @@ func _on_no_pressed() -> void:
 func _on_yes_pressed() -> void:
 	_update_stats()
 	self.set_visible(false)
+	Global.exit_menu()
 	self.queue_free()
 
 

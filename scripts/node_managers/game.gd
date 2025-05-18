@@ -64,13 +64,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if track_frames:
 		count_frames()
-	
+
 	if total_mobs:
 		disable_unseen_enemies() # Stops processing enemies outside of view
-	
+
 	if spawn_enemies and total_mobs < MOB_CAP:
 		spawn(spawnable_enemies)
-	
+
 	if use_save_data and autosaving:
 		autosave()
 
@@ -87,7 +87,7 @@ func load_data() -> void:
 		Data.clear_data()
 		if Data.is_data_cleared != true:
 			await Data.data_cleared
-	
+
 	Data.load_game_data() # Load _current data into the game
 	if not Data.is_data_loaded:
 		await Data.data_loaded
@@ -107,8 +107,8 @@ func ready_up() -> void:
 	# Wait for ALL SIGNALS BEFORE STARTING
 	if not is_level_loaded:
 		await level_loaded
-	
-	await Dialogue.start(Dialogue.TIMELINES.YOUREAWAKE)
+
+	await Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
 	is_ready_to_start = true
 	ready_to_start.emit()
 
@@ -125,18 +125,18 @@ func count_frames() -> void:
 func disable_unseen_enemies() -> void:
 	var enemies: Array = get_current_enemies()
 	var camera: Camera2D = Global.player_camera
-	
+
 	# Get the viewport rectangle in global coordinates
 	var camera_view: Rect2 = Rect2(camera.get_screen_center_position() - 0.5 * camera.get_viewport_rect().size, camera.get_viewport_rect().size)
-	
+
 	# expand the rect to account for different sprite sizes
 	var margin: int = 100
 	camera_view = camera_view.grow(margin)
-	
+
 	for enemy: Node2D in enemies:
 		# Check if enemy is in camera view
 		var _is_visible: bool = camera_view.has_point(enemy.global_position)
-		
+
 		# Enable/disable based on visibility
 		enemy.set_process(_is_visible)
 		enemy.set_physics_process(_is_visible)
@@ -148,55 +148,55 @@ func spawn(enemy_scene_array: Array[PackedScene]) -> void:
 		if spawnable_enemies.size() != 0:
 			if not _spawn_enemies or total_mobs >= MOB_CAP:
 				return  # Early exit if spawning is disabled or the cap is already reached
-			
+
 			_spawn_enemies = false  # Lock spawning immediately
-			
+
 			# Calculate how many enemies we can spawn without exceeding the cap
 			var available_slots: int = MOB_CAP - total_mobs
 			var spawn_count: int = min(enemies_per_spawn, available_slots)
-			
+
 			# Early return if no room for new mobs
 			if spawn_count <= 0:
 				await Global.delay(self, SECONDS_PER_SPAWN)
 				_spawn_enemies = true
 				return
-			
+
 			# Check if we have spawnable positions
 			if enemy_spawnpoints.is_empty():
 				await Global.delay(self, SECONDS_PER_SPAWN)
 				_spawn_enemies = true
 				return
-			
+
 			# Find valid spawn positions within the radius
 			var valid_positions: Array[Vector2] = []
 			var player_pos: Vector2 = Global.player.global_position
-			
+
 			# Filter positions within the spawn radius
 			for pos: Vector2 in enemy_spawnpoints:
 				if pos.distance_to(player_pos) <= SPAWN_RADIUS:
 					valid_positions.append(pos)
-			
+
 			# If no valid positions found, wait and try again later
 			if valid_positions.is_empty():
 				#print("No valid spawn positions within radius!")
 				await Global.delay(self, SECONDS_PER_SPAWN)
 				_spawn_enemies = true
 				return
-			
+
 			# Spawn the calculated number of enemies
 			for i: int in range(spawn_count):
 				var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
 				var spawn_position: Vector2 = valid_positions[randi() % valid_positions.size()] # Rand pos
 				var query: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
 				query.position = spawn_position
-				
+
 				if not space_state.intersect_point(query, 1): # Only spawn if there will it will not overlap another body
 					var random: int = randi_range(0, enemy_scene_array.size() - 1)
 					var _enemy: Node = enemy_scene_array[random].instantiate() as CharacterBody2D # Rand enemy
 					_enemy.global_position = spawn_position
 					Global.game_manager.add_child(_enemy)
 					total_mobs += 1
-			
+
 			await Global.delay(self, SECONDS_PER_SPAWN)
 			_spawn_enemies = true
 
@@ -239,14 +239,14 @@ func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 	current_level = load(new_level_path).instantiate()
 	add_child(current_level)
 	update_level_data()
-	
+
 	var new_spawn_position: Vector2 = current_level.find_child("PortalTo" + old_level.name).spawn_point.global_position
 	Global.player.global_position = new_spawn_position
 	Global.player_camera.global_position = new_spawn_position
 	Global.player_camera.reset_smoothing()
-	
+
 	old_level.queue_free()
-	
+
 	if spawn_enemies:
 		_spawn_enemies = true
 
@@ -257,16 +257,16 @@ func _on_level_changed(old_level: Node, new_level_path: String) -> void:
 func update_level_data() -> void:
 	if "tiles" in current_level:
 		current_tile_map = current_level.tiles
-	
+
 	if "enemies" in current_level:
 		spawnable_enemies = current_level.enemies
-	
+
 	if "spawnpoints" in current_level:
 		enemy_spawnpoints = current_level.enemy_spawnpoints
-	
+
 	if "checkpoints" in current_level:
 		checkpoints = current_level.checkpoints_dict
-	
+
 	Data.game_data.reload_data.last_level = current_level.scene_file_path
 	is_level_loaded = true
 	level_loaded.emit()

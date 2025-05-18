@@ -24,7 +24,7 @@ func _on_body_exited(_body: Node2D) -> void:
 	if not entered:
 		await Global.delay(self, 3.0) # wait three seconds and self destruct if it doesnt hit anything
 		destroy()
-		
+
 func destroy() -> void:
 	velocity = Vector2.ZERO
 	collider.call_deferred("set_disabled", true)

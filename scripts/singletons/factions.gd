@@ -1,7 +1,7 @@
 extends Node
 
 enum FACTIONS {
-	NA,
+	ERROR,
 	NEW_CALIFORNIA_REPUBLIC,
 	CAESERS_LEGION,
 	BROTHERHOOD_OF_STEEL,
@@ -148,10 +148,10 @@ func change_rep(faction: FACTIONS, rep_change: int) -> void:
 func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 	if faction_exists(faction):
 		change_rep(faction, rep_change)
-		
+
 		# Get current decisions
 		var decisions: Array = Data.game_data["factions_data"][faction]["decisions"]
-		
+
 		# Check if decision already exists
 		var found: bool = false
 		for entry: Array in decisions:
@@ -160,11 +160,11 @@ func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 				entry[2] += 1  # Increment count
 				found = true
 				break
-		
+
 		# If decision not found, add a new entry
 		if not found:
 			decisions.append([decision, rep_change, 1])
-		
+
 		# Update decisions using the wrapper
 		update_faction_data(faction, "decisions", decisions)
 	else:
@@ -173,71 +173,71 @@ func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 
 func print_overview() -> void:
 	var output: String = ""
-	
+
 	# Find the longest faction name for proper formatting
 	var longest_name_length: int = 0
 	for faction_enum: FACTIONS in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
 		longest_name_length = max(longest_name_length, faction_name.length())
-	
+
 	# Add some padding
 	longest_name_length += 2
-	
+
 	# Create the header with dynamic width
 	var header: String = "| %-*s | %-10s | %-5s |" % [longest_name_length, "FACTION", "STATUS", "REP"]
 	var divider: String = "-".repeat(header.length())
-	
+
 	output += divider + "\n"
 	output += header + "\n"
 	output += divider + "\n"
-	
+
 	# Process each faction with consistent formatting
 	for faction_enum: int in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
 		var rep: int = get_rep_num(faction_enum)
 		var status: String = get_rep_status(faction_enum)
-		
+
 		output += "| %-*s | %-10s | %5d |" % [longest_name_length, faction_name, status, rep] + "\n"
 		output += divider + "\n\n"
-	
+
 	# Add decisions section with better formatting
 	output += "FACTION DECISIONS:\n"
 	output += divider + "\n"
-	
+
 	for faction_enum: int in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
 		var decisions: Array = Data.game_data["factions_data"][faction_enum]["decisions"]
-		
+
 		if decisions.size() > 0:
 			output += faction_name + ":\n"
-			
+
 			# Sort decisions by impact (absolute value of rep change)
 			# Expanded sorting logic instead of one-liner
 			var sorted_decisions: Array = decisions.duplicate()
-			
+
 			# Custom sorting function to sort by absolute value of reputation change
 			for i: int in range(sorted_decisions.size()):
 				for j: int in range(i + 1, sorted_decisions.size()):
 					var impact_i: int = abs(sorted_decisions[i][1])
 					var impact_j: int = abs(sorted_decisions[j][1])
-					
+
 					# If impact_j is greater than impact_i, swap the elements
 					if impact_j > impact_i:
 						var temp: Array = sorted_decisions[i]
 						sorted_decisions[i] = sorted_decisions[j]
 						sorted_decisions[j] = temp
-			
+
 			# Show all decisions for this faction
 			for entry: Array in sorted_decisions:
 				var decision: String = entry[0]
 				var rep_change: int = entry[1]
 				var times: int = entry[2]
-				
+
 				var _sign: String = "+" if rep_change > 0 else ""
 				output += "\tx%d %s (%s%d)\n" % [times, decision, _sign, rep_change]
-			
+
 			output += "\n"
-	
+
 	print(output)
 
 
@@ -259,12 +259,30 @@ func get_rep_status(faction: FACTIONS) -> String:
 		return "Faction not found!"
 
 
+func is_faction_hostile(_faction: FACTIONS) -> bool:
+	return get_rep_status(_faction) == "hostile"
+
+
 func faction_exists(faction: FACTIONS) -> bool:
 	return faction in FACTIONS.values()
 
 
 func get_faction_name(faction: FACTIONS) -> String:
 	return Global.enum_to_camelcase(faction, FACTIONS)
+
+
+const death_rep_loss: int = -100
+func process_member_kill(_character: Characters.CHARACTERS, rep_loss: int = death_rep_loss) -> void: # logs death and applies hostility
+	var faction: FACTIONS = Dialogue.get_character_faction(_character)
+	Factions.log_decision(faction, "killed %s." % [Characters.get_character_name(_character)], rep_loss)
+	if Factions.is_faction_hostile(faction):
+		var allies: Array = get_loaded_members(faction)
+		for ally: Node2D in allies:
+			ally.master.set_hostile(true)
+
+
+func get_loaded_members(faction: FACTIONS) -> Array[Node]:
+	return get_tree().get_nodes_in_group(get_faction_name(faction))
 
 
 func get_rep_num(faction: FACTIONS) -> int:

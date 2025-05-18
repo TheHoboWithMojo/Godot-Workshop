@@ -12,16 +12,16 @@ func _ready() -> void:
 	if require_player:
 		body_entered.connect(_on_body_entered)
 		body_exited.connect(_on_body_exited)
-		
+
 	self.set_name("PortalTo" + Levels.get_level_name(send_to)) # enforce naming consistency for outside reference
-	
+
 	add_to_group("interactable")
-	
+
 	if require_mouse:
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
-		
-		
+
+
 func _process(_delta: float) -> void:
 	load_zone()
 
@@ -32,9 +32,9 @@ func load_zone() -> void:
 			processing = true
 			if require_mouse and require_player:
 				while Global.player_touching_node == self and Global.mouse_touching_node == self:
-					print("conditions met")
+					#print("conditions met")
 					if Input.is_action_just_pressed("interact"):
-						print("interacted")
+						#print("interacted")
 						Global.game_manager.level_changed.emit(send_from, _send_to)
 					await get_tree().process_frame
 			elif require_mouse:
