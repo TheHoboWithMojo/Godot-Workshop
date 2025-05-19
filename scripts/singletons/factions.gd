@@ -109,8 +109,8 @@ var factions_data: Dictionary = {
 
 
 func _ready() -> void:
-	if Global.game_manager:
-		Global.game_manager.level_loaded.connect(_on_level_loaded)
+	if Global.level_manager:
+		Global.level_manager.level_loaded.connect(_on_level_loaded)
 
 
 func _on_level_loaded() -> void: # check for hostility when entering level

@@ -27,17 +27,17 @@ func _process(delta: float) -> void:
 	# Get the target position
 	var screen_pos: Vector2 = Global.player_camera.get_screen_center_position()
 	var target_position: Vector2 = screen_pos - (get_rect().size / 2)
-	
+
 	# Smoothly move towards the target position
 	global_position = global_position.lerp(target_position, 10 * delta)
-	
+
 	# Position the background at the top-left of the VBoxContainer
 	background.position = buttons_box.position
-	
+
 	# Then resize it to match the VBoxContainer
 	background.size.x = buttons_box.size.x
 	background.size.y = buttons_box.size.y
-	
+
 	# Handle menu visibility
 	if not is_menu_open:
 		if Input.is_action_just_pressed("open_debug_menu"):
@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed("open_debug_menu"):
 			self.visible = false
 			is_menu_open = false
-			
+
 	if show_player_stats or show_frames:
 		update_stat_labels()
 
@@ -59,7 +59,7 @@ func update_stat_labels() -> void:
 	crit.text = "Crit:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["crit"])
 	personality.text = "Personality:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["personality"])
 	damage.text = "Damage:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["damage"])
-	
+
 func clear_data() -> void:
 	health.text = ""
 	speed.text = ""
@@ -89,4 +89,4 @@ func _on_save_game_button_pressed() -> void:
 	await Data.data_saved
 
 func _on_spawn_enemies_button_toggled(toggled_on: bool) -> void:
-	Global.game_manager.spawn_enemies = !toggled_on
+	Global.mob_manager.set_spawn_enemies(!toggled_on)

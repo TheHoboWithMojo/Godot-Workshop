@@ -169,10 +169,11 @@ func _create_navigator() -> void:
 		print("[Being] agents navigation map: ", _navigator.get_navigation_map())
 
 	_navigator.set_avoidance_enabled(true)
-	_navigator.set_path_desired_distance(5.0)
-	_navigator.set_target_desired_distance(5.0)
-	#_navigator.set_path_postprocessing(1) # PATH_POSTPROCESSING_EDGECENTERED
+	_navigator.set_path_desired_distance(20.0) # these both are set to default, tinker as needed
+	_navigator.set_target_desired_distance(10.0)
+	_navigator.set_path_postprocessing(NavigationPathQueryParameters2D.PATH_POSTPROCESSING_CORRIDORFUNNEL) # PATH_POSTPROCESSING_EDGECENTERED
 	_navigator.velocity_computed.connect(_on_navigator_velocity_computed)
+	_navigator.target_reached.connect(_on_navigator_target_reached)
 	_navigator.set_radius(Global.get_collider(_ibubble).shape.radius)
 	_navigation_target = _slave.global_position
 	displacement = Global.get_collider(_ibubble).shape.radius
@@ -200,7 +201,8 @@ func heal(amount: float) -> void:
 
 func set_paused(value: bool) -> void:
 	_paused = value
-	set_vincible(value)
+	set_vincible(!value)
+	_slave.set_physics_process(!value)
 
 
 func is_paused() -> bool:
@@ -235,7 +237,7 @@ func die() -> void:
 		if _faction:
 			Factions.process_member_kill(_character)
 
-		Global.game_manager.mob_died.emit()
+		Global.mob_manager.mob_died.emit()
 		Player.log_kill(_exp_on_kill)
 		await Global.delay(self, 1.0)
 		_slave.queue_free()
@@ -273,6 +275,10 @@ func _on_navigator_velocity_computed(safe_velocity: Vector2) -> void:
 	_slave.velocity = safe_velocity
 
 
+func _on_navigator_target_reached() -> void:
+	pass
+
+
 func seeking_complete() -> void:
 	if _navigator:
 		await _navigator.navigation_finished
@@ -282,31 +288,27 @@ func seeking_complete() -> void:
 
 # PROCESS FUNCTIONS
 var displacement: float = 0.0 # set in init
-var shifted: bool = false
 func seek(target: Variant = _navigation_target, up_down_left_right: String = "") -> void:
 	if typeof(target) != typeof(_navigation_target) or target != _navigation_target: # ALWAYS accept a target change
 		if target is Vector2:
 			_navigation_target = target
 		elif target is Node2D:
 			_navigation_target = target.global_position
-		if not shifted:
-			match(up_down_left_right): # shift will only occur on change of target
-				"left":
-					_navigation_target -= (1.2 * Vector2(displacement, 0))
-					shifted = true
-				"right":
-					_navigation_target += (1.2 * Vector2(displacement, 0))
-					shifted = true
-				"above":
-					_navigation_target -= (1.2 * Vector2(0, displacement))
-					shifted = true
-				"below":
-					_navigation_target += (1.2 * Vector2(displacement, 0))
-					shifted = true
+		match(up_down_left_right): # shift will only occur on change of target
+			"left":
+				_navigation_target -= (1.2 * Vector2(displacement, 0))
+			"right":
+				_navigation_target += (1.2 * Vector2(displacement, 0))
+			"above":
+				_navigation_target -= (1.2 * Vector2(0, displacement))
+			"below":
+				_navigation_target += (1.2 * Vector2(displacement, 0))
+		if _debugging:
+			print(_nomen, "'s target has been changed. Now seeking: ", _navigation_target)
 	if _alive and not _paused:
 		_navigator.target_position = _navigation_target
 		if _navigator.is_navigation_finished():
 			_slave.velocity = Vector2.ZERO
-			shifted = false
 			return
-		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * 50)
+		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * 50 * Global.speed_mult)
+		_slave.set_velocity(_navigator.velocity)

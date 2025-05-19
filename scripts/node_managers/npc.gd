@@ -1,3 +1,4 @@
+@icon("res://assets/Icons/16x16/character_npc.png")
 extends CharacterBody2D
 @export_group("Config")
 @export var active: bool = true

@@ -72,8 +72,7 @@ func is_timeline_running() -> bool:
 	return Dialogic.current_timeline != null
 
 
-func get_timeline(timeline: TIMELINES) -> DialogicTimeline:
-	Debug.pretty_print_dict(timelines)
+func get_timeline_resource(timeline: TIMELINES) -> DialogicTimeline:
 	return load(timelines[timeline]["resource"])
 
 

@@ -1,3 +1,4 @@
+@icon("res://assets/Icons/16x16/crosshair.png")
 extends Marker2D
 class_name SpawnPoint
 

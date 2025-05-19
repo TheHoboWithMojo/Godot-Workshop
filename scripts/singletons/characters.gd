@@ -46,7 +46,7 @@ func character_exists(nomen: String) -> bool:
 	return nomen in Data.game_data["characters"].keys()
 
 
-func get_character(character: CHARACTERS) -> DialogicCharacter:
+func get_character_resource(character: CHARACTERS) -> DialogicCharacter:
 	return load(characters[character]["resource"])
 
 

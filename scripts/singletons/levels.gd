@@ -14,4 +14,4 @@ func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
 
 func get_current_level() -> Level:
-	return Global.game_manager.current_level
+	return Global.level_manager.get_current_level()

@@ -1,3 +1,4 @@
+@icon("res://assets/Icons/16x16/world.png")
 extends Node2D
 class_name Level
 @export var level: Levels.LEVELS
@@ -5,6 +6,7 @@ class_name Level
 @export var tiles: TileMapLayer
 @export var enemies: Array[PackedScene] = []
 @export var npcs: Array[CharacterBody2D]
+@export var waypoints: Node
 @onready var enemy_spawnpoints: Array[Vector2] = Global.get_tiles_with_property(tiles, "spawnable")
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 

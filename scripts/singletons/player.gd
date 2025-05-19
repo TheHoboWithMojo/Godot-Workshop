@@ -1,5 +1,6 @@
 extends Node2D
 signal player_stats_changed
+signal player_name_changed
 
 var choices: Array[String]
 
@@ -206,6 +207,7 @@ func log_kill(exp_gain: int) -> void:
 
 func change_name(nomen: String) -> void:
 	Global.player.nametag.set_text(nomen)
+	player_name_changed.emit()
 
 
 func is_occupied() -> bool:

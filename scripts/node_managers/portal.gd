@@ -1,3 +1,4 @@
+@icon("res://assets/Icons/16x16/door.png")
 extends Area2D
 @export var send_from: Node2D
 @export var send_to: Levels.LEVELS
@@ -35,17 +36,17 @@ func load_zone() -> void:
 					#print("conditions met")
 					if Input.is_action_just_pressed("interact"):
 						#print("interacted")
-						Global.game_manager.level_changed.emit(send_from, _send_to)
+						Global.level_manager.change_level(send_from, _send_to)
 					await get_tree().process_frame
 			elif require_mouse:
 				while Global.mouse_touching_node == self:
 					if Input.is_action_just_pressed("interact"):
-						Global.game_manager.level_changed.emit(send_from, _send_to)
+						Global.level_manager.change_level(send_from, _send_to)
 					await get_tree().process_frame
 			elif require_player:
 				while Global.player_touching_node == self:
 					if Input.is_action_just_pressed("interact"):
-						Global.game_manager.level_changed.emit(send_from, _send_to)
+						Global.level_manager.change_level(send_from, _send_to)
 					await get_tree().process_frame
 			processing = false
 

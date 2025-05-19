@@ -1,10 +1,11 @@
+res://scenes/default
+res://scripts/icon_extenders
+res://scenes/level_builders
 res://scripts/singletons
 res://scenes/levels/goodsprings
-res://scenes/default
 res://dialogic/timelines
 res://scenes
 res://scripts/node_managers
-res://scenes/level_builders
 res://dialogic/characters/DocMitchell
 res://dialogic/characters
 res://scenes/levels

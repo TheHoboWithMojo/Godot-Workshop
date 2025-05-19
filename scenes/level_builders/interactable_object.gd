@@ -1,7 +1,9 @@
+@icon("res://assets/Icons/16x16/cursor.png")
 extends StaticBody2D
+class_name Interactable
 @export_group("Nodes")
 @export var sprite: Sprite2D
-@export var collider: CollisionShape2D
+@export var collider: Collider
 @export var ibubble_collider: CollisionShape2D
 @export_group("Events")
 @export var repeat_event: bool = false

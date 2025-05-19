@@ -11,7 +11,7 @@ extends CharacterBody2D
 
 @export_group("Nodes")
 @export var sprite: Sprite2D
-@export var collider: CollisionShape2D
+@export var collider: Collider
 @export var projectiles: Array[PackedScene]
 @export var health_bar: TextureProgressBar
 @export var direction_tracker: Marker2D
@@ -21,10 +21,10 @@ func _ready() -> void:
 	await Global.active_and_ready(self, active)
 	if not collision_on:
 		collider.queue_free()
-	
+
 	if Global.game_manager.use_save_data:
 		load_saved_stats()
-		
+
 	health_bar.set_visible(false)
 
 @onready var speed: float = default_speed
@@ -43,7 +43,7 @@ func load_saved_stats() -> void:
 
 	health_bar.min_value = 0.0
 	health_bar.max_value = max_health
-	
+
 # physics variables
 @onready var normal: Vector2
 @onready var orientation_angle: float
@@ -54,11 +54,11 @@ func load_saved_stats() -> void:
 func _physics_process(delta: float) -> void:
 	if not dying:
 		normal = velocity.normalized()
-		
+
 		speed *= speed_mult*Global.speed_mult
-		
+
 		direction_x = _get_direction("x")
-		
+
 		direction_y = _get_direction("y")
 
 		# Smooth movement
@@ -76,7 +76,7 @@ func _physics_process(delta: float) -> void:
 		mouse_pos = get_global_mouse_position()
 		#character_position = position
 		orientation_angle = (mouse_pos - position).angle()
-		
+
 		_flip_sprite(sprite, orientation_angle)
 		#_run_or_idle(velocity)
 
@@ -88,11 +88,11 @@ func _process(_delta: float) -> void:
 		if health <= 0:
 			die()
 			return  # Exit early to prevent other processing
-			
+
 		else:
 			shoot(orientation_angle)
 			health_bar.set_value(health)
-			
+
 			if projectiles:
 				process_scroll()
 
@@ -129,7 +129,7 @@ func shoot(angle: float) -> void: # spawns a projectile at a given angle
 func _flip_sprite(_sprite: Variant, _orientation_angle: float) -> void:
 	if sprite:
 		_sprite.flip_h = (-PI/2 <= _orientation_angle and _orientation_angle <= PI/2)
-	
+
 func _get_direction(x_or_y: String) -> float:
 	if x_or_y.to_lower() == "x":
 		var direction: float = Input.get_axis("move_left", "move_right")

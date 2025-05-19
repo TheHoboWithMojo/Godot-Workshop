@@ -3,10 +3,14 @@ extends Node2D
 
 # Constants
 const FLOAT_LIMIT: float = 2147483647.0
-const PLAYER_PATH: String = "/root/Game/Player"
-const PLAYER_CAMERA_PATH: String = "/root/Game/Player/Camera"
-const GAME_MANAGER_PATH: String = "/root/Game"
-const QUEST_BOX_PATH: String = "/root/Game/Player/QuestBox"
+const PLAYER_PATH: String = "/root/GameManager/Player"
+const PLAYER_CAMERA_PATH: String = "/root/GameManager/Player/Camera"
+const GAME_MANAGER_PATH: String = "/root/GameManager"
+const QUEST_BOX_PATH: String = "/root/GameManager/Player/QuestBox"
+const QUEST_MANAGER_PATH: String = "/root/GameManager/QuestManager"
+const WAYPOINT_MANAGER_PATH: String = "/root/GameManager/WaypointManager"
+const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
+const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
@@ -18,6 +22,10 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 @onready var quest_box: Control = get_node(QUEST_BOX_PATH)
+@onready var waypoint_manager: Node = get_node(WAYPOINT_MANAGER_PATH)
+@onready var level_manager: Node = get_node(LEVEL_MANAGER_PATH)
+@onready var quest_manager: Node = get_node(QUEST_MANAGER_PATH)
+@onready var mob_manager: Node = get_node(MOB_MANAGER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
@@ -45,13 +53,13 @@ func is_fast_travel_enabled() -> bool:
 
 
 func enter_menu() -> void:
-	print("menu entered")
+	#print("menu entered")
 	set_paused(true)
 	in_menu = true
 
 
 func exit_menu() -> void:
-	print("menu exited")
+	#print("menu exited")
 	set_paused(false)
 	in_menu = false
 
@@ -69,10 +77,10 @@ func set_paused(value: bool) -> void:
 	if value:
 		speed_mult = 0.0
 		total_mobs = game_manager.total_mobs # Store actual mob count
-		game_manager.total_mobs = game_manager.MOB_CAP # Sets mob count to max to stop spawning
+		mob_manager.total_mobs = mob_manager.MOB_CAP # Sets mob count to max to stop spawning
 	else:
 		speed_mult = 1.0
-		game_manager.total_mobs = total_mobs # Restores actual mob count
+		mob_manager.total_mobs = total_mobs # Restores actual mob count
 
 
 func is_in_menu() -> bool:
@@ -91,7 +99,7 @@ func get_beings() -> Array[Node]:
 	return get_tree().get_nodes_in_group("beings")
 
 
-func string_to_enum(string: String, enum_reference: Variant) -> int:
+func string_to_enum_value(string: String, enum_reference: Variant) -> int:
 	string = string.to_snake_case().to_upper()
 	return enum_reference[string]
 
