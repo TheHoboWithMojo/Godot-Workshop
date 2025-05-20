@@ -88,13 +88,11 @@ func _process(_delta: float) -> void:
 		if health <= 0:
 			die()
 			return  # Exit early to prevent other processing
+		shoot(orientation_angle)
+		health_bar.set_value(health)
 
-		else:
-			shoot(orientation_angle)
-			health_bar.set_value(health)
-
-			if projectiles:
-				process_scroll()
+		if projectiles:
+			process_scroll()
 
 func process_scroll() -> void:
 	var size: int = projectiles.size()

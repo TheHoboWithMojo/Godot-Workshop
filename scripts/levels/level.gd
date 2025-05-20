@@ -11,10 +11,11 @@ class_name Level
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
 func _ready() -> void:
-	if level:
-		self.set_name(Levels.get_level_name(level)) # enforce naming conventions
-	else:
-		Debug.throw_error(self, "_ready", "Parent of Level node MUST be connected to the level singleton")
+	if not level:
+		Debug.throw_error(self, "_ready", "Parent of Level scene MUST be connected to the level singleton")
+		return
+	self.set_name(Levels.get_level_name(level)) # enforce naming conventions
+
 
 func get_level() -> Levels.LEVELS:
 	return level

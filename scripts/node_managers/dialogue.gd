@@ -34,13 +34,12 @@ func start(timeline: TIMELINES) -> bool:
 	if is_timeline_completed(timeline) and not is_timeline_repeatable(timeline):
 		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_path + " has been played and is not repeatable")
 		return false
-	else:
-		Data.game_data["timelines"][str(timeline)]["completed"] = true
-		Dialogic.start(timeline_path)
-		if not Dialogic.current_timeline:
-			await Dialogic.timeline_started
-			dialogue_started.emit()
-		return true
+	Data.game_data["timelines"][str(timeline)]["completed"] = true
+	Dialogic.start(timeline_path)
+	if not Dialogic.current_timeline:
+		await Dialogic.timeline_started
+		dialogue_started.emit()
+	return true
 
 
 func preload_timeline(timeline: TIMELINES) -> Resource:

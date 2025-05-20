@@ -30,20 +30,22 @@ func _on_body_entered(body: Node2D) -> void:
 		else:
 			Global.player_touching_node = receiver
 		if signal_receiver:
-			if emit_self_as_argument:
-				player_entered_area.emit(self)
-			else:
+			if not emit_self_as_argument:
 				player_entered_area.emit()
+				return
+			player_entered_area.emit(self)
+
 
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == Global.player:
 		Global.player_touching_node = null
 		if signal_receiver:
-			if emit_self_as_argument:
-				player_exited_area.emit(self)
-			else:
+			if not emit_self_as_argument:
 				player_exited_area.emit()
+				return
+			player_exited_area.emit(self)
+
 
 
 func _on_mouse_entered() -> void:
@@ -61,7 +63,7 @@ func _on_mouse_entered() -> void:
 func _on_mouse_exited() -> void:
 	Global.mouse_touching_node = null
 	if signal_receiver:
-		if emit_self_as_argument:
-			mouse_exited_area.emit(self)
-		else:
+		if not emit_self_as_argument:
 			mouse_exited_area.emit()
+			return
+		mouse_exited_area.emit(self)

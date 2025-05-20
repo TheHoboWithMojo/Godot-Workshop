@@ -128,14 +128,16 @@ func _process(_delta: float) -> void:
 		check_for_achievements()
 
 
-func set_stat(stat: STATS, value: float, debugging: bool = false) -> void:
+func set_stat(stat: STATS, value: float, debugging: bool = false) -> bool:
 	var stat_category: STAT_CATEGORIES = _get_stat_category(stat)
-	if stat_category != null:
-		var original_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
-		var new_value: float = float(_get_updated_stat(stat_category, stat, "=", value))
-		player_stats_changed.emit()
-		if debugging:
-			_print_stat_change(stat, original_value, new_value)
+	var original_stat_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
+	var new_stat_value: float = _get_updated_stat(stat_category, stat, "=", value)
+	if new_stat_value == original_stat_value:
+		return false
+	if debugging:
+		_print_stat_change(stat, original_stat_value, new_stat_value)
+	player_stats_changed.emit()
+	return true
 
 
 func get_stat_name(stat: STATS) -> String:
@@ -144,25 +146,25 @@ func get_stat_name(stat: STATS) -> String:
 
 func get_stat(stat: STATS) -> float:
 	var stat_category: STAT_CATEGORIES = _get_stat_category(stat)
-	if stat_category != null:
-		return Data.game_data["stats"][str(stat_category)][str(stat)]
-	return 0.0
+	return Data.game_data["stats"][str(stat_category)][str(stat)]
 
 
-func change_stat(stat: STATS, change: float) -> void:
+func change_stat(stat: STATS, change: float) -> bool:
 	var stat_category: STAT_CATEGORIES = _get_stat_category(stat)
-	if stat_category != null:
-		var original_stat_value: float = Data.game_data["stats"][stat_category][stat]
-		var new_stat_value: float = _get_updated_stat(stat_category, stat, "+", change)
-		player_stats_changed.emit()
-		_print_stat_change(stat, original_stat_value, new_stat_value)
+	var original_stat_value: float = get_stat(stat)
+	var new_stat_value: float = _get_updated_stat(stat_category, stat, "+", change)
+	if new_stat_value == original_stat_value:
+		return false
+	player_stats_changed.emit()
+	_print_stat_change(stat, original_stat_value, new_stat_value)
+	return true
 
 
-func set_perk_active(perk: PERKS, value: bool) -> void:
+func set_perk_active(perk: PERKS, value: bool) -> bool:
 	if is_perk_active(perk) and not is_perk_reversible(perk):
-		return
+		return false
 	Data.game_data["perks"][str(perk)]["has"] = value
-	# code to apply or remove buffs from the perk
+	return true
 
 
 func is_perk_reversible(perk: PERKS) -> bool:
@@ -177,18 +179,20 @@ func get_perk_name(perk: PERKS) -> String:
 	return Global.enum_to_title(perk, PERKS)
 
 
-func check_for_achievements() -> void: #UPDATE SO EVERY PERK HAS A REQ LIST IN DICT
+func check_for_achievements() -> void:
 	if Player.get_stat(Player.STATS.ENEMIES_KILLED) > 5:
 		Player.set_perk_active(Player.PERKS.ASSHOLE, true)
 
 
-func damage(amount: float) -> void:
-	if _damagable:
-		_damagable = false
-		Global.player.health -= amount
-		change_stat(STATS.HEALTH, -amount)
-		await Global.delay(self, 1.0) # IFRAMES
-		_damagable = true
+func damage(amount: float) -> bool:
+	if not _damagable:
+		return false
+	_damagable = false
+	Global.player.health -= amount
+	change_stat(STATS.HEALTH, -amount)
+	await Global.delay(self, 1.0)
+	_damagable = true
+	return true
 
 
 func heal(amount: float) -> void:
@@ -224,17 +228,6 @@ func set_quest(quest: Quest) -> void:
 	quest_box.set_text(quest.nomen + ":")
 
 
-# =============================================
-# PRIVATE HELPER FUNCTIONS
-# =============================================
-func _is_valid_stat(stat: STATS) -> bool:
-	return stat in STATS.values()
-
-
-func _is_valid_operator(_char: String) -> bool:
-	return _char in ["*", "-", "+", "/", "="]
-
-
 func _print_stat_change(stat: STATS, original_stat_value: float, new_stat_value: float) -> void:
 	var change: float = new_stat_value - original_stat_value
 	print("Stat changed: %s from %.2f to %.2f (change: %s%.2f)" % [
@@ -243,11 +236,11 @@ func _print_stat_change(stat: STATS, original_stat_value: float, new_stat_value:
 
 
 func _get_stat_category(stat: STATS) -> STAT_CATEGORIES:
-	if Global.game_manager.active:
-		for category: String in Data.game_data["stats"].keys():
-			if str(stat) in Data.game_data["stats"][category]:
-				@warning_ignore("int_as_enum_without_cast")
-				return int(category)
+	for category: String in Data.game_data["stats"].keys():
+		if not str(stat) in Data.game_data["stats"][category]: # go through all categories until you find the stat
+			continue
+		@warning_ignore("int_as_enum_without_cast")
+		return int(category) # return the category that had the stat
 	Debug.throw_error(self, "_get_stat_category", "Stat %s does not exist" % [stat])
 	return STAT_CATEGORIES.ERROR
 
@@ -258,22 +251,20 @@ func _get_stat_constraints(stat_category: STAT_CATEGORIES, stat: STATS) -> Dicti
 
 
 func _get_updated_stat(stat_category: STAT_CATEGORIES, stat: STATS, operator: String, value: float) -> float:
-	if Global.player:
-		var current_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
-		match operator:
-			"*": current_value *= value
-			"-": current_value -= value
-			"+": current_value += value
-			"=": current_value = value
-			"/":
-				if value != 0:
-					current_value /= value
-				else:
-					Debug.throw_error(self, "_get_updated_stat", "Cannot divide by 0")
+	var current_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
+	match operator:
+		"*": current_value *= value
+		"-": current_value -= value
+		"+": current_value += value
+		"=": current_value = value
+		"/":
+			if value == 0:
+				Debug.throw_error(self, "_get_updated_stat", "Cannot divide by 0")
+				return current_value
+			current_value /= value
 
-		var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
-		var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
-		Data.game_data["stats"][str(stat_category)][str(stat)] = constrained_value
+	var constraints: Dictionary = _get_stat_constraints(stat_category, stat)
+	var constrained_value: float = clamp(current_value, constraints["min"], constraints["max"])
+	Data.game_data["stats"][str(stat_category)][str(stat)] = constrained_value
 
-		return constrained_value
-	return 0.0
+	return constrained_value

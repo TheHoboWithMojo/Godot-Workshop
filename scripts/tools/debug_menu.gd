@@ -79,10 +79,11 @@ func _on_show_frames_button_toggled(toggled_on: bool) -> void:
 
 func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 	show_player_stats = toggled_on
-	if not show_player_stats:
-		clear_data()
-	else:
+	if show_player_stats:
 		update_stat_labels()
+		return
+	clear_data()
+
 
 func _on_save_game_button_pressed() -> void:
 	Data.save_data_changes()

@@ -8,7 +8,7 @@ extends CharacterBody2D
 
 @export_group("Stats")
 @export var repulsion_strength: float = 5000.0
-@export var base_speed: float = 3500.0
+@export var base_speed: float = 50.0
 @export var base_damage: float = 10.0
 @export var base_health: float = 30
 @export var perception: float = 200.0

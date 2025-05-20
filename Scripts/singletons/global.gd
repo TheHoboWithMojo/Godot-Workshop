@@ -74,13 +74,13 @@ func set_paused(value: bool) -> void:
 		for being: Node2D in get_beings():
 			being.master.set_vincible(!value)
 			being.master.set_paused(value)
-	if value:
-		speed_mult = 0.0
-		total_mobs = game_manager.total_mobs # Store actual mob count
-		mob_manager.total_mobs = mob_manager.MOB_CAP # Sets mob count to max to stop spawning
-	else:
+	if not value:
 		speed_mult = 1.0
 		mob_manager.total_mobs = total_mobs # Restores actual mob count
+		return
+	speed_mult = 0.0
+	total_mobs = game_manager.total_mobs # Store actual mob count
+	mob_manager.total_mobs = mob_manager.MOB_CAP # Sets mob count to max to stop spawning
 
 
 func is_in_menu() -> bool:
@@ -130,18 +130,17 @@ func swap_scenes(self_node: Node, new_scene: PackedScene) -> void:
 
 
 func get_rawname(scene_or_node_or_path: Variant) -> String:
-	if scene_or_node_or_path is Node:
-		return scene_or_node_or_path.name
-	elif scene_or_node_or_path is PackedScene:
-		return scene_or_node_or_path.resource_path.get_file().get_basename()
-	elif scene_or_node_or_path is String:
-		return scene_or_node_or_path.get_file().get_basename()
-	elif scene_or_node_or_path is Resource:
-		return scene_or_node_or_path.resource_path.get_file().get_basename()
-	else:
-		Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
-		return ""
+	match typeof(scene_or_node_or_path):
+		TYPE_OBJECT:
+			if scene_or_node_or_path is Node:
+				return scene_or_node_or_path.name
+			elif scene_or_node_or_path is PackedScene or scene_or_node_or_path is Resource:
+				return scene_or_node_or_path.resource_path.get_file().get_basename()
+		TYPE_STRING:
+			return scene_or_node_or_path.get_file().get_basename()
 
+	Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
+	return ""
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
 	var positions: Array[Vector2] = []
@@ -165,14 +164,15 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 
 # ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
 func active_and_ready(self_node: Node, active: bool = true) -> void:
-	if active: # Check is node is active and if the player exists
-		if not player:
-			await game_reloaded # if theres no player wait for references to update
-
-		if not game_manager.is_ready_to_start:
-			await game_manager.ready_to_start
-	else:
+	if not active: # Check is node is active and if the player exists
 		self_node.queue_free()
+		return
+
+	if not player:
+		await game_reloaded # if theres no player wait for references to update
+
+	if not game_manager.is_ready_to_start:
+		await game_manager.ready_to_start
 
 
 func delay(self_node: Node, seconds: float) -> void:
@@ -180,19 +180,17 @@ func delay(self_node: Node, seconds: float) -> void:
 
 
 func get_vector_to_player(self_node: Node2D) -> Vector2:
-	if player:
-		return player.global_position - self_node.global_position
-	else:
+	if not player:
 		Debug.throw_error(self, "get_vector_to_player", "Player path has changed")
 		return Vector2.ZERO
+	return player.global_position - self_node.global_position
 
 
 func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
-	if player_camera:
-		return player_camera.global_position - self_node.global_position
-	else:
+	if not player_camera:
 		Debug.throw_error(self, "get_vector_to_player_camera", "Player camera path has changed")
 		return Vector2.ZERO
+	return player_camera.global_position - self_node.global_position
 
 
 func get_collider(node: Node2D) -> CollisionShape2D:

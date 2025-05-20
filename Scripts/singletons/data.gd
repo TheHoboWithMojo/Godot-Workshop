@@ -36,12 +36,23 @@ var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing cs
 # ----- Initialization -----
 func load_game_data() -> void:
 	print("Loading game data...")
+	_load_static_data()
+	_load_dynamic_data()
+	_process_reload_data()
+	_convert_faction_keys()
+	_ensure_player_health()
 
-	# Load synced files (not stored in dicts singleton)
-	game_data["items"] = load_json_file(_get_current_path("items").replace("_current", "")) # Doesn't change
+	print("Game data loaded...")
+	is_data_loaded = true
+	data_loaded.emit()
+
+
+func _load_static_data() -> void: # quests is outdated
+	game_data["items"] = load_json_file(_get_current_path("items").replace("_current", ""))
 	game_data["quests"] = load_json_file(_get_current_path("quests"))
 
-	# Load All Currents
+
+func _load_dynamic_data() -> void:
 	for data_name: String in reference_data.keys():
 		var current_data_path: String = _get_current_path(data_name)
 		var backup_data_path: String = _get_backup_path(data_name)
@@ -49,67 +60,63 @@ func load_game_data() -> void:
 		var current_data_str: String = FileAccess.get_file_as_string(current_data_path)
 		var backup_data_str: String = FileAccess.get_file_as_string(backup_data_path)
 
-		var current_data: Dictionary = {}
-		var backup_data: Dictionary = {}
+		var current_data: Dictionary = {} if current_data_str.is_empty() else JSON.parse_string(current_data_str)
+		var backup_data: Dictionary = {} if backup_data_str.is_empty() else JSON.parse_string(backup_data_str)
 
-		# Try to parse both files
-		if not current_data_str.is_empty():
-			current_data = JSON.parse_string(current_data_str)
 
-		if not backup_data_str.is_empty():
-			backup_data = JSON.parse_string(backup_data_str)
-
-		# Handle corruption or missing files
 		if current_data == null or current_data.is_empty():
 			print("Warning: Current data for %s is invalid or empty" % data_name)
 
 			if backup_data != null and not backup_data.is_empty():
 				print("Restoring from backup for %s" % data_name)
 				game_data[data_name] = backup_data
-				# Also save the backup to current to fix corruption
 				save_json(backup_data, current_data_path)
-			else:
-				print("Using default data for %s" % data_name)
-				game_data[data_name] = reference_data[data_name].duplicate(true)
-				# Save default data to both files
-				save_json(game_data[data_name], current_data_path)
-				save_json(game_data[data_name], backup_data_path)
-		else:
-			# Current data is valid
-			game_data[data_name] = current_data
+				continue
 
-			# If current and backup don't match, update backup
-			if current_data_str != backup_data_str:
-				print("Updating backup for %s" % data_name)
-				save_json(current_data, backup_data_path)
+			print("Using default data for %s" % data_name)
+			game_data[data_name] = reference_data[data_name].duplicate(true)
+			save_json(game_data[data_name], current_data_path)
+			save_json(game_data[data_name], backup_data_path)
+			continue
 
-	# Process loaded data
-	if game_data.has("reload_data"):
-		if game_data["reload_data"].has("last_position"):
-			Global.player.global_position = _string_to_vector2(game_data["reload_data"]["last_position"])
+		game_data[data_name] = current_data
+		if current_data_str != backup_data_str:
+			print("Updating backup for %s" % data_name)
+			save_json(current_data, backup_data_path)
 
-		if game_data["reload_data"].has("acquired_weapons"):
-			for weapon_scene_path: String in game_data["reload_data"]["acquired_weapons"]:
-				Global.player.projectiles.append(load(weapon_scene_path))
-				if Global.player.projectiles:
-					Global.player.current_projectile = Global.player.projectiles[0]
 
-		if game_data["reload_data"].has("last_level"):
-			Global.level_manager.current_level = load(game_data["reload_data"]["last_level"]).instantiate()
+func _process_reload_data() -> void:
+	if not game_data.has("reload_data"):
+		return
 
-	# Convert faction keys from string to int
-	if game_data.has("factions_data"):
-		var factions_copy: Dictionary = game_data["factions_data"].duplicate()
-		game_data["factions_data"].clear()
-		for faction_number: String in factions_copy.keys():
-			game_data["factions_data"][int(faction_number)] = factions_copy[faction_number]
+	var _reload_data: Dictionary = game_data["reload_data"]
 
+	if _reload_data.has("last_position"):
+		Global.player.global_position = _string_to_vector2(_reload_data["last_position"])
+
+	if _reload_data.has("acquired_weapons"):
+		for weapon_scene_path: String in _reload_data["acquired_weapons"]:
+			Global.player.projectiles.append(load(weapon_scene_path))
+		if Global.player.projectiles:
+			Global.player.current_projectile = Global.player.projectiles[0]
+
+	if _reload_data.has("last_level"):
+		Global.level_manager.current_level = load(_reload_data["last_level"]).instantiate()
+
+
+func _convert_faction_keys() -> void:
+	if not game_data.has("factions_data"):
+		return
+
+	var factions_copy: Dictionary = game_data["factions_data"].duplicate()
+	game_data["factions_data"].clear()
+	for faction_number: String in factions_copy.keys():
+		game_data["factions_data"][int(faction_number)] = factions_copy[faction_number]
+
+
+func _ensure_player_health() -> void:
 	if Player.get_stat(Player.STATS.HEALTH) == 0:
-		Player.set_stat(Player.STATS.HEALTH, 100.0) # Ensure health is set to a feasible value (in case it saved with 0 health)
-
-	print("Game data loaded...")
-	is_data_loaded = true
-	data_loaded.emit()
+		Player.set_stat(Player.STATS.HEALTH, 100.0)
 
 func _string_to_vector2(input: String) -> Vector2:
 	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
