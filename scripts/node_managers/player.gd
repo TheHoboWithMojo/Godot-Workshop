@@ -2,7 +2,8 @@ extends CharacterBody2D
 # EXPORTS
 @export_group("Control")
 @export var active: bool = true
-@export var collision_on: bool = true
+@export var collision_enabled: bool = true
+@export var movement_enabled: bool = true
 
 @export_group("Default Stats")
 @export var default_speed: float = 10000.0
@@ -19,7 +20,7 @@ extends CharacterBody2D
 
 func _ready() -> void:
 	await Global.active_and_ready(self, active)
-	if not collision_on:
+	if not collision_enabled:
 		collider.queue_free()
 
 	if Global.game_manager.use_save_data:
@@ -52,7 +53,7 @@ func load_saved_stats() -> void:
 @onready var direction_y: float
 @onready var mouse_pos: Vector2
 func _physics_process(delta: float) -> void:
-	if not dying:
+	if not dying and movement_enabled:
 		normal = velocity.normalized()
 
 		speed *= speed_mult*Global.speed_mult

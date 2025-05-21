@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cwnm0aj3c61af" path="res://scripts/node_managers/vit_machine.gd" id="1_4v6rv"]
 
 [node name="Control" type="Control"]
+z_index = 2
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -268,6 +269,6 @@ text = "Yes"
 [connection signal="pressed" from="SPECIAL/Agility/AUp" to="." method="_on_a_up_pressed"]
 [connection signal="pressed" from="SPECIAL/Luck/LDown" to="." method="_on_l_down_pressed"]
 [connection signal="pressed" from="SPECIAL/Luck/LUp" to="." method="_on_l_up_pressed"]
-[connection signal="pressed" from="SPECIAL/Confirm/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="SPECIAL/Confirm/Button" to="." method="_on_confirm_button_pressed"]
 [connection signal="pressed" from="Confirm/HBoxContainer/No" to="." method="_on_no_pressed"]
 [connection signal="pressed" from="Confirm/HBoxContainer/Yes" to="." method="_on_yes_pressed"]

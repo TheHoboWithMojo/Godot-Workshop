@@ -11,6 +11,7 @@ extends Node2D
 @export var track_frames: bool = true
 @export var use_save_data: bool = true
 @export var autosaving_enabled: bool = true
+@export var vect: Vector2
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================

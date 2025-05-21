@@ -13,6 +13,7 @@ func _ready() -> void:
 	use_the_vit.pair_waypoints(["VitMachine"])
 	sit_down.pair_waypoints(["Couch"])
 	exit.pair_waypoints(["Exit"])
+	Levels.print_level_navpoints(Levels.LEVELS.DOC_MITCHELLS_HOUSE) # print the named navpoints for reference
 
 # build the main quest
 @onready var main: Quest.Plot = quest.mainplot
@@ -37,14 +38,11 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	if timeline == Dialogue.TIMELINES.YOURE_AWAKE:
 		await Dialogic.timeline_ended
 		quest.start()
-		print(main.get_current_objective_name())
 		doc_mitchell.seek(Vector2(40, -104))
 		await vit_machine.player_touched_me
 		main.advance()
-		print(main.get_current_objective_name())
 		await Player.player_stats_changed
 		main.advance()
-		print(main.get_current_objective_name())
 		await doc_mitchell.seeking_complete()
 		doc_mitchell.seek(Vector2(144, -104))
 		await doc_mitchell.seeking_complete()

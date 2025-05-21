@@ -209,6 +209,10 @@ func log_kill(exp_gain: int) -> void:
 	change_stat(STATS.ENEMIES_KILLED, 1)
 
 
+func set_movement_enabled(value: bool) -> void:
+	Global.player.movement_enabled = value
+
+
 func change_name(nomen: String) -> void:
 	Global.player.nametag.set_text(nomen)
 	player_name_changed.emit()
@@ -219,13 +223,11 @@ func is_occupied() -> bool:
 
 
 func set_objective(objective: Quest.Objective) -> void:
-	var objective_box: RichTextLabel = Global.quest_box.get_node("Box/Objective")
-	objective_box.set_text(objective.nomen)
+	Global.quest_displayer.get_node("Objective").set_text(objective.nomen)
 
 
 func set_quest(quest: Quest) -> void:
-	var quest_box: RichTextLabel = Global.quest_box.get_node("Box/Quest")
-	quest_box.set_text(quest.nomen + ":")
+	Global.quest_displayer.get_node("Quest").set_text(quest.nomen + ":")
 
 
 func _print_stat_change(stat: STATS, original_stat_value: float, new_stat_value: float) -> void:

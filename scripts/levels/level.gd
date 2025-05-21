@@ -7,6 +7,7 @@ class_name Level
 @export var enemies: Array[PackedScene] = []
 @export var npcs: Array[CharacterBody2D]
 @export var waypoints: Node
+@export var interactables: Array[Interactable]
 @onready var enemy_spawnpoints: Array[Vector2] = Global.get_tiles_with_property(tiles, "spawnable")
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
@@ -19,3 +20,7 @@ func _ready() -> void:
 
 func get_level() -> Levels.LEVELS:
 	return level
+
+
+func get_interectables() -> Array[Interactable]:
+	return interactables

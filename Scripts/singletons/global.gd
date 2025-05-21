@@ -6,7 +6,7 @@ const FLOAT_LIMIT: float = 2147483647.0
 const PLAYER_PATH: String = "/root/GameManager/Player"
 const PLAYER_CAMERA_PATH: String = "/root/GameManager/Player/Camera"
 const GAME_MANAGER_PATH: String = "/root/GameManager"
-const QUEST_BOX_PATH: String = "/root/GameManager/Player/QuestBox"
+const QUEST_DISPLAYER_PATH: String = "/root/GameManager/UI/QuestDisplayer"
 const QUEST_MANAGER_PATH: String = "/root/GameManager/QuestManager"
 const WAYPOINT_MANAGER_PATH: String = "/root/GameManager/WaypointManager"
 const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
@@ -21,7 +21,7 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
-@onready var quest_box: Control = get_node(QUEST_BOX_PATH)
+@onready var quest_displayer: Control = get_node(QUEST_DISPLAYER_PATH)
 @onready var waypoint_manager: Node = get_node(WAYPOINT_MANAGER_PATH)
 @onready var level_manager: Node = get_node(LEVEL_MANAGER_PATH)
 @onready var quest_manager: Node = get_node(QUEST_MANAGER_PATH)
@@ -175,6 +175,16 @@ func active_and_ready(self_node: Node, active: bool = true) -> void:
 		await game_manager.ready_to_start
 
 
+func string_to_vector2(input: String) -> Vector2:
+	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
+	var parts: PackedStringArray = trimmed.split(",")
+	if parts.size() == 2:
+		var x: float = parts[0].to_float()
+		var y: float = parts[1].to_float()
+		return Vector2(x, y)
+	return Vector2.ZERO  # fallback if string is malformed
+
+
 func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
 
@@ -216,5 +226,9 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player = get_node(PLAYER_PATH)
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
-	quest_box = get_node(QUEST_BOX_PATH)
+	quest_displayer = get_node(QUEST_DISPLAYER_PATH)
+	waypoint_manager = get_node(WAYPOINT_MANAGER_PATH)
+	level_manager = get_node(LEVEL_MANAGER_PATH)
+	quest_manager = get_node(QUEST_MANAGER_PATH)
+	mob_manager = get_node(MOB_MANAGER_PATH)
 	print("Global references reloaded!")

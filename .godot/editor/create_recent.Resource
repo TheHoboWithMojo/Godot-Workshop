@@ -1,3 +1,4 @@
+SceneReplicationConfig
 TileSet
 AtlasTexture
 SpriteFrames

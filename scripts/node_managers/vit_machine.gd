@@ -143,6 +143,6 @@ func _on_yes_pressed() -> void:
 	self.queue_free()
 
 
-func _on_button_pressed() -> void:
+func _on_confirm_button_pressed() -> void:
 	special.set_visible(false)
 	confirm.set_visible(true)

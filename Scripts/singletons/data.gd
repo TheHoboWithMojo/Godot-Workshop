@@ -20,7 +20,7 @@ signal data_saved
 	"timelines": Dialogue.timelines,
 }
 var reload_data: Dictionary = {
-	"last_level": "res://scenes/levels/doc_mitchell's_house/doc_mitchell's_house.tscn", # these are set to level one values by default
+	"last_level": "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn", # these are set to level one values by default
 	"last_position": Vector2(0, 0),
 	"acquired_weapons": [],
 }
@@ -92,7 +92,7 @@ func _process_reload_data() -> void:
 	var _reload_data: Dictionary = game_data["reload_data"]
 
 	if _reload_data.has("last_position"):
-		Global.player.global_position = _string_to_vector2(_reload_data["last_position"])
+		Global.player.global_position = Global.string_to_vector2(_reload_data["last_position"])
 
 	if _reload_data.has("acquired_weapons"):
 		for weapon_scene_path: String in _reload_data["acquired_weapons"]:
@@ -118,17 +118,10 @@ func _ensure_player_health() -> void:
 	if Player.get_stat(Player.STATS.HEALTH) == 0:
 		Player.set_stat(Player.STATS.HEALTH, 100.0)
 
-func _string_to_vector2(input: String) -> Vector2:
-	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
-	var parts: PackedStringArray = trimmed.split(",")
-	if parts.size() == 2:
-		var x: float = parts[0].to_float()
-		var y: float = parts[1].to_float()
-		return Vector2(x, y)
-	return Vector2.ZERO  # fallback if string is malformed
 
 func _get_current_path(data_name: String) -> String:
 	return "res://data/%s_current.json" % [data_name]
+
 
 func _get_backup_path(data_name: String) -> String:
 	return "res://data/%s_backup.json" % [data_name]

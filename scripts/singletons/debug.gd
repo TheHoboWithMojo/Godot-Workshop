@@ -165,7 +165,7 @@ func _get_array_as_string(array: Array, indent: int = 0) -> String:
 func _format_value(value: Variant) -> String:
 	match typeof(value):
 		TYPE_STRING:
-			return "\"" + value + "\""
+			return value
 		TYPE_BOOL:
 			return "true" if value else "false"
 		TYPE_NIL:

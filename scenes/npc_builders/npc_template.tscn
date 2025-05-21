@@ -14,9 +14,8 @@ size = Vector2(30, 30)
 motion_mode = 1
 script = ExtResource("1_vnwdf")
 
-[node name="IBubble" type="Area2D" parent="." node_paths=PackedStringArray("receiver")]
+[node name="IBubble" type="Area2D" parent="."]
 script = ExtResource("2_j4dpj")
-receiver = NodePath("..")
 
 [node name="Collider" type="CollisionShape2D" parent="IBubble"]
 shape = SubResource("CircleShape2D_hsmms")
