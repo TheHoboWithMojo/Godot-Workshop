@@ -1,7 +1,7 @@
 extends Node
 signal dialogue_started
 
-enum TIMELINES {ERROR, YOURE_AWAKE, PICKTAGS}
+enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS}
 
 var timelines: Dictionary = {
 	TIMELINES.YOURE_AWAKE: {

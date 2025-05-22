@@ -5,6 +5,7 @@ extends Node2D
 const FLOAT_LIMIT: float = 2147483647.0
 const PLAYER_PATH: String = "/root/GameManager/Player"
 const PLAYER_CAMERA_PATH: String = "/root/GameManager/Player/Camera"
+const PLAYER_BUBBLE_PATH: String = "/root/GameManager/Player/Bubble"
 const GAME_MANAGER_PATH: String = "/root/GameManager"
 const QUEST_DISPLAYER_PATH: String = "/root/GameManager/UI/QuestDisplayer"
 const QUEST_MANAGER_PATH: String = "/root/GameManager/QuestManager"
@@ -20,6 +21,7 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var speed_mult: float = 1.0
 @onready var player: CharacterBody2D = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
+@onready var player_bubble: Area2D = get_node(PLAYER_BUBBLE_PATH)
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 @onready var quest_displayer: Control = get_node(QUEST_DISPLAYER_PATH)
 @onready var waypoint_manager: Node = get_node(WAYPOINT_MANAGER_PATH)

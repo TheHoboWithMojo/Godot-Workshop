@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://u3bnqno540du"]
+[gd_scene load_steps=3 format=3 uid="uid://u3bnqno540du"]
 
-[ext_resource type="Script" uid="uid://db6i2i7kj6cx" path="res://scripts/node_managers/portal.gd" id="1_v0xau"]
+[ext_resource type="Script" uid="uid://3oiwbxor74sc" path="res://scenes/level_builders/yeye.gd" id="1_ufldq"]
+[ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="2_ufldq"]
 
-[node name="Portal" type="Area2D"]
-script = ExtResource("1_v0xau")
+[node name="Portal" type="StaticBody2D"]
+script = ExtResource("1_ufldq")
+
+[node name="EntryDetector" parent="." node_paths=PackedStringArray("monitored_parent") instance=ExtResource("2_ufldq")]
+monitored_parent = NodePath("..")

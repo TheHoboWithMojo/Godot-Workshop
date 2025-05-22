@@ -61,7 +61,11 @@ func set_current_level(node: Node2D) -> void: # bypass level switch
 		level_loaded.emit()
 
 
+@onready var changing_level: bool = false
 func change_level(old_level: Node, new_level_path: String) -> void:
+	if changing_level:
+		return
+	changing_level = true
 	_level_loaded = false
 	current_level = load(new_level_path).instantiate()
 	add_child(current_level)
@@ -73,6 +77,7 @@ func change_level(old_level: Node, new_level_path: String) -> void:
 	old_level.queue_free()
 	_level_loaded = true
 	level_loaded.emit()
+	changing_level = false
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================

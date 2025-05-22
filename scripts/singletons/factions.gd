@@ -5,7 +5,7 @@ signal rep_changed
 signal member_died
 
 enum FACTIONS {
-	ERROR,
+	UNASSIGNED,
 	NEW_CALIFORNIA_REPUBLIC,
 	CAESERS_LEGION,
 	BROTHERHOOD_OF_STEEL,

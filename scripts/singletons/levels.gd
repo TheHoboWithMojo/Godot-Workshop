@@ -1,6 +1,6 @@
 extends Node
 
-enum LEVELS {NA, DOC_MITCHELLS_HOUSE, GOODSPRINGS}
+enum LEVELS {UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS}
 
 var levels: Dictionary[LEVELS, String] = {
 	LEVELS.DOC_MITCHELLS_HOUSE: "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",

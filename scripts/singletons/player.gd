@@ -6,7 +6,7 @@ var choices: Array[String]
 
 # Enums
 enum STATS {
-	ERROR,
+	UNASSIGNED,
 	SPEED_MULT,
 	SPEED,
 	ATTACK_SPEED_MULT,
@@ -31,7 +31,7 @@ enum STATS {
 	ENEMIES_KILLED
 }
 
-enum STAT_CATEGORIES {ERROR, SPECIAL, SPEED, HEALTH, CRIT, EXP, DAMAGE, ACCOMPLISHMENTS}
+enum STAT_CATEGORIES {UNASSIGNED, SPECIAL, SPEED, HEALTH, CRIT, EXP, DAMAGE, ACCOMPLISHMENTS}
 
 enum PERKS {
 	HEAVY_HANDED,
@@ -244,7 +244,7 @@ func _get_stat_category(stat: STATS) -> STAT_CATEGORIES:
 		@warning_ignore("int_as_enum_without_cast")
 		return int(category) # return the category that had the stat
 	Debug.throw_error(self, "_get_stat_category", "Stat %s does not exist" % [stat])
-	return STAT_CATEGORIES.ERROR
+	return STAT_CATEGORIES.UNASSIGNED
 
 
 func _get_stat_constraints(stat_category: STAT_CATEGORIES, stat: STATS) -> Dictionary:

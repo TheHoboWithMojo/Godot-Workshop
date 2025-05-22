@@ -26,7 +26,7 @@ var _health_bar: TextureProgressBar = null
 var _audio: AudioStreamPlayer2D = null
 var _navigator: NavigationAgent2D = NavigationAgent2D.new()
 var _navigation_target: Vector2 = Vector2.ZERO
-var _timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.ERROR
+var _timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.UNASSIGNED
 var _missing_components: Array[String] = []
 
 # ===== Initialization =====
@@ -222,7 +222,7 @@ func is_vincible() -> bool:
 
 # --- Character Check ---
 func is_character() -> bool:
-	return _character != Characters.CHARACTERS.ERROR
+	return _character != Characters.CHARACTERS.UNASSIGNED
 
 # --- Hostile ---
 func is_hostile() -> bool:

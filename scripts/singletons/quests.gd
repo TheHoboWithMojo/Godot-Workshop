@@ -1,6 +1,6 @@
 extends Node
 
-enum QUESTS {ERROR, AINT_THAT_A_KICK_IN_THE_HEAD}
+enum QUESTS {UNASSIGNED, AINT_THAT_A_KICK_IN_THE_HEAD}
 
 var quests: Dictionary = {
 	QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD: {

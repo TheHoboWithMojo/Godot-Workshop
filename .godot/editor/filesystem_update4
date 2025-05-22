@@ -3,9 +3,7 @@ res://dialogic/styles/alt.tres
 res://dialogic/styles/default.tres
 res://dialogic/styles/tryme.tres
 res://assets/tiles.tres
+res://scenes/level_builders/yeye.gd
+res://scripts/node_managers/npc.gd
 res://scenes/level_builders/interactable_object.gd
-res://scenes/level_builders/interactable_object.tscn
-res://scenes/npc_builders/npc_template.tscn
-res://scenes/levels/doc_mitchells_house/vit_machine.tscn
-res://scripts/tools/detect_mouse_and_player.gd
-res://scripts/quests/aint_that_a_kick_in_the_head.gd
+res://scenes/default/level_manager.gd

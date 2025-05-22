@@ -15,7 +15,7 @@ extends CharacterBody2D
 @export var exp_on_kill: int = 10
 
 @export_group("Character")
-@export var faction: Factions.FACTIONS = Factions.FACTIONS.ERROR
+@export var faction: Factions.FACTIONS = Factions.FACTIONS.UNASSIGNED
 @export var character: Characters.CHARACTERS
 @export var timeline: Dialogue.TIMELINES
 @onready var nomen: String = Characters.get_character_name(character)
@@ -25,7 +25,7 @@ extends CharacterBody2D
 @onready var audio: AudioStreamPlayer2D = null
 @onready var nametag: RichTextLabel = $Texture/NameTag
 @onready var collider: CollisionShape2D = $Collider
-@onready var ibubble: Area2D = $IBubble
+@onready var ibubble: TouchDetector = $IBubble
 @onready var health_bar: TextureProgressBar = $HealthBar
 @onready var master: Being = Being.new(self)
 

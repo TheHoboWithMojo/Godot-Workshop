@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_nrx6f"]
 [ext_resource type="Texture2D" uid="uid://dmiv2bmqsjs2k" path="res://assets/vit_machine.png" id="5_ou502"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="6_28y3f"]
+[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="6_ejuju"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="7_58nvt"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="8_pmyaa"]
 [ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/level_builders/spawnpoint.tscn" id="9_pik0f"]
@@ -14,16 +15,15 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fl73o"]
 size = Vector2(30, 45)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8rqal"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_o2d5v"]
-size = Vector2(32, 48)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bpc4r"]
-size = Vector2(32, 48)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ejuju"]
+radius = 8.0
+height = 48.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjkh3"]
+size = Vector2(8, 48)
 
 [node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoints", "interactables")]
 script = ExtResource("1_ejuju")
@@ -39,12 +39,8 @@ faction = 20
 character = 1
 timeline = 1
 
-[node name="VitMachine" parent="." node_paths=PackedStringArray("ibubble_collider", "click_detector") instance=ExtResource("3_khflj")]
+[node name="VitMachine" parent="." instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)
-ibubble_collider = NodePath("IbubbleCollider")
-click_detector = NodePath("ClickerRegisterer")
-play_scene_enabled = true
-play_scene_path = "res://scenes/levels/doc_mitchells_house/vit_machine.tscn"
 
 [node name="Collider" type="CollisionShape2D" parent="VitMachine"]
 position = Vector2(-4.76837e-07, -0.5)
@@ -56,28 +52,7 @@ position = Vector2(3.58559e-08, 0)
 scale = Vector2(0.071111, 0.0817715)
 texture = ExtResource("5_ou502")
 
-[node name="ClickerRegisterer" type="Button" parent="VitMachine"]
-offset_left = -16.0
-offset_top = -24.0
-offset_right = 16.0
-offset_bottom = 24.0
-focus_mode = 0
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_8rqal")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_8rqal")
-
-[node name="IbubbleCollider" type="CollisionShape2D" parent="VitMachine"]
-position = Vector2(-4.76837e-07, 0)
-shape = SubResource("RectangleShape2D_o2d5v")
-script = ExtResource("4_nrx6f")
+[node name="ClickDetector" parent="VitMachine" instance=ExtResource("6_ejuju")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -103,39 +78,6 @@ scale = Vector2(1.07748, 1.17117)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="PortalToGoodsprings" parent="." node_paths=PackedStringArray("send_from", "spawn_point") instance=ExtResource("8_pmyaa")]
-position = Vector2(-176, -64)
-send_from = NodePath("..")
-send_to = 2
-spawn_point = NodePath("SpawnPoint")
-
-[node name="SpawnPoint" parent="PortalToGoodsprings" instance=ExtResource("9_pik0f")]
-position = Vector2(64, 0)
-
-[node name="Collider" type="CollisionShape2D" parent="PortalToGoodsprings"]
-position = Vector2(16, 0)
-shape = SubResource("RectangleShape2D_bpc4r")
-
-[node name="ColorRect" type="ColorRect" parent="PortalToGoodsprings"]
-offset_top = -24.0
-offset_right = 8.0
-offset_bottom = 24.0
-color = Color(0.943828, 0.497655, 0.317317, 1)
-
-[node name="RichTextLabel" type="RichTextLabel" parent="PortalToGoodsprings/ColorRect"]
-custom_minimum_size = Vector2(56, 6)
-layout_mode = 0
-offset_left = -3.0
-offset_top = 52.0
-offset_right = 53.0
-offset_bottom = 64.0
-rotation = -1.57079
-theme_override_font_sizes/normal_font_size = 8
-text = "Good Springs"
-fit_content = true
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Waypoints" type="Node" parent="."]
 
 [node name="VitMachine" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
@@ -149,6 +91,48 @@ quest = 1
 local_waypoints = NodePath("..")
 
 [node name="Exit" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(-112, -64)
+position = Vector2(-144, -32)
 quest = 1
 local_waypoints = NodePath("..")
+
+[node name="Portal" parent="." instance=ExtResource("8_pmyaa")]
+position = Vector2(-176, -64)
+
+[node name="DetectionZone" type="CollisionShape2D" parent="Portal"]
+position = Vector2(16, 3.8147e-06)
+shape = SubResource("CapsuleShape2D_ejuju")
+script = ExtResource("4_nrx6f")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="Collider" type="CollisionShape2D" parent="Portal"]
+position = Vector2(4, 3.8147e-06)
+shape = SubResource("RectangleShape2D_kjkh3")
+script = ExtResource("4_nrx6f")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="ClickDetector" parent="Portal" instance=ExtResource("6_ejuju")]
+offset_left = 0.0
+offset_right = 8.0
+scale = Vector2(0.997569, 1.01298)
+
+[node name="SpawnPoint" parent="Portal" instance=ExtResource("9_pik0f")]
+position = Vector2(48, 0)
+
+[node name="ColorRect" type="ColorRect" parent="Portal"]
+offset_top = -24.0
+offset_right = 8.0
+offset_bottom = 24.0
+color = Color(0.943828, 0.497655, 0.317317, 1)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Portal/ColorRect"]
+layout_mode = 0
+offset_top = 40.0
+offset_right = 56.0
+offset_bottom = 52.0
+rotation = -1.57079
+scale = Vector2(0.659343, 0.659343)
+theme_override_font_sizes/normal_font_size = 8
+text = "Good Springs"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1

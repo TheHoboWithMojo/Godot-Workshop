@@ -25,7 +25,7 @@ func _ready() -> void:
 # init scene-specific variables that are assigned by the level loading function
 var doc_mitchell: Being
 var doc_mitchells_house: Node
-var vit_machine: Node
+var vit_machine: Interactable
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE:
@@ -39,9 +39,9 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 		await Dialogic.timeline_ended
 		quest.start()
 		doc_mitchell.seek(Vector2(40, -104))
-		await vit_machine.player_touched_me
+		await vit_machine.event_started
 		main.advance()
-		await Player.player_stats_changed
+		await vit_machine.event_ended
 		main.advance()
 		await doc_mitchell.seeking_complete()
 		doc_mitchell.seek(Vector2(144, -104))

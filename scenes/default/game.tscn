@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dhxviff8epo6d" path="res://scenes/default/quest_manager.gd" id="6_0leiu"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/default/debug_menu.tscn" id="6_p57ef"]
 [ext_resource type="Script" uid="uid://bx63l2sso8arx" path="res://scripts/quests/aint_that_a_kick_in_the_head.gd" id="10_f32yu"]
-[ext_resource type="Script" uid="uid://b3ri3kgmogrxe" path="res://scenes/default/level_loader.gd" id="11_dogt3"]
+[ext_resource type="Script" uid="uid://b3ri3kgmogrxe" path="res://scenes/default/level_manager.gd" id="11_dogt3"]
 [ext_resource type="Script" uid="uid://dekgjbmxuc1f" path="res://scenes/default/spawn_manager.gd" id="12_0leiu"]
 [ext_resource type="Script" uid="uid://b84n510w2nunx" path="res://scripts/quests/by_a_campfire_on_the_trail.gd" id="12_f32yu"]
 [ext_resource type="Script" uid="uid://cjv6qf28rc7c0" path="res://scripts/quests/run_goodsprings_run.gd" id="13_0leiu"]

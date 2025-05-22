@@ -1,11 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://djbiv47x0t7gg"]
+[gd_scene load_steps=5 format=3 uid="uid://djbiv47x0t7gg"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_vnwdf"]
-[ext_resource type="Script" uid="uid://de67x4niml467" path="res://scripts/tools/detect_mouse_and_player.gd" id="2_j4dpj"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="3_j4dpj"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_hsmms"]
-radius = 32.0
+[ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="3_vnwdf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(30, 30)
@@ -13,12 +10,6 @@ size = Vector2(30, 30)
 [node name="NPC" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_vnwdf")
-
-[node name="IBubble" type="Area2D" parent="."]
-script = ExtResource("2_j4dpj")
-
-[node name="Collider" type="CollisionShape2D" parent="IBubble"]
-shape = SubResource("CircleShape2D_hsmms")
 
 [node name="Texture" type="ColorRect" parent="."]
 anchors_preset = 8
@@ -57,3 +48,7 @@ offset_left = -16.0
 offset_top = 16.0
 offset_right = 844.0
 offset_bottom = 253.0
+
+[node name="IBubble" parent="." node_paths=PackedStringArray("monitored_parent") instance=ExtResource("3_vnwdf")]
+scale = Vector2(2.94539, 2.94539)
+monitored_parent = NodePath("..")
