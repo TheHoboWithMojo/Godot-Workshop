@@ -35,12 +35,16 @@ interactables = [NodePath("VitMachine")]
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
+debugging = true
 faction = 20
 character = 1
 timeline = 1
 
-[node name="VitMachine" parent="." instance=ExtResource("3_khflj")]
+[node name="VitMachine" parent="." node_paths=PackedStringArray("click_detector_custom") instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)
+click_detector_custom = NodePath("ClickDetector")
+play_mode_custom = 1
+scene_path_custom = "res://scenes/levels/doc_mitchells_house/vit_machine.tscn"
 
 [node name="Collider" type="CollisionShape2D" parent="VitMachine"]
 position = Vector2(-4.76837e-07, -0.5)

@@ -21,7 +21,7 @@ var _paused: bool = false
 var _slave: Node
 var _sprite: Sprite2D = null
 var _collider: CollisionShape2D = null
-var _ibubble: Area2D = null
+var _touch_detector: Area2D = null
 var _health_bar: TextureProgressBar = null
 var _audio: AudioStreamPlayer2D = null
 var _navigator: NavigationAgent2D = NavigationAgent2D.new()
@@ -97,9 +97,9 @@ func _init_nodes() -> void:
 	elif _slave.get("collision_on") != null:
 		set_collision(_slave.collision_on)
 
-	_ibubble = _slave.get("ibubble")
-	if _ibubble == null:
-		_missing_components.append("ibubble")
+	_touch_detector = _slave.get("touch_detector")
+	if _touch_detector == null:
+		_missing_components.append("touch_detector")
 	else:
 		_create_navigator()
 

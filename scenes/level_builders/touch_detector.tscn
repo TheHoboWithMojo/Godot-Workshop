@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" uid="uid://de67x4niml467" path="res://scenes/level_builders/touch_detector.gd" id="1_fasnu"]
 
-[node name="MouseOrPlayerTouchingDetector" type="Area2D"]
+[node name="TouchDetector" type="Area2D"]
 script = ExtResource("1_fasnu")

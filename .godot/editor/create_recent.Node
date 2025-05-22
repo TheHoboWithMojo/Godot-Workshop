@@ -1,7 +1,5 @@
 Collider
 Button
-Portal
-PlayerAndMouseDetector
 StaticBody2D
 Interactable
 Area2D

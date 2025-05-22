@@ -15,11 +15,9 @@ enum PLAY_MODES {DIALOG, SCENE}
 @export var spawn_point_portal: SpawnPoint
 @export var click_detector_portal: ClickDetector
 @export var touch_detector_portal: TouchDetector
-@export var touch_detection_zone_portal: Collider
 @onready var send_to_level_path: String = Levels.get_level_path(send_to_level) if send_to_level else ""
 
 @export_subgroup("Mode Reqs/Cutscene")
-@export var touch_detection_zone_cutscene: Collider
 @export var touch_detector_cutscene: TouchDetector
 @export var scene_path_cutscene: String
 
@@ -34,11 +32,9 @@ enum PLAY_MODES {DIALOG, SCENE}
 @export var click_detector_custom: ClickDetector
 @export_subgroup("Trigger Mode/Reqs/Entry")
 @export var touch_detector_custom: TouchDetector
-@export var touch_detection_zone_custom: Collider
 @export_subgroup("Trigger Mode/Reqs/Click AND OR Entry")
 @export var click_detector_custom_alt: ClickDetector
 @export var touch_detector_custom_alt: TouchDetector
-@export var touch_detection_zone_custom_alt: Collider
 
 @export_subgroup("Play Mode")
 @export var play_mode_custom: PLAY_MODES
@@ -48,7 +44,7 @@ enum PLAY_MODES {DIALOG, SCENE}
 @export var scene_path_custom: String
 
 @export_category("Tweaks")
-@export var max_trigger_distance: float = 100000.0
+@export var max_trigger_distance: float = 75.0 # bypass for touching; draws a vector to the player and only plays the event if its shorter than this
 @export var repeat_event: bool = false
 @export var emit_interaction_signals: bool = true
 
@@ -142,21 +138,19 @@ func _assert_portal_mode() -> void:
 	assert(send_to_level != Levels.LEVELS.UNASSIGNED)
 	assert(click_detector_portal)
 	assert(touch_detector_portal)
-	assert(touch_detection_zone_portal)
 
 	trigger_mode = TRIGGER_MODES.CLICK_AND_ENTRY
-	_configure_trigger(click_detector_portal, touch_detector_portal, touch_detection_zone_portal)
+	_configure_trigger(click_detector_portal, touch_detector_portal)
 	_configure_play(PLAY_MODES.SCENE)
 	name = "PortalTo%s" % Levels.get_level_name(send_to_level)
 
 
 func _assert_cutscene_mode() -> void:
-	assert(touch_detection_zone_cutscene)
 	assert(touch_detector_cutscene)
 	assert(scene_path_cutscene != "")
 
 	trigger_mode = TRIGGER_MODES.ENTRY
-	_configure_trigger(null, touch_detector_cutscene, touch_detection_zone_cutscene)
+	_configure_trigger(null, touch_detector_cutscene)
 	_configure_play(PLAY_MODES.SCENE, Dialogue.TIMELINES.UNASSIGNED, scene_path_cutscene)
 
 
@@ -170,7 +164,6 @@ func _assert_point_and_click_mode() -> void:
 
 
 func _assert_custom_mode() -> void:
-	assert(trigger_mode_custom)
 	trigger_mode = trigger_mode_custom
 
 	match trigger_mode:
@@ -179,11 +172,11 @@ func _assert_custom_mode() -> void:
 			_configure_trigger(click_detector_custom)
 		TRIGGER_MODES.ENTRY:
 			assert(touch_detector_custom)
-			_configure_trigger(null, touch_detector_custom, touch_detection_zone_custom)
+			_configure_trigger(null, touch_detector_custom)
 		TRIGGER_MODES.CLICK_AND_ENTRY, TRIGGER_MODES.CLICK_OR_ENTRY:
 			assert(click_detector_custom_alt)
 			assert(touch_detector_custom_alt)
-			_configure_trigger(click_detector_custom_alt, touch_detector_custom_alt, touch_detection_zone_custom_alt)
+			_configure_trigger(click_detector_custom_alt, touch_detector_custom_alt)
 
 	assert(play_mode_custom)
 	play_mode = play_mode_custom
@@ -197,24 +190,27 @@ func _assert_custom_mode() -> void:
 			_configure_play(PLAY_MODES.SCENE, Dialogue.TIMELINES.UNASSIGNED, scene_path_custom)
 
 
-func _configure_trigger(click: ClickDetector, touch: TouchDetector = null, detection_zone: Node = null) -> void:
-	click_detector = click
+@onready var click_detector_assigned: bool = false
+@onready var touch_detector_assigned: bool = false
+func _configure_trigger(click: ClickDetector, touch: TouchDetector = null) -> void:
+	assert(not (click_detector_assigned or touch_detector_assigned), "Only follow the guidelines of one mode.")
 	if click:
-		click.pressed.connect(_on_button_pressed)
+		click_detector = click
+		click_detector_assigned = true
+		click_detector.pressed.connect(_on_button_pressed)
 
-	touch_detector = touch
 	if touch:
-		touch.set_monitored_parent(self)
+		assert(touch.get_collider(), "interactables with a touch detector must have an aera2d collider")
+		touch_detector = touch
+		touch_detector_assigned = true
+		touch_detector.set_monitored_parent(self)
 		if click:
-			touch.set_ignored_menu(click)
-
-	if detection_zone and touch:
-		detection_zone.reparent(touch)
+			touch_detector.set_ignored_menu(click_detector)
 
 
 func _configure_play(play: PLAY_MODES, timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.UNASSIGNED, scene_path: String = "") -> void:
 	play_mode = play
-	match play:
+	match play_mode:
 		PLAY_MODES.DIALOG:
 			timeline_to_play = timeline
 		PLAY_MODES.SCENE:

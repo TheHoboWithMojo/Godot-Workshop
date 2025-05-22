@@ -25,7 +25,7 @@ extends CharacterBody2D
 @onready var audio: AudioStreamPlayer2D = null
 @onready var nametag: RichTextLabel = $Texture/NameTag
 @onready var collider: CollisionShape2D = $Collider
-@onready var ibubble: TouchDetector = $IBubble
+@onready var touch_detector: TouchDetector = $TouchDetector
 @onready var health_bar: TextureProgressBar = $HealthBar
 @onready var master: Being = Being.new(self)
 
@@ -33,13 +33,13 @@ func _ready() -> void:
 	if not active:
 		queue_free()
 	nametag.set_text(nomen)
-	ibubble.player_entered_area.connect(_check_for_dialog)
+	touch_detector.player_entered_area.connect(_check_for_dialog)
 
 
 var first_time_talked_to: bool = true
 func _check_for_dialog() -> void:
 	if timeline and not Player.is_occupied():
-		while Global.is_touching_player(self):
+		while Global.player_bubble in touch_detector.get_overlapping_areas():
 			if Input.is_action_just_pressed("interact"):
 				if first_time_talked_to:
 					first_time_talked_to = false

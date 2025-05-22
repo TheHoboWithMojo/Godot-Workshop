@@ -1,11 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://djbiv47x0t7gg"]
+[gd_scene load_steps=7 format=3 uid="uid://djbiv47x0t7gg"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_vnwdf"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="3_j4dpj"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="3_vnwdf"]
+[ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_n1ps7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(30, 30)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
 
 [node name="NPC" type="CharacterBody2D"]
 motion_mode = 1
@@ -49,6 +52,12 @@ offset_top = 16.0
 offset_right = 844.0
 offset_bottom = 253.0
 
-[node name="IBubble" parent="." node_paths=PackedStringArray("monitored_parent") instance=ExtResource("3_vnwdf")]
+[node name="TouchDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("3_vnwdf")]
 scale = Vector2(2.94539, 2.94539)
 monitored_parent = NodePath("..")
+collider = NodePath("Collider")
+
+[node name="Collider" type="CollisionShape2D" parent="TouchDetector"]
+shape = SubResource("CircleShape2D_j4dpj")
+script = ExtResource("4_n1ps7")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"

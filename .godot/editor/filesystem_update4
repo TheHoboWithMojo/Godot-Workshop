@@ -3,7 +3,14 @@ res://dialogic/styles/alt.tres
 res://dialogic/styles/default.tres
 res://dialogic/styles/tryme.tres
 res://assets/tiles.tres
-res://scenes/level_builders/yeye.gd
 res://scripts/node_managers/npc.gd
+res://scenes/npc_builders/npc_template.tscn
 res://scenes/level_builders/interactable_object.gd
-res://scenes/default/level_manager.gd
+res://scenes/level_builders/touch_detector.tscn
+res://scenes/level_builders/touch_detector.gd
+res://scenes/default/game.tscn
+res://scenes/default/player.tscn
+res://scenes/level_builders/portal.tscn
+res://scenes/level_builders/interactable_object.tscn
+res://scenes/level_builders/yeye.gd
+res://scripts/classes/being.gd

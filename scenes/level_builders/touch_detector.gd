@@ -13,8 +13,6 @@ class_name TouchDetector
 @export var set_touching_to_self: bool = false
 @export var emit_self_as_argument: bool = false
 
-@onready var default_collider: Collider = $DefaultCollider
-
 signal player_entered_area
 signal player_exited_area
 signal mouse_entered_area
@@ -62,8 +60,8 @@ func set_monitored_parent(node: Node) -> void:
 	monitored_parent = node
 
 
-func set_custom_collider(_custom_collider: Collider) -> void:
-	default_collider = _custom_collider
+func get_collider() -> Collider:
+	return $Collider
 
 
 func _on_area2d_entered(area: Area2D) -> void:
