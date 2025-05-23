@@ -95,7 +95,7 @@ func _try_play_event() -> void:
 		PLAY_MODES.DIALOG:
 			await _try_play_dialog()
 		PLAY_MODES.SCENE:
-			_try_play_scene()
+			await _try_play_scene()
 
 
 func _try_play_dialog() -> void:
@@ -115,6 +115,7 @@ func _try_play_scene() -> void:
 	var node: Node = load(scene_path_to_play).instantiate()
 	Global.game_manager.add_child(node)
 	node.global_position = Global.player.global_position
+	await node.tree_exited # wait for the scene to end
 	event_completed = true
 	event_ended.emit(self)
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://5qmyahukkvx"]
+[gd_scene load_steps=19 format=4 uid="uid://5qmyahukkvx"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
 [ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="2_kjkh3"]
@@ -9,8 +9,11 @@
 [ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="6_ejuju"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="7_58nvt"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="8_pmyaa"]
+[ext_resource type="Script" uid="uid://c5vmlmggmw0w5" path="res://scripts/node_managers/child_manager.gd" id="9_kjkh3"]
 [ext_resource type="PackedScene" uid="uid://j2dk0px2bpvs" path="res://scenes/level_builders/spawnpoint.tscn" id="9_pik0f"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="10_8rqal"]
+[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="13_khflj"]
+[ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="14_nrx6f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fl73o"]
 size = Vector2(30, 45)
@@ -25,17 +28,18 @@ height = 48.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kjkh3"]
 size = Vector2(8, 48)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoints", "interactables")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "interactables", "navpoints")]
 script = ExtResource("1_ejuju")
 level = 1
 tiles = NodePath("Tiles")
+npcs = [NodePath("DocMitchell")]
 waypoints = NodePath("Waypoints")
 interactables = [NodePath("VitMachine")]
+navpoints = NodePath("Navpoints")
 
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
-debugging = true
 faction = 20
 character = 1
 timeline = 1
@@ -82,7 +86,9 @@ scale = Vector2(1.07748, 1.17117)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Waypoints" type="Node" parent="."]
+[node name="Waypoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
+script = ExtResource("9_kjkh3")
+enforce_node_type = NodePath("VitMachine")
 
 [node name="VitMachine" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
 position = Vector2(0, -64)
@@ -90,12 +96,12 @@ quest = 1
 local_waypoints = NodePath("..")
 
 [node name="Couch" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(144, -104)
+position = Vector2(144, -144)
 quest = 1
 local_waypoints = NodePath("..")
 
 [node name="Exit" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(-144, -32)
+position = Vector2(-128, -64)
 quest = 1
 local_waypoints = NodePath("..")
 
@@ -120,6 +126,7 @@ offset_right = 8.0
 scale = Vector2(0.997569, 1.01298)
 
 [node name="SpawnPoint" parent="Portal" instance=ExtResource("9_pik0f")]
+visible = false
 position = Vector2(48, 0)
 
 [node name="ColorRect" type="ColorRect" parent="Portal"]
@@ -140,3 +147,21 @@ text = "Good Springs"
 fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Navpoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
+script = ExtResource("9_kjkh3")
+enforce_node_type = NodePath("VitMachine")
+
+[node name="VitMachine" parent="Navpoints" instance=ExtResource("13_khflj")]
+position = Vector2(32, -100)
+related_quests = Array[int]([1])
+
+[node name="Couch" parent="Navpoints" instance=ExtResource("13_khflj")]
+position = Vector2(144, -96)
+related_quests = Array[int]([1])
+
+[node name="Exit" type="Marker2D" parent="Navpoints"]
+position = Vector2(-144, -100)
+script = ExtResource("14_nrx6f")
+related_quests = Array[int]([1])
+metadata/_custom_type_script = "uid://v843ummj070b"

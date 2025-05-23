@@ -2,7 +2,7 @@ extends Control
 
 @onready var popup: Window = $VBoxContainer/NamePopup
 @onready var input_box: LineEdit = $VBoxContainer/NamePopup/Control/VBoxContainer/LineEdit
-@onready var mouse_follower: RichTextLabel = $MouseFollower
+@onready var coordinate_printer: RichTextLabel = $CoordinatePrinter
 @export var show_coords: bool = true
 @export var ask_for_name: bool = true
 @export var save_selection: bool = true
@@ -38,10 +38,8 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	# Follow mouse if enabled
-	if show_coords:
-		var pos: Vector2 = get_global_mouse_position() + Vector2(-18, 8)
-		mouse_follower.set_global_position(pos)
-		mouse_follower.set_text(str(get_global_mouse_position()))
+	if not show_coords:
+		coordinate_printer.set_physics_process(false)
 
 func _on_gui_input(event: InputEvent) -> void:
 	if not processing and event.is_action_pressed("place_point"):

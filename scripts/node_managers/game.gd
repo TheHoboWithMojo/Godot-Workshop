@@ -8,10 +8,9 @@ extends Node2D
 # =========================================================================
 @export_group("Config")
 @export var active: bool = true
-@export var track_frames: bool = true
 @export var use_save_data: bool = true
 @export var autosaving_enabled: bool = true
-@export var vect: Vector2
+@export var show_mouse_pos: bool = false
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
@@ -37,10 +36,12 @@ func _ready() -> void:
 	load_data()
 	ready_up()
 
+	if show_mouse_pos:
+		add_child(load("res://scenes/tools/mouse_pos_printer.tscn").instantiate())
+
 
 func _process(_delta: float) -> void:
-	if track_frames:
-		count_frames()
+	count_frames()
 	if use_save_data and autosaving_enabled:
 		autosave()
 # =========================================================================

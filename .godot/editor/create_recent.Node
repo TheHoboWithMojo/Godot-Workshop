@@ -1,3 +1,8 @@
+NavigationAgent2D
+Navpoint
+Marker2D
+AnimatedSprite2D
+Node
 Collider
 Button
 StaticBody2D
@@ -8,5 +13,3 @@ RichTextLabel
 VBoxContainer
 CanvasLayer
 Window
-PopupPanel
-LineEdit

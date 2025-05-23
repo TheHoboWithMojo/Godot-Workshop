@@ -2,13 +2,22 @@ extends Node
 
 enum LEVELS {UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS}
 
-var levels: Dictionary[LEVELS, String] = {
-	LEVELS.DOC_MITCHELLS_HOUSE: "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
-	LEVELS.GOODSPRINGS: "res://scenes/levels/goodsprings/goodsprings.tscn",
+var levels: Dictionary[LEVELS, Dictionary] = {
+	LEVELS.DOC_MITCHELLS_HOUSE: {
+		"Path": "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
+		"Waypoints": {},
+		"Navpoints": {},
+	},
+	LEVELS.GOODSPRINGS: {
+		"Path": "res://scenes/levels/goodsprings/goodsprings.tscn",
+		"Waypoints": {},
+		"Navpoints": {},
+	},
 }
 
+
 func get_level_path(level: LEVELS) -> String:
-	return levels[level]
+	return levels[level]["Path"]
 
 func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
@@ -17,7 +26,7 @@ func get_current_level() -> Level:
 	return Global.level_manager.get_current_level()
 
 
-func print_level_navpoints(level: LEVELS) -> bool: # loads the files created by vector places
+func print_vector_tool_level_navpoints(level: LEVELS) -> bool: # loads the files created by vector placing tool
 	var level_name: String = get_level_name(level)
 	var access_path: String = get_level_path(level).replace(".tscn", "_navpoints.txt")
 	if not FileAccess.file_exists(access_path):
@@ -30,3 +39,13 @@ func print_level_navpoints(level: LEVELS) -> bool: # loads the files created by 
 	Debug.pretty_print_dict(navpoint_dict)
 	print("\n")
 	return true
+
+
+func print_onready_level_navpoints(level: LEVELS) -> void: # uses the level class navpoint and waypoint nodse
+	print("\nNavpoint Summary For Level: %s" % [get_level_name(level)])
+	Debug.pretty_print_dict(levels[level]["Navpoints"])
+
+
+func print_onready_level_waypoints(level: LEVELS) -> void:
+	print("\nWaypoint Summary For Level: %s" % [get_level_name(level)])
+	Debug.pretty_print_dict(levels[level]["Navpoints"])

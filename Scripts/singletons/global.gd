@@ -55,13 +55,13 @@ func is_fast_travel_enabled() -> bool:
 
 
 func enter_menu() -> void:
-	#print("menu entered")
+	print("[Global] menu entered")
 	set_paused(true)
 	in_menu = true
 
 
 func exit_menu() -> void:
-	#print("menu exited")
+	print("[Global] menu exited")
 	set_paused(false)
 	in_menu = false
 

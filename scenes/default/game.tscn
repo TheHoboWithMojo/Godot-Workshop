@@ -17,6 +17,7 @@
 script = ExtResource("1_wrm1d")
 use_save_data = false
 autosaving_enabled = false
+show_mouse_pos = true
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3

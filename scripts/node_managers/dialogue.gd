@@ -29,10 +29,10 @@ func _ready() -> void:
 func start(timeline: TIMELINES) -> bool:
 	var timeline_path: String = timelines[timeline]["resource"]
 	if is_timeline_running():
-		#Debug.throw_error(self, "start_dialog", "The timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
+		#Debug.throw_error(self, "start_dialog", "A timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))])
 		return false
 	if is_timeline_completed(timeline) and not is_timeline_repeatable(timeline):
-		Debug.throw_error(self, "start_dialog", "The timeline " + timeline_path + " has been played and is not repeatable")
+		#Debug.throw_error(self, "start_dialog", "The timeline " + timeline_path + " has been played and is not repeatable")
 		return false
 	Data.game_data["timelines"][str(timeline)]["completed"] = true
 	Dialogic.start(timeline_path)

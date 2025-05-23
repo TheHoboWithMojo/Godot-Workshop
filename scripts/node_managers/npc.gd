@@ -40,11 +40,11 @@ var first_time_talked_to: bool = true
 func _check_for_dialog() -> void:
 	if timeline and not Player.is_occupied():
 		while Global.player_bubble in touch_detector.get_overlapping_areas():
+			#print("Checking")
 			if Input.is_action_just_pressed("interact"):
-				if first_time_talked_to:
-					first_time_talked_to = false
-					if await Dialogue.start(timeline):
-						await Dialogic.timeline_ended
+				first_time_talked_to = false
+				if await Dialogue.start(timeline):
+					await Dialogic.timeline_ended
 			await get_tree().process_frame
 
 

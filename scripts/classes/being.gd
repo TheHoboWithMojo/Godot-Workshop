@@ -46,7 +46,8 @@ func _init(self_node: Node) -> void:
 	_init_nodes()
 
 	if _debugging and _missing_components.size() > 0:
-		_print_missing_components()
+		pass
+		#_print_missing_components()
 
 
 func _init_character() -> void:
@@ -121,12 +122,12 @@ func _create_navigator() -> void:
 	_slave.add_child(_navigator)
 	if _debugging:
 		_navigator.set_debug_enabled(true)
-		print("[Being] agents avoidance layers: ", _navigator.get_avoidance_layers())
-		print("[Being] agents navigation map: ", _navigator.get_navigation_map())
+		#print("[Being] agents avoidance layers: ", _navigator.get_avoidance_layers())
+		#print("[Being] agents navigation map: ", _navigator.get_navigation_map())
 
 	_navigator.set_avoidance_enabled(true)
-	_navigator.set_path_desired_distance(20.0)
-	_navigator.set_target_desired_distance(10.0)
+	_navigator.set_path_desired_distance(30.0)
+	_navigator.set_target_desired_distance(1.0)
 
 
 # ===== Public API =====
@@ -155,7 +156,7 @@ func seek(target: Variant = _navigation_target, up_down_left_right: String = "")
 			"below":
 				_navigation_target += (1.2 * Vector2(displacement, 0))
 		if _debugging:
-			print(_nomen, "'s target has been changed. Now seeking: ", _navigation_target)
+			print("[Being] ", _nomen, "'s target has been changed to: ", _navigation_target)
 	if _alive and not _paused:
 		_navigator.target_position = _navigation_target
 		if _navigator.is_navigation_finished():
@@ -364,6 +365,8 @@ func _set_timeline(timeline: Dialogue.TIMELINES) -> bool:
 		return false
 	_timeline = timeline
 	_slave.timeline = _timeline
+	if _debugging:
+		print("[Being] %s's timeline has been changed to %s." % [_nomen, Dialogue.get_timeline_name(_slave.timeline)])
 	return true
 
 

@@ -9,6 +9,7 @@ var quests: Dictionary = {
 		"timelines": [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS],
 		"related_levels": [Levels.LEVELS.DOC_MITCHELLS_HOUSE],
 		"waypoints": [], # appended by waypoint scenes, will be hardcoded later
+		"navpoints": []
 	}
 }
 
@@ -33,9 +34,18 @@ func get_quest_waypoints(quest: QUESTS) -> Array: # bc godot doesnt support nest
 	return quests[quest]["waypoints"]
 
 
+func get_quest_navpoints(quest: QUESTS) -> Array:
+	return quests[quest]["navpoints"]
+
+
 func add_quest_waypoint(waypoint: Waypoint, quest: QUESTS) -> void:
 	if waypoint not in quests[quest]["waypoints"]:
 		quests[quest]["waypoints"].append(waypoint)
+
+
+func add_quest_navpoint(navpoint: Navpoint, quest: QUESTS) -> void:
+	if navpoint not in quests[quest]["navpoints"]:
+		quests[quest]["navpoints"].append(navpoint)
 
 
 func is_quest_complete(quest: QUESTS) -> bool:

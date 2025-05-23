@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dassfvqra788a"]
+[gd_scene load_steps=3 format=3 uid="uid://dassfvqra788a"]
 
 [ext_resource type="Script" uid="uid://vy8827pxrjgn" path="res://scenes/default/vector_placer.gd" id="1_h6osu"]
+[ext_resource type="PackedScene" uid="uid://dm2s4ivsjk3fh" path="res://scenes/tools/mouse_pos_printer.tscn" id="2_mdcny"]
 
 [node name="VectorPlacer" type="Control"]
 layout_mode = 3
@@ -21,23 +22,14 @@ size_flags_vertical = 4
 script = ExtResource("1_h6osu")
 level = 1
 
-[node name="MouseFollower" type="RichTextLabel" parent="."]
-custom_minimum_size = Vector2(500, 100)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -50.0
-offset_right = 250.0
-offset_bottom = 50.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.25, 0.25)
-theme_override_font_sizes/normal_font_size = 16
-fit_content = true
+[node name="CoordinatePrinter" parent="." instance=ExtResource("2_mdcny")]
+layout_mode = 0
+anchors_preset = 0
+offset_left = 16.4912
+offset_top = -824.023
+offset_right = 516.491
+offset_bottom = -724.023
+text = "(734.6986, 47.84186)"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0

@@ -7,7 +7,8 @@ var characters: Array[DialogicCharacter] = [] # store related characters
 var timelines: Array[DialogicTimeline] = [] # store related timelines for detection logic
 var levels: Array[String] = [] # store related levels file paths
 var rewards: Array[String] = [] # buff string parsing?
-var waypoints: Dictionary[String, Waypoint] = {} # array of waypoints but i cant enforce bc a lack of nested dicts
+var quest_waypoints: Dictionary[String, Waypoint] = {} # array of waypoints but i cant enforce bc a lack of nested dicts
+var quest_navpoints: Dictionary[String, Navpoint] = {}
 var caller: Node = null # save what called it
 var mainplot: Plot = null # non-optional parts
 var sideplots: Dictionary[String, Plot] = {} # optional parts
@@ -16,9 +17,11 @@ var completed: bool = false # is quest completed?
 var active: bool = false # is this the current quest?
 var started: bool = false
 
+signal waypoints_assigned
+signal navpoints_assigned
+
 func _init(self_node: Node, quest: Quests.QUESTS) -> void:
 	caller = self_node
-
 	linked_quest = quest
 
 	nomen = Quests.get_quest_name(quest)
@@ -32,9 +35,28 @@ func _init(self_node: Node, quest: Quests.QUESTS) -> void:
 
 
 func waypoint_overview() -> void:
-	print("%s's Waypoints Overview (name, position):" % [nomen])
-	for waypoint_name: String in waypoints:
-		print(waypoint_name + " " + str(waypoints[waypoint_name].global_position))
+	print("\n%s's Waypoints Overview (name, position):" % [nomen])
+	for waypoint_name: String in quest_waypoints:
+		print(waypoint_name + " " + str(quest_waypoints[waypoint_name].global_position))
+
+
+func navpoint_overview() -> void:
+	print("\n%s's Navpoints Overview (name, position):" % [nomen])
+	for navpoint_name: String in quest_navpoints:
+		print(navpoint_name + " " + str(quest_navpoints[navpoint_name].global_position))
+
+
+func get_navpoint_position(navpoint_name: String) -> Vector2:
+	assert(navpoint_name in quest_navpoints.keys())
+	var navpoint: Navpoint = quest_navpoints[navpoint_name]
+	return navpoint.global_position
+
+
+func get_waypoint_position(waypoint_name: String) -> Vector2:
+	if not waypoint_name in quest_waypoints.keys():
+		return Vector2.ZERO
+	var waypoint: Waypoint = quest_waypoints[waypoint_name]
+	return waypoint.global_position
 
 
 func add_timelines(_timelines: Array[Dialogue.TIMELINES]) -> Array[DialogicTimeline]:
@@ -65,14 +87,17 @@ func _on_timeline_started() -> void: # notify the caller if a related timeline h
 		caller._on_related_timeline_played(timeline)
 
 
-signal waypoints_assigned
 func _on_level_loaded() -> void:
 	var current_level: Node = Levels.get_current_level()
 	if current_level.scene_file_path in levels:
 		var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest) # update the linked waypoints every time a level is loaded
+		var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
 		for waypoint: Waypoint in new_waypoints:
-			waypoints[Global.get_rawname(waypoint)] = waypoint
+			quest_waypoints[Global.get_rawname(waypoint)] = waypoint
 		waypoints_assigned.emit()
+		for navpoint: Navpoint in new_navpoints:
+			quest_navpoints[Global.get_rawname(navpoint)] = navpoint
+		navpoints_assigned.emit()
 		caller._on_related_level_loaded(current_level)
 
 
@@ -93,15 +118,16 @@ func start() -> bool:
 	if not mainplot.objectives:
 		Debug.throw_error("quest.gd", "start", "Quest plot %'s objectives have not been declared" % [mainplot.nomen])
 		return false
-	mainplot.set_started(true)
-	mainplot.current_objective = mainplot.objectives.keys()[0]
-	for plot: String in sideplots:
-		var _plot: Plot = sideplots[plot]
-		if not _plot.objectives:
-			Debug.throw_error("quest.gd", "start", "Quest %'s objectives have not been declared" % [_plot.nomen])
+	set_active(true) # quests always are set active on start
+	mainplot._start()
+	for plot_name: String in sideplots:
+		var plot: Plot = sideplots[plot_name]
+		if not plot.objectives:
+			Debug.throw_error("quest.gd", "start", "Quest %'s objectives have not been declared" % [plot.nomen])
 			return false
-		_plot.current_objective = _plot.objectives.keys()[0]
-		_plot.set_started(true)
+		if not plot.activate_on_main:
+			continue
+		plot._start()
 	started = true
 	return true
 
@@ -144,6 +170,7 @@ class Plot:
 	var objectives: Dictionary[Objective, String] # Objective + description
 	var objective_waypoint_dict: Dictionary [Objective, Array] = {} # objective + array Vector2
 	var current_objective: Objective = null
+	var activate_on_main: bool = true # whether or not the sideplot starts when the main does
 	var quest: Quest = null
 	var nomen: String = ""
 	var rewards: Array[String] = []
@@ -151,28 +178,49 @@ class Plot:
 	var started: bool = false
 
 
-	func _init(_nomen: String = "main") -> void:
+	func _init(_nomen: String = "main", _activate_on_main: bool = true) -> void:
 		nomen = _nomen
+		activate_on_main = _activate_on_main
+
+
+	func _start() -> void:
+		if is_started():
+			return
+		current_objective = objectives.keys()[0]
+		current_objective.objective_waypoints[0].set_active(true)
+		started = true
 
 
 	func advance() -> bool: # moves forward in the plot
 		if not is_started():
 			Debug.throw_error("quest.gd", "advance", "Cannot advance the plot '%s' without first starting the quest '%s'" % [nomen, quest.nomen])
 			return false
-		var objectives_keys: Array[Objective] = objectives.keys()
-		var index: int = objectives_keys.find(current_objective)
-		if (index + 1) > objectives_keys.size()-1: # if we can't advance anymore, complete the quest
-			complete()
+		if is_complete():
+			Debug.throw_error("quest.gd", "advance", "Trying to advance a plot that was already completed")
+			return false
+
+		var objectives_array: Array[Objective] = objectives.keys()
+		var current_position: int = objectives_array.find(current_objective)
+		if not _has_next_objective(current_position, objectives_array):
+			_complete()
 			return true
-		var new_objective: Objective = objectives_keys[index + 1]
-		for waypoint: Waypoint in current_objective.waypoints:
-			waypoint.set_active(false)
-		current_objective = new_objective
+
+		var _new_objective: Objective = objectives_array[current_position + 1]
+		_set_active_all_waypoints(current_objective, false)
+		current_objective = _new_objective
 		if quest.is_active():
-			for waypoint: Waypoint in current_objective.waypoints:
-				waypoint.set_active(true)
-			Player.set_objective(new_objective)
+			_set_active_all_waypoints(current_objective, true)
+			Player.set_objective(current_objective)
 		return true
+
+
+	func _has_next_objective(index: int, array: Array) -> bool:
+		return index + 1 < array.size()
+
+
+	func _set_active_all_waypoints(objective: Objective, value: bool) -> void:
+		for waypoint: Waypoint in objective.objective_waypoints:
+			waypoint.set_active(value)
 
 
 	func skip_to_objective(objective: Objective) -> bool: # move to a specific plot objective
@@ -190,31 +238,29 @@ class Plot:
 			return false
 		if target_index == _objectives.size() - 1:
 			current_objective = objective
-			complete()
+			_complete()
 			return true
 		current_objective = objective
 		return true
 
 
-	func complete() -> void:
+	func _complete() -> void:
 		for reward: String in rewards:
 			pass
 		if self == quest.mainplot:
 			quest.complete()
 		completed = true
-		print("quest '%s' completed!" % [nomen])
+		print("plot '%s' completed!" % [nomen])
 
 
-	func create_new_objective(objective_name: String, description: String = "") -> Objective:
-		var new_objective: Objective = Objective.new(objective_name, self, self.quest)
-		objective_waypoint_dict[new_objective] = []
-		objectives[new_objective] = description
-		if not current_objective and quest.started:
-			current_objective = new_objective
-		return new_objective
+	func new_objective(objective_name: String, description: String = "") -> Objective:
+		var _new_objective: Objective = Objective.new(objective_name, self, self.quest)
+		objective_waypoint_dict[_new_objective] = []
+		objectives[_new_objective] = description
+		return _new_objective
 
 
-	func objective_complete(objective: Objective) -> bool:
+	func is_objective_complete(objective: Objective) -> bool:
 		return objectives.keys().find(objective) < objectives.keys().find(current_objective)
 
 
@@ -238,16 +284,12 @@ class Plot:
 		return started
 
 
-	func set_started(value: bool) -> void:
-		started = value
-
-
 class Objective:
 	var nomen: String
 	var plot: Plot
 	var quest: Quest
 	var completed: bool = false
-	var waypoints: Array[Waypoint]
+	var objective_waypoints: Array[Waypoint]
 
 
 	func _init(_nomen: String, _plot: Plot, _quest: Quest) -> void:
@@ -269,11 +311,11 @@ class Objective:
 
 	func pair_waypoints(waypoint_names: Array[String]) -> bool:
 		for waypoint_name: String in waypoint_names:
-			if not waypoint_name in quest.waypoints.keys():
+			if not waypoint_name in quest.quest_waypoints.keys():
 				Debug.throw_error(quest.caller, "pair_waypoints", "waypoint %s does not exist" % [waypoint_name])
 				return false
-			var waypoint: Waypoint = quest.waypoints[waypoint_name]
-			waypoints.append(waypoint)
+			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
+			objective_waypoints.append(waypoint)
 			plot.objective_waypoint_dict[self].append(waypoint.global_position)
 			continue
 		return true
