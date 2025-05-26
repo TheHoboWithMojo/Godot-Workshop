@@ -14,9 +14,8 @@ signal player_touched_me
 
 func _ready() -> void:
 	assert(quest != 0, "All waypoints must link to a quest.")
-	Quests.add_quest_waypoint(self, quest)
 	sprite.set_visible(false)
-	add_to_group("waypoint")
+	add_to_group("waypoints")
 	if not self in Global.waypoint_manager.get_children():
 		reparent.call_deferred(Global.waypoint_manager)
 	area_entered.connect(_on_area_entered)
@@ -26,7 +25,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if area == Global.player_bubble:
 		player_touched_me.emit()
 		if complete_on_touch:
-			remove_from_group("waypoint")
+			remove_from_group("waypoints")
 			complete = true
 			queue_free()
 

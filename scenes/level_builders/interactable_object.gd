@@ -12,7 +12,7 @@ enum PLAY_MODES {DIALOG, SCENE}
 @export_subgroup("Mode Reqs/Portal")
 @export var send_from_level: Node2D
 @export var send_to_level: Levels.LEVELS
-@export var spawn_point_portal: SpawnPoint
+@export var spawn_point: SpawnPoint
 @export var click_detector_portal: ClickDetector
 @export var touch_detector_portal: TouchDetector
 @onready var send_to_level_path: String = Levels.get_level_path(send_to_level) if send_to_level else ""
@@ -65,15 +65,22 @@ func _ready() -> void:
 	_assert_mode_requirements()
 	await get_tree().process_frame
 
+@onready var processing_press: bool = false
 func _on_button_pressed() -> void:
+	if processing_press:
+		return
 	if not is_event_playable():
 		return
+	processing_press = true
 	player_touched_me.emit(self)
-	if template == TEMPLATES.PORTAL_MODE and Global.player in touch_detector.get_overlapping_bodies():
-		print("working")
-		Global.level_manager.change_level(send_from_level, send_from_level)
+	if template == TEMPLATES.PORTAL_MODE:
+		if Global.player in touch_detector.get_overlapping_bodies():
+			Global.level_manager.change_level(send_from_level, send_to_level_path)
+		processing_press = false
 		return
 	await _try_play_event()
+	processing_press = false
+
 
 func _on_area_entered(area: Area2D) -> void: # this runs for ENTRY or ENTRYorCLICK modes
 	if not area == Global.player_bubble or not is_event_playable():

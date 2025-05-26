@@ -8,8 +8,6 @@ var quests: Dictionary = {
 		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
 		"timelines": [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS],
 		"related_levels": [Levels.LEVELS.DOC_MITCHELLS_HOUSE],
-		"waypoints": [], # appended by waypoint scenes, will be hardcoded later
-		"navpoints": []
 	}
 }
 
@@ -30,22 +28,20 @@ func get_quest_levels(quest: QUESTS) -> Array[Levels.LEVELS]:
 	return quests[quest]["related_levels"]
 
 
-func get_quest_waypoints(quest: QUESTS) -> Array: # bc godot doesnt support nested dictionaries i cant return a Waypoint safely
-	return quests[quest]["waypoints"]
+func get_quest_waypoints(quest: QUESTS) -> Array[Waypoint]:
+	var waypoint_array: Array[Waypoint]
+	for waypoint: Waypoint in get_tree().get_nodes_in_group("waypoints"):
+		if waypoint.quest == quest:
+			waypoint_array.append(waypoint)
+	return waypoint_array
 
 
-func get_quest_navpoints(quest: QUESTS) -> Array:
-	return quests[quest]["navpoints"]
-
-
-func add_quest_waypoint(waypoint: Waypoint, quest: QUESTS) -> void:
-	if waypoint not in quests[quest]["waypoints"]:
-		quests[quest]["waypoints"].append(waypoint)
-
-
-func add_quest_navpoint(navpoint: Navpoint, quest: QUESTS) -> void:
-	if navpoint not in quests[quest]["navpoints"]:
-		quests[quest]["navpoints"].append(navpoint)
+func get_quest_navpoints(quest: QUESTS) -> Array[Navpoint]:
+	var navpoint_array: Array[Navpoint]
+	for navpoint: Navpoint in get_tree().get_nodes_in_group("navpoints"):
+		if quest in navpoint.related_quests:
+			navpoint_array.append(navpoint)
+	return navpoint_array
 
 
 func is_quest_complete(quest: QUESTS) -> bool:

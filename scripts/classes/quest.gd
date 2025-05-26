@@ -88,17 +88,18 @@ func _on_timeline_started() -> void: # notify the caller if a related timeline h
 
 
 func _on_level_loaded() -> void:
-	var current_level: Node = Levels.get_current_level()
-	if current_level.scene_file_path in levels:
-		var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest) # update the linked waypoints every time a level is loaded
-		var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
-		for waypoint: Waypoint in new_waypoints:
-			quest_waypoints[Global.get_rawname(waypoint)] = waypoint
-		waypoints_assigned.emit()
-		for navpoint: Navpoint in new_navpoints:
-			quest_navpoints[Global.get_rawname(navpoint)] = navpoint
-		navpoints_assigned.emit()
-		caller._on_related_level_loaded(current_level)
+	if not completed:
+		var current_level: Node = Levels.get_current_level()
+		if current_level.scene_file_path in levels:
+			var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest) # update the linked waypoints every time a level is loaded
+			var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
+			for waypoint: Waypoint in new_waypoints:
+				quest_waypoints[Global.get_rawname(waypoint)] = waypoint
+			waypoints_assigned.emit()
+			for navpoint: Navpoint in new_navpoints:
+				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
+			navpoints_assigned.emit()
+			caller._on_related_level_loaded(current_level)
 
 
 func new_sideplot(_nomen: String) -> Plot:

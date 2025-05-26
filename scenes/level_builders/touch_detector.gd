@@ -21,6 +21,10 @@ signal mouse_exited_area
 var ignored_zone: Rect2
 
 func _ready() -> void:
+	if not collider:
+		collider = %Collider
+		assert(collider, "area2ds need hit detection")
+	collider.reparent(self)
 	assert(monitored_parent, "all mouse/player detectors must have a parent to monitor")
 	if detect_player:
 		area_entered.connect(_on_area2d_entered)

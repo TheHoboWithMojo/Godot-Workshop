@@ -1,6 +1,6 @@
 extends Node2D
 
-enum CHARACTERS {UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE}
+enum CHARACTERS {UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE, JOE_COBB}
 
 @onready var characters: Dictionary = {
 	CHARACTERS.DOC_MITCHELL: {
@@ -40,6 +40,13 @@ enum CHARACTERS {UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD
 		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
 		"faction": Factions.FACTIONS.GOODSPRINGS
 	},
+	CHARACTERS.JOE_COBB:
+		{
+		"name": "joe_cobb",
+		"alive": true,
+		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		"faction": Factions.FACTIONS.POWDER_GANGERS
+		}
 }
 
 func character_exists(nomen: String) -> bool:
