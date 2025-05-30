@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=4 uid="uid://ckkwucoj1mfu5"]
+
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kryoy"]
+[ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_2u73p"]
+[ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_lfjp6"]
+[ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="4_slmuk"]
+[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_2u73p"]
+[ext_resource type="Script" uid="uid://c5vmlmggmw0w5" path="res://scripts/node_managers/child_manager.gd" id="6_slmuk"]
+[ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
+[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="8_hhryp"]
+
+[node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "navpoints")]
+script = ExtResource("1_kryoy")
+level = 3
+tiles = NodePath("Tiles")
+npcs = [NodePath("SunnySmiles"), NodePath("Tammy")]
+waypoints = NodePath("Waypoints")
+navpoints = NodePath("Navpoints")
+metadata/_custom_type_script = "uid://2pi66vkrsk8k"
+
+[node name="Tiles" type="TileMapLayer" parent="."]
+z_index = -1
+tile_map_data = PackedByteArray("AAD0//T/AQAAAAgAAAD0//X/AQAAAAkAAAD1//T/AQABAAgAAAD1//X/AQABAAkAAAD0//b/AQAAAAgAAAD0//f/AQAAAAkAAAD1//b/AQABAAgAAAD1//f/AQABAAkAAAD2//j/AQAAAAgAAAD2//n/AQAAAAkAAAD3//j/AQABAAgAAAD3//n/AQABAAkAAAD2//r/AQAAAAgAAAD2//v/AQAAAAkAAAD3//r/AQABAAgAAAD3//v/AQABAAkAAAD2//z/AQAAAAgAAAD2//3/AQAAAAkAAAD3//z/AQABAAgAAAD3//3/AQABAAkAAAD2//7/AQAAAAgAAAD2////AQAAAAkAAAD3//7/AQABAAgAAAD3////AQABAAkAAAD0//7/AQAAAAgAAAD0////AQAAAAkAAAD1//7/AQABAAgAAAD1////AQABAAkAAAD0//z/AQAAAAgAAAD0//3/AQAAAAkAAAD1//z/AQABAAgAAAD1//3/AQABAAkAAAD0//r/AQAAAAgAAAD0//v/AQAAAAkAAAD1//r/AQABAAgAAAD1//v/AQABAAkAAAD0//j/AQAAAAgAAAD0//n/AQAAAAkAAAD1//j/AQABAAgAAAD1//n/AQABAAkAAAD2//T/AQAAAAgAAAD2//X/AQAAAAkAAAD3//T/AQABAAgAAAD3//X/AQABAAkAAAD4//T/AQAAAAgAAAD4//X/AQAAAAkAAAD5//T/AQABAAgAAAD5//X/AQABAAkAAAD6//T/AQAAAAgAAAD6//X/AQAAAAkAAAD7//T/AQABAAgAAAD7//X/AQABAAkAAAD8//T/AQAAAAgAAAD8//X/AQAAAAkAAAD9//T/AQABAAgAAAD9//X/AQABAAkAAAD+//T/AQAAAAgAAAD+//X/AQAAAAkAAAD///T/AQABAAgAAAD///X/AQABAAkAAAAAAPT/AQAAAAgAAAAAAPX/AQAAAAkAAAABAPT/AQABAAgAAAABAPX/AQABAAkAAAACAPT/AQAAAAgAAAACAPX/AQAAAAkAAAADAPT/AQABAAgAAAADAPX/AQABAAkAAAAEAPT/AQAAAAgAAAAEAPX/AQAAAAkAAAAFAPT/AQABAAgAAAAFAPX/AQABAAkAAAAGAPT/AQAAAAgAAAAGAPX/AQAAAAkAAAAHAPT/AQABAAgAAAAHAPX/AQABAAkAAAAGAPb/AQAAAAgAAAAGAPf/AQAAAAkAAAAHAPb/AQABAAgAAAAHAPf/AQABAAkAAAAGAPj/AQAAAAgAAAAGAPn/AQAAAAkAAAAHAPj/AQABAAgAAAAHAPn/AQABAAkAAAAGAPr/AQAAAAgAAAAGAPv/AQAAAAkAAAAHAPr/AQABAAgAAAAHAPv/AQABAAkAAAAGAPz/AQAAAAgAAAAGAP3/AQAAAAkAAAAHAPz/AQABAAgAAAAHAP3/AQABAAkAAAAGAP7/AQAAAAgAAAAGAP//AQAAAAkAAAAHAP7/AQABAAgAAAAHAP//AQABAAkAAAAEAP7/AQAAAAgAAAAEAP//AQAAAAkAAAAFAP7/AQABAAgAAAAFAP//AQABAAkAAAACAP7/AQAAAAgAAAACAP//AQAAAAkAAAADAP7/AQABAAgAAAADAP//AQABAAkAAAAAAP7/AQAAAAgAAAAAAP//AQAAAAkAAAABAP7/AQABAAgAAAABAP//AQABAAkAAAD+//7/AQAAAAgAAAD+////AQAAAAkAAAD///7/AQABAAgAAAD/////AQABAAkAAAD8//7/AQAAAAgAAAD8////AQAAAAkAAAD9//7/AQABAAgAAAD9////AQABAAkAAAD6//7/AQAAAAgAAAD6////AQAAAAkAAAD7//7/AQABAAgAAAD7////AQABAAkAAAD4//7/AQAAAAgAAAD4////AQAAAAkAAAD5//7/AQABAAgAAAD5////AQABAAkAAAD4//z/AQAAAAgAAAD4//3/AQAAAAkAAAD5//z/AQABAAgAAAD5//3/AQABAAkAAAD4//r/AQAAAAgAAAD4//v/AQAAAAkAAAD5//r/AQABAAgAAAD5//v/AQABAAkAAAD4//j/AQAAAAgAAAD4//n/AQAAAAkAAAD5//j/AQABAAgAAAD5//n/AQABAAkAAAD4//b/AQAAAAgAAAD4//f/AQAAAAkAAAD5//b/AQABAAgAAAD5//f/AQABAAkAAAD2//b/AQAAAAgAAAD2//f/AQAAAAkAAAD3//b/AQABAAgAAAD3//f/AQABAAkAAAD6//b/AQAAAAgAAAD6//f/AQAAAAkAAAD7//b/AQABAAgAAAD7//f/AQABAAkAAAD8//b/AQAAAAgAAAD8//f/AQAAAAkAAAD9//b/AQABAAgAAAD9//f/AQABAAkAAAD+//b/AQAAAAgAAAD+//f/AQAAAAkAAAD///b/AQABAAgAAAD///f/AQABAAkAAAAAAPb/AQAAAAgAAAAAAPf/AQAAAAkAAAABAPb/AQABAAgAAAABAPf/AQABAAkAAAACAPb/AQAAAAgAAAACAPf/AQAAAAkAAAADAPb/AQABAAgAAAADAPf/AQABAAkAAAAEAPb/AQAAAAgAAAAEAPf/AQAAAAkAAAAFAPb/AQABAAgAAAAFAPf/AQABAAkAAAAEAPj/AQAAAAgAAAAEAPn/AQAAAAkAAAAFAPj/AQABAAgAAAAFAPn/AQABAAkAAAACAPj/AQAAAAgAAAACAPn/AQAAAAkAAAADAPj/AQABAAgAAAADAPn/AQABAAkAAAAAAPj/AQAAAAgAAAAAAPn/AQAAAAkAAAABAPj/AQABAAgAAAABAPn/AQABAAkAAAD+//j/AQAAAAgAAAD+//n/AQAAAAkAAAD///j/AQABAAgAAAD///n/AQABAAkAAAD8//j/AQAAAAgAAAD8//n/AQAAAAkAAAD9//j/AQABAAgAAAD9//n/AQABAAkAAAD8//r/AQAAAAgAAAD8//v/AQAAAAkAAAD9//r/AQABAAgAAAD9//v/AQABAAkAAAD6//r/AQAAAAgAAAD6//v/AQAAAAkAAAD7//r/AQABAAgAAAD7//v/AQABAAkAAAD6//j/AQAAAAgAAAD6//n/AQAAAAkAAAD7//j/AQABAAgAAAD7//n/AQABAAkAAAD6//z/AQAAAAgAAAD6//3/AQAAAAkAAAD7//z/AQABAAgAAAD7//3/AQABAAkAAAD8//z/AQAAAAgAAAD8//3/AQAAAAkAAAD9//z/AQABAAgAAAD9//3/AQABAAkAAAD+//z/AQAAAAgAAAD+//3/AQAAAAkAAAD///z/AQABAAgAAAD///3/AQABAAkAAAD+//r/AQAAAAgAAAD+//v/AQAAAAkAAAD///r/AQABAAgAAAD///v/AQABAAkAAAAAAPr/AQAAAAgAAAAAAPv/AQAAAAkAAAABAPr/AQABAAgAAAABAPv/AQABAAkAAAAAAPz/AQAAAAgAAAAAAP3/AQAAAAkAAAABAPz/AQABAAgAAAABAP3/AQABAAkAAAACAPz/AQAAAAgAAAACAP3/AQAAAAkAAAADAPz/AQABAAgAAAADAP3/AQABAAkAAAACAPr/AQAAAAgAAAACAPv/AQAAAAkAAAADAPr/AQABAAgAAAADAPv/AQABAAkAAAAEAPr/AQAAAAgAAAAEAPv/AQAAAAkAAAAFAPr/AQABAAgAAAAFAPv/AQABAAkAAAAEAPz/AQAAAAgAAAAEAP3/AQAAAAkAAAAFAPz/AQABAAgAAAAFAP3/AQABAAkAAAA=")
+tile_set = ExtResource("2_2u73p")
+script = ExtResource("3_lfjp6")
+metadata/_custom_type_script = "uid://85so8xh35jkw"
+
+[node name="SunnySmiles" parent="." instance=ExtResource("4_slmuk")]
+position = Vector2(96, -152)
+debugging = true
+faction = 20
+character = 2
+timeline = 3
+
+[node name="Tammy" parent="." instance=ExtResource("4_slmuk")]
+position = Vector2(-160, -152)
+faction = 20
+character = 5
+
+[node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]
+position = Vector2(48, 0)
+rotation = -1.57079
+send_from_level = NodePath("..")
+send_to_level = 2
+
+[node name="Waypoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
+script = ExtResource("6_slmuk")
+enforce_node_type = NodePath("PortalToGoodsprings")
+metadata/_custom_type_script = "uid://c5vmlmggmw0w5"
+
+[node name="PortalToGoodsprings" parent="Waypoints" instance=ExtResource("7_wbjm1")]
+position = Vector2(24, -32)
+quest = 2
+
+[node name="Navpoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
+script = ExtResource("6_slmuk")
+enforce_node_type = NodePath("DoorToGoodprings")
+metadata/_custom_type_script = "uid://c5vmlmggmw0w5"
+
+[node name="DoorToGoodprings" parent="Navpoints" instance=ExtResource("8_hhryp")]

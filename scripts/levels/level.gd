@@ -5,10 +5,11 @@ class_name Level
 # READ BY GAME MANAGER SECTION #
 @export var tiles: TileMapLayer
 @export var enemies: Array[PackedScene] = []
-@export var npcs: Array[CharacterBody2D]
+@export var npcs: Array[NPC]
 @export var waypoints: ChildManager
 @export var interactables: Array[Interactable]
 @export var navpoints: ChildManager
+@export var portals: Array[Interactable]
 @onready var enemy_spawnpoints: Array[Vector2] = Global.get_tiles_with_property(tiles, "spawnable")
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
@@ -31,7 +32,11 @@ func get_interactables() -> Array[Interactable]:
 	return interactables
 
 
-func get_npcs() -> Array[CharacterBody2D]:
+func get_portals() -> Array[Interactable]:
+	return portals
+
+
+func get_npcs() -> Array[NPC]:
 	return npcs
 
 

@@ -35,10 +35,12 @@ gdscript/warnings/inferred_declaration=2
 [dialogic]
 
 directories/dch_directory={
-"doc_mitchell": "res://dialogic/characters/DocMitchell/doc_mitchell.dch"
+"doc_mitchell": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+"sunny_smiles": "res://dialogic/characters/SunnySmiles/sunny_smiles.dch"
 }
 directories/dtl_directory={
 "picktags": "res://dialogic/timelines/picktags.dtl",
+"sunny_greeting": "res://dialogic/timelines/sunny_greeting.dtl",
 "youre_awake": "res://dialogic/timelines/youre_awake.dtl"
 }
 layout/style_list=["res://dialogic/styles/alt.tres", "res://dialogic/styles/default.tres", "res://dialogic/styles/tryme.tres"]

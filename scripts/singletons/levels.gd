@@ -1,6 +1,6 @@
 extends Node
 
-enum LEVELS {UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS}
+enum LEVELS {UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS, PROSPECTORS_SALOON}
 
 var levels: Dictionary[LEVELS, Dictionary] = {
 	LEVELS.DOC_MITCHELLS_HOUSE: {
@@ -10,6 +10,11 @@ var levels: Dictionary[LEVELS, Dictionary] = {
 	},
 	LEVELS.GOODSPRINGS: {
 		"Path": "res://scenes/levels/goodsprings/goodsprings.tscn",
+		"Waypoints": {},
+		"Navpoints": {},
+	},
+		LEVELS.PROSPECTORS_SALOON: {
+		"Path": "res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn",
 		"Waypoints": {},
 		"Navpoints": {},
 	},

@@ -29,6 +29,7 @@ signal ready_to_start # Nodes read this to know when to begin processing
 # =========================================================================
 func _ready() -> void:
 	if not active:
+		push_warning("Game Manager set to Inactive")
 		queue_free()
 		return
 	update_global_references()

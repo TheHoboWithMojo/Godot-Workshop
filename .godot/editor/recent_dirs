@@ -1,3 +1,6 @@
+res://dialogic/characters/SunnySmiles
+res://dialogic/timelines
+res://scenes/levels/prospectors_saloon
 res://scenes/tools
 res://scenes/level_builders
 res://scripts/node_managers
@@ -6,7 +9,6 @@ C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scenes/levels/doc_mitc
 res://scenes/default
 res://scripts/singletons
 res://scenes/levels/goodsprings
-res://dialogic/timelines
 res://scenes
 res://dialogic/characters/DocMitchell
 res://dialogic/characters
@@ -18,5 +20,3 @@ res://Scenes
 res://
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons
 res://assets
-res://dialogic/styles
-res://scenes/projectiles

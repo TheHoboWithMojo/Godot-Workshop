@@ -1,14 +1,20 @@
 extends Node
 
-enum QUESTS {UNASSIGNED, AINT_THAT_A_KICK_IN_THE_HEAD}
+enum QUESTS {UNASSIGNED, AINT_THAT_A_KICK_IN_THE_HEAD, BACK_IN_THE_SADDLE}
 
 var quests: Dictionary = {
 	QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD: {
 		"complete": false,
 		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
 		"timelines": [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS],
-		"related_levels": [Levels.LEVELS.DOC_MITCHELLS_HOUSE],
-	}
+		"related_levels": [Levels.LEVELS.DOC_MITCHELLS_HOUSE]
+		},
+	QUESTS.BACK_IN_THE_SADDLE: {
+		"complete": false,
+		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+		"timelines": [Dialogue.TIMELINES.SUNNY_GREETING],
+		"related_levels": [Levels.LEVELS.GOODSPRINGS, Levels.LEVELS.PROSPECTORS_SALOON],
+	},
 }
 
 

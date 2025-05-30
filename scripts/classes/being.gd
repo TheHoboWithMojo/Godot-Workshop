@@ -29,6 +29,8 @@ var _navigation_target: Vector2 = Vector2.ZERO
 var _timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.UNASSIGNED
 var _missing_components: Array[String] = []
 
+signal navigation_target_changed
+
 # ===== Initialization =====
 func _init(self_node: Node) -> void:
 	_slave = self_node
@@ -155,6 +157,7 @@ func seek(target: Variant = _navigation_target, up_down_left_right: String = "")
 				_navigation_target -= (1.2 * Vector2(0, displacement))
 			"below":
 				_navigation_target += (1.2 * Vector2(displacement, 0))
+		navigation_target_changed.emit()
 		if _debugging:
 			print("[Being] ", _nomen, "'s target has been changed to: ", _navigation_target)
 	if _alive and not _paused:
@@ -164,6 +167,7 @@ func seek(target: Variant = _navigation_target, up_down_left_right: String = "")
 			return
 		_navigator.set_velocity(_slave.global_position.direction_to(_navigator.get_next_path_position()) * _speed * Global.speed_mult)
 		_slave.set_velocity(_navigator.velocity)
+
 
 # --- Health ---
 func set_health(value: float) -> bool:

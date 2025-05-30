@@ -30,3 +30,9 @@ character = 7
 position = Vector2(-80, 80)
 faction = 20
 character = 6
+
+[node name="Portal2" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
+position = Vector2(24, 96)
+rotation = -1.57079
+send_from_level = NodePath("..")
+send_to_level = 3

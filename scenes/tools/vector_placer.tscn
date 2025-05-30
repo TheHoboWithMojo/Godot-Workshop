@@ -10,10 +10,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -4878.0
-offset_top = -4477.0
-offset_right = 5122.0
-offset_bottom = 5523.0
+offset_left = -5000.0
+offset_top = -5000.0
+offset_right = 5000.0
+offset_bottom = 5000.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.00044, 1.00787)
@@ -25,11 +25,16 @@ level = 1
 [node name="CoordinatePrinter" parent="." instance=ExtResource("2_mdcny")]
 layout_mode = 0
 anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
 offset_left = 16.4912
 offset_top = -824.023
 offset_right = 516.491
 offset_bottom = -724.023
-text = "(734.6986, 47.84186)"
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0

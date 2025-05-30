@@ -100,6 +100,10 @@ func _on_level_loaded() -> void:
 				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
 			navpoints_assigned.emit()
 			caller._on_related_level_loaded(current_level)
+		if quest_waypoints and current_level.waypoints: # turn off waypoints that are not in the new level
+			for waypoint: Waypoint in quest_waypoints.values():
+				if not waypoint in current_level.waypoints:
+					waypoint.set_visible(false)
 
 
 func new_sideplot(_nomen: String) -> Plot:
@@ -111,8 +115,17 @@ func new_sideplot(_nomen: String) -> Plot:
 
 func set_active(value: bool) -> void:
 	active = value
-	if value:
+	if active == true:
 		Player.set_quest(self)
+		for quest: Node in caller.get_tree().get_nodes_in_group("quests"):
+			if quest.quest != caller:
+				quest.quest.set_active(false)
+	if active == false:
+		for plot: Plot in sideplots.values():
+			for objective: Objective in plot.objectives:
+				plot._set_active_all_waypoints(objective, false)
+		for objective: Objective in mainplot.objectives:
+			mainplot._set_active_all_waypoints(objective, false)
 
 
 func start() -> bool:
@@ -318,5 +331,4 @@ class Objective:
 			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
 			objective_waypoints.append(waypoint)
 			plot.objective_waypoint_dict[self].append(waypoint.global_position)
-			continue
 		return true

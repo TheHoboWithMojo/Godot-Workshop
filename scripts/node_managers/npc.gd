@@ -1,10 +1,12 @@
 @icon("res://assets/Icons/16x16/character_npc.png")
+class_name NPC
 extends CharacterBody2D
 @export_group("Config")
 @export var active: bool = true
 @export var collision_on: bool = true
 @export var hostile: bool = false
 @export var debugging: bool
+@export var seeking_enabled: bool = false
 
 @export_group("Stats")
 @export var repulsion_strength: float = 5000.0
@@ -33,21 +35,22 @@ func _ready() -> void:
 	if not active:
 		queue_free()
 	nametag.set_text(nomen)
+	set_name(Characters.get_character_name(character))
 	touch_detector.player_entered_area.connect(_check_for_dialog)
 
 
-var first_time_talked_to: bool = true
+var talked_to: bool = false
 func _check_for_dialog() -> void:
 	if timeline and not Player.is_occupied():
 		while Global.player_bubble in touch_detector.get_overlapping_areas():
-			#print("Checking")
 			if Input.is_action_just_pressed("interact"):
-				first_time_talked_to = false
 				if await Dialogue.start(timeline):
+					talked_to = true
 					await Dialogic.timeline_ended
 			await get_tree().process_frame
 
 
 func _physics_process(_delta: float) -> void:
-	master.seek()
+	if master._navigation_target != Vector2.ZERO:
+		master.seek()
 	move_and_slide()

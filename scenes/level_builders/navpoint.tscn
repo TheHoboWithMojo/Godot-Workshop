@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="1_cvtro"]
 
-[node name="VitMachine" type="Marker2D"]
+[node name="Navpoint" type="Marker2D"]
 script = ExtResource("1_cvtro")
 
 [connection signal="tree_exited" from="." to="." method="_on_tree_exited"]

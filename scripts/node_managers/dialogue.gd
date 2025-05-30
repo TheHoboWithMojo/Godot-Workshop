@@ -1,7 +1,7 @@
 extends Node
 signal dialogue_started
 
-enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS}
+enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING}
 
 var timelines: Dictionary = {
 	TIMELINES.YOURE_AWAKE: {
@@ -17,6 +17,13 @@ var timelines: Dictionary = {
 		"repeatable": false,
 		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
 		"resource": "res://dialogic/timelines/picktags.dtl",
+	},
+	TIMELINES.SUNNY_GREETING: {
+		"name": "sunny_greeting",
+		"completed": false,
+		"repeatable": false,
+		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+		"resource": "res://dialogic/timelines/sunny_greeting.dtl",
 	},
 }
 

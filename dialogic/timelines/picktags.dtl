@@ -1,11 +1,15 @@
+Skip?
+- Yes
+	[end_timeline]
+- No
 \doc_mitchell: "All right. I'm gonna say a word. I want you to say the first thing that comes to mind."
 \doc_mitchell: Dog.
-	- Cat
-	- Feed
-	- Newspaper
-	- Train
-	- Kick
-	- Dinner
+- Cat
+- Feed
+- Newspaper
+- Train
+- Kick
+- Dinner
 \doc_mitchell: House
 - Shelter
 - Burglarize

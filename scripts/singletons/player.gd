@@ -123,6 +123,12 @@ var perks: Dictionary = {
 @onready var _damagable: bool = true
 
 
+func _ready() -> void:
+	set_process(false)
+	await Global.active_and_ready(self)
+	set_process(true)
+
+
 func _process(_delta: float) -> void:
 	if Global.frames % 120 == 0:
 		check_for_achievements()
@@ -210,7 +216,13 @@ func log_kill(exp_gain: int) -> void:
 
 
 func set_movement_enabled(value: bool) -> void:
-	Global.player.movement_enabled = value
+	if Global.player:
+		Global.player.movement_enabled = value
+		return
+	var player: Node2D = get_tree().root.get_node("/Player")
+	print(player)
+	if player:
+		player.movement_enabled = value
 
 
 func change_name(nomen: String) -> void:

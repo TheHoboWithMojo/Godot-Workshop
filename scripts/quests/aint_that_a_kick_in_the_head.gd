@@ -5,7 +5,7 @@ func _ready() -> void:
 	quest.add_characters([Characters.CHARACTERS.DOC_MITCHELL])
 	quest.add_levels([Levels.LEVELS.DOC_MITCHELLS_HOUSE])
 	quest.set_active(true) # bc its the first quest in the game
-	Global.set_fast_travel_enabled(false) # can't leave tutorial
+	#Global.set_fast_travel_enabled(false) # can't leave tutorial
 
 	await quest.waypoints_assigned
 	await quest.navpoints_assigned
@@ -32,7 +32,7 @@ func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE:
 		#print(level.get_interactables())
 		#print(level.get_npcs())
-		doc_mitchell = level.find_child("DocMitchell").master
+		doc_mitchell = level.find_child(Characters.get_character_name(Characters.CHARACTERS.DOC_MITCHELL)).master
 		doc_mitchells_house = Levels.get_current_level()
 		vit_machine = doc_mitchells_house.find_child("VitMachine")
 

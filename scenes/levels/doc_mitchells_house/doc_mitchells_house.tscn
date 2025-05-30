@@ -20,7 +20,7 @@ size = Vector2(30, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "interactables", "navpoints")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "interactables", "navpoints", "portals")]
 script = ExtResource("1_ejuju")
 level = 1
 tiles = NodePath("Tiles")
@@ -28,6 +28,7 @@ npcs = [NodePath("DocMitchell")]
 waypoints = NodePath("Waypoints")
 interactables = [NodePath("VitMachine")]
 navpoints = NodePath("Navpoints")
+portals = [NodePath("DoorToGoodsprings")]
 
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
@@ -116,7 +117,7 @@ script = ExtResource("14_nrx6f")
 related_quests = Array[int]([1])
 metadata/_custom_type_script = "uid://v843ummj070b"
 
-[node name="Portal" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
+[node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
 position = Vector2(-176, -40)
 send_from_level = NodePath("..")
 send_to_level = 2
