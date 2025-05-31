@@ -1,18 +1,34 @@
-[gd_scene load_steps=7 format=3 uid="uid://djbiv47x0t7gg"]
+[gd_scene load_steps=12 format=3 uid="uid://djbiv47x0t7gg"]
 
 [ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_vnwdf"]
+[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="3_4ul4r"]
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="3_j4dpj"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="3_vnwdf"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_n1ps7"]
+[ext_resource type="PackedScene" uid="uid://b1miocpocuslf" path="res://scenes/npc_builders/dialog_component.tscn" id="5_kt180"]
+[ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="6_4ul4r"]
+[ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="7_tlv0r"]
+[ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="8_bxylu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(30, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
 
-[node name="NPC" type="CharacterBody2D"]
+[node name="NPC" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_vnwdf")
+dialog_manager = NodePath("DialogComponent")
+health_manager = NodePath("HealthComponent")
+navigation_manager = NodePath("NavigationComponent")
+character_manager = NodePath("CharacterComponent")
+collider = NodePath("Collider")
+
+[node name="HealthBar" parent="." instance=ExtResource("3_j4dpj")]
+offset_left = -16.0
+offset_top = 16.0
+offset_right = 844.0
+offset_bottom = 253.0
 
 [node name="Texture" type="ColorRect" parent="."]
 anchors_preset = 8
@@ -45,12 +61,12 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_i1lge")
+script = ExtResource("4_n1ps7")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 
-[node name="HealthBar" parent="." instance=ExtResource("3_j4dpj")]
-offset_left = -16.0
-offset_top = 16.0
-offset_right = 844.0
-offset_bottom = 253.0
+[node name="ClickDetector" parent="." instance=ExtResource("3_4ul4r")]
+offset_top = -16.0
+offset_bottom = 16.0
 
 [node name="TouchDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("3_vnwdf")]
 scale = Vector2(2.94539, 2.94539)
@@ -61,3 +77,19 @@ collider = NodePath("Collider")
 shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("4_n1ps7")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "click_detector", "touch_detector") instance=ExtResource("5_kt180")]
+parent = NodePath("..")
+click_detector = NodePath("../ClickDetector")
+touch_detector = NodePath("../TouchDetector")
+
+[node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death") instance=ExtResource("6_4ul4r")]
+parent = NodePath("..")
+track_death = NodePath("../HealthComponent")
+
+[node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("7_tlv0r")]
+parent = NodePath("..")
+
+[node name="HealthComponent" parent="." node_paths=PackedStringArray("parent", "health_bar") instance=ExtResource("8_bxylu")]
+parent = NodePath("..")
+health_bar = NodePath("../HealthBar")

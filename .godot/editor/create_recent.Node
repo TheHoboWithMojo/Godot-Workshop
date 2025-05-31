@@ -1,3 +1,6 @@
+Collider
+Node
+NavigationAgent2D
 Waypoint
 ChildManager
 Navpoint
@@ -7,9 +10,5 @@ Tiles
 Level
 ClickDetector
 RichTextLabel
-Collider
 ColorRect
 SpawnPoint
-NavigationAgent2D
-Marker2D
-AnimatedSprite2D

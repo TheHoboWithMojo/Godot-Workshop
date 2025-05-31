@@ -100,9 +100,10 @@ func _on_level_loaded() -> void:
 				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
 			navpoints_assigned.emit()
 			caller._on_related_level_loaded(current_level)
-		if quest_waypoints and current_level.waypoints: # turn off waypoints that are not in the new level
+		if quest_waypoints:
+			var level_waypoints: Array[Waypoint] = current_level.get_waypoints()
 			for waypoint: Waypoint in quest_waypoints.values():
-				if not waypoint in current_level.waypoints:
+				if not waypoint in level_waypoints:
 					waypoint.set_visible(false)
 
 
@@ -117,6 +118,7 @@ func set_active(value: bool) -> void:
 	active = value
 	if active == true:
 		Player.set_quest(self)
+		Player.set_objective(mainplot.current_objective)
 		for quest: Node in caller.get_tree().get_nodes_in_group("quests"):
 			if quest.quest != caller:
 				quest.quest.set_active(false)
@@ -129,11 +131,18 @@ func set_active(value: bool) -> void:
 
 
 func start() -> bool:
+	if not Levels.get_current_level():
+		await Global.level_manager.level_loaded
+	if not quest_waypoints and "waypoint_manager" in Levels.get_current_level():
+		await waypoints_assigned
+	if not quest_navpoints and "navpoint_manager" in Levels.get_current_level():
+		await navpoints_assigned
+
 	if not mainplot.objectives:
 		Debug.throw_error("quest.gd", "start", "Quest plot %'s objectives have not been declared" % [mainplot.nomen])
 		return false
-	set_active(true) # quests always are set active on start
 	mainplot._start()
+	set_active(true) # quests always are set active on start
 	for plot_name: String in sideplots:
 		var plot: Plot = sideplots[plot_name]
 		if not plot.objectives:
@@ -201,6 +210,8 @@ class Plot:
 		if is_started():
 			return
 		current_objective = objectives.keys()[0]
+		if not current_objective.objective_waypoints:
+			await current_objective.waypoint_paired
 		current_objective.objective_waypoints[0].set_active(true)
 		started = true
 
@@ -304,6 +315,7 @@ class Objective:
 	var quest: Quest
 	var completed: bool = false
 	var objective_waypoints: Array[Waypoint]
+	signal waypoint_paired
 
 
 	func _init(_nomen: String, _plot: Plot, _quest: Quest) -> void:
@@ -331,4 +343,5 @@ class Objective:
 			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
 			objective_waypoints.append(waypoint)
 			plot.objective_waypoint_dict[self].append(waypoint.global_position)
+		waypoint_paired.emit()
 		return true

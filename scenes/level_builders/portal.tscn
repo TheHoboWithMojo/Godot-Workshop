@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://u3bnqno540du"]
 
-[ext_resource type="Script" uid="uid://mnyla5jgj2mi" path="res://scenes/level_builders/interactable_object.gd" id="1_ufldq"]
+[ext_resource type="Script" uid="uid://db6i2i7kj6cx" path="res://scenes/level_builders/portal.gd" id="1_8p0xl"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="2_ufldq"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="3_8p0xl"]
 [ext_resource type="Script" uid="uid://bea8rvif7d3ms" path="res://scripts/node_managers/spawnpoints.gd" id="4_ltbqu"]
@@ -12,19 +12,18 @@ size = Vector2(32, 48)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l3y07"]
 size = Vector2(8, 48)
 
-[node name="Portal" type="StaticBody2D" node_paths=PackedStringArray("spawn_point", "click_detector_portal", "touch_detector_portal")]
-script = ExtResource("1_ufldq")
-template = 1
+[node name="Portal" type="StaticBody2D" node_paths=PackedStringArray("spawn_point", "click_detector", "touch_detector")]
+script = ExtResource("1_8p0xl")
 spawn_point = NodePath("SpawnPoint")
-click_detector_portal = NodePath("ClickDetector")
-touch_detector_portal = NodePath("EntryDetector")
+click_detector = NodePath("ClickDetector")
+touch_detector = NodePath("TouchDetector")
 
-[node name="EntryDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("2_ufldq")]
+[node name="TouchDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("2_ufldq")]
 position = Vector2(0, -6)
 monitored_parent = NodePath("..")
 collider = NodePath("Collider")
 
-[node name="Collider" type="CollisionShape2D" parent="EntryDetector"]
+[node name="Collider" type="CollisionShape2D" parent="TouchDetector"]
 position = Vector2(16, -18)
 shape = SubResource("RectangleShape2D_45nlr")
 script = ExtResource("3_8p0xl")

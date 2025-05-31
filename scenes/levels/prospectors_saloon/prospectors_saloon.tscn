@@ -9,13 +9,14 @@
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="8_hhryp"]
 
-[node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "navpoints")]
+[node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoint_manager", "navpoint_manager", "portals")]
 script = ExtResource("1_kryoy")
 level = 3
 tiles = NodePath("Tiles")
 npcs = [NodePath("SunnySmiles"), NodePath("Tammy")]
-waypoints = NodePath("Waypoints")
-navpoints = NodePath("Navpoints")
+waypoint_manager = NodePath("Waypoints")
+navpoint_manager = NodePath("Navpoints")
+portals = [NodePath("DoorToGoodsprings")]
 metadata/_custom_type_script = "uid://2pi66vkrsk8k"
 
 [node name="Tiles" type="TileMapLayer" parent="."]
@@ -27,14 +28,12 @@ metadata/_custom_type_script = "uid://85so8xh35jkw"
 
 [node name="SunnySmiles" parent="." instance=ExtResource("4_slmuk")]
 position = Vector2(96, -152)
-debugging = true
-faction = 20
-character = 2
 timeline = 3
+character = 2
+debugging = true
 
 [node name="Tammy" parent="." instance=ExtResource("4_slmuk")]
 position = Vector2(-160, -152)
-faction = 20
 character = 5
 
 [node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]

@@ -31,12 +31,13 @@ enum CHOICES {}
 
 @onready var quest: Quest = Quest.new(self, Quests.QUESTS.BACK_IN_THE_SADDLE)
 func _ready() -> void:
+	name = Quests.get_quest_name(Quests.QUESTS.BACK_IN_THE_SADDLE)
 	quest.add_timelines(related_timelines)
 	quest.add_characters(characters)
 	quest.add_levels(related_levels)
 	await quest.waypoints_assigned
-	await quest.navpoints_assigned
 	talk_to_sunny.pair_waypoints(["PortalToGoodsprings"])
+	await quest.start()
 
 # build the main quest
 @onready var main: Quest.Plot = quest.mainplot
@@ -44,20 +45,20 @@ func _ready() -> void:
 @onready var meet_sunny_in_the_back: Quest.Objective = main.new_objective("Meet Sunny at the back of the Prospector Saloon.")
 @onready var shoot_the_bottles: Quest.Objective = main.new_objective("Shoot the Sarsparilla Bottles")
 var saloon: Level = null
-var sunny_smiles: Being = null
+var sunny_smiles: NPC = null
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.PROSPECTORS_SALOON:
-		sunny_smiles = level.find_child(Characters.get_character_name(Characters.CHARACTERS.SUNNY_SMILES)).master
+		sunny_smiles = level.find_child(Characters.get_character_name(Characters.CHARACTERS.SUNNY_SMILES))
 		saloon = Levels.get_current_level()
 
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
+	var sunny_nav: NavigationComponent = sunny_smiles.navigation_manager
 	if timeline == Dialogue.TIMELINES.SUNNY_GREETING:
 		await Dialogic.timeline_ended
-		quest.start()
-		sunny_smiles.seek(saloon.find_child("PortalToGoodsprings").spawn_point)
-		await sunny_smiles.seeking_complete()
-		sunny_smiles._slave.queue_free()
+		sunny_nav.set_target(saloon.find_child("PortalToGoodsprings").spawn_point)
+		await sunny_nav.navigation_finished
+		sunny_smiles.queue_free()
 		main.advance()
 		#sunny_smiles.set_timeline(SHOOTBOTTLE)

@@ -59,8 +59,8 @@ func _ready() -> void:
 
 func _on_level_loaded() -> void:
 	for being: Node2D in get_tree().get_nodes_in_group("beings"):
-		if get_rep_status(being.master._faction) == "hostile":
-			being.master.hostile = true
+		if get_rep_status(being.character_manager._faction) == "hostile":
+			being.hostile = true
 
 
 func _on_member_died(member: Characters.CHARACTERS) -> void:
@@ -74,7 +74,7 @@ func _process_member_killed(_character: Characters.CHARACTERS, rep_loss: int = d
 	if Factions.is_faction_hostile(faction):
 		var allies: Array = get_loaded_members(faction)
 		for ally: Node2D in allies:
-			ally.master.set_hostile(true)
+			ally.set_hostile(true)
 
 
 func update_faction_data(faction: FACTIONS, property: String, value: Variant) -> bool:

@@ -12,9 +12,11 @@ const QUEST_MANAGER_PATH: String = "/root/GameManager/QuestManager"
 const WAYPOINT_MANAGER_PATH: String = "/root/GameManager/WaypointManager"
 const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
 const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
+const SAVE_MANAGER_PATH: String = "/root/GameManager/SaveManager"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
+signal references_updated
 
 # Global Variables
 @onready var frames: int = 0
@@ -28,6 +30,7 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 @onready var level_manager: Node = get_node(LEVEL_MANAGER_PATH)
 @onready var quest_manager: Node = get_node(QUEST_MANAGER_PATH)
 @onready var mob_manager: Node = get_node(MOB_MANAGER_PATH)
+@onready var save_manager: Node = get_node(SAVE_MANAGER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
@@ -74,8 +77,8 @@ func set_paused(value: bool) -> void:
 		player.can_shoot = !value
 
 		for being: Node2D in get_beings():
-			being.master.set_vincible(!value)
-			being.master.set_paused(value)
+			being.health_manager.set_vincible(!value)
+			being.set_paused(value)
 	if not value:
 		speed_mult = 1.0
 		mob_manager.total_mobs = total_mobs # Restores actual mob count
@@ -233,4 +236,5 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	level_manager = get_node(LEVEL_MANAGER_PATH)
 	quest_manager = get_node(QUEST_MANAGER_PATH)
 	mob_manager = get_node(MOB_MANAGER_PATH)
-	print("Global references reloaded!")
+	references_updated.emit()
+	print("[Global] Global references reloaded!")

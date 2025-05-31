@@ -15,7 +15,7 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body in get_tree().get_nodes_in_group("beings"):
 		entered = true
-		body.master.take_damage(damage)
+		body.health_manager.take_damage(damage)
 		destroy()
 	elif not body == Global.player:
 		destroy()

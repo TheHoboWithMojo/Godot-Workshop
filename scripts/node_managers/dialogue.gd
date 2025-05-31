@@ -59,7 +59,7 @@ func aggro_conversers() -> void:
 		for character: Characters.CHARACTERS in timelines[timeline_name]["characters"]:
 			for npc: Node2D in get_tree().get_nodes_in_group("npc"):
 				if npc.name.to_lower() == Characters.get_character_name(character):
-					npc.master.hostile = true
+					npc.set_hostile(true)
 
 
 func is_dialogue_playing() -> bool:

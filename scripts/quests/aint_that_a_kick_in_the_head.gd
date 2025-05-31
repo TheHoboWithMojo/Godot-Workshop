@@ -4,11 +4,9 @@ func _ready() -> void:
 	quest.add_timelines([Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS])
 	quest.add_characters([Characters.CHARACTERS.DOC_MITCHELL])
 	quest.add_levels([Levels.LEVELS.DOC_MITCHELLS_HOUSE])
-	quest.set_active(true) # bc its the first quest in the game
-	#Global.set_fast_travel_enabled(false) # can't leave tutorial
+	await quest.start()
 
-	await quest.waypoints_assigned
-	await quest.navpoints_assigned
+	#Global.set_fast_travel_enabled(false) # can't leave tutorial
 	#quest.waypoint_overview() # prints the names and coords of the placed waypoints
 	#quest.navpoint_overview() # print the names and coods of placed navpoints
 	walk_to_vit.pair_waypoints(["VitMachine"])
@@ -24,37 +22,40 @@ func _ready() -> void:
 @onready var exit: Quest.Objective = main.new_objective("Follow Doc Mitchell to the exit.")
 
 # init scene-specific variables that are assigned by the level loading function
-var doc_mitchell: Being
+var doc_mitchell: NPC
 var doc_mitchells_house: Node
 var vit_machine: Interactable
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE:
+		#level.get_portals_overview()
 		#print(level.get_interactables())
 		#print(level.get_npcs())
-		doc_mitchell = level.find_child(Characters.get_character_name(Characters.CHARACTERS.DOC_MITCHELL)).master
+		doc_mitchell = level.find_child(Characters.get_character_name(Characters.CHARACTERS.DOC_MITCHELL))
 		doc_mitchells_house = Levels.get_current_level()
 		vit_machine = doc_mitchells_house.find_child("VitMachine")
 
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
+	var docs_nav: NavigationComponent = doc_mitchell.navigation_manager
+	var docs_speech: DialogComponent = doc_mitchell.dialog_manager
 	if timeline == Dialogue.TIMELINES.YOURE_AWAKE:
 		await Dialogic.timeline_ended
 		quest.start()
-		doc_mitchell.seek(quest.get_navpoint_position("VitMachine"))
+		docs_nav.set_target(quest.get_navpoint_position("VitMachine"))
 		await vit_machine.event_started
 		main.advance()
 		await vit_machine.event_ended
 		main.advance()
-		await doc_mitchell.seeking_complete()
-		doc_mitchell.seek(quest.get_navpoint_position("Couch"))
-		await doc_mitchell.seeking_complete()
-		doc_mitchell.set_timeline(Dialogue.TIMELINES.PICKTAGS)
+		await docs_nav.navigation_finished
+		docs_nav.set_target(quest.get_navpoint_position("Couch"))
+		await docs_nav.navigation_finished
+		docs_speech.set_timeline(Dialogue.TIMELINES.PICKTAGS)
 	elif timeline == Dialogue.TIMELINES.PICKTAGS:
 		await Dialogic.timeline_ended
 		main.advance()
-		doc_mitchell.seek(Vector2(0,0))
-		await doc_mitchell.seeking_complete()
-		doc_mitchell.seek(quest.get_navpoint_position("Exit"))
-		await doc_mitchell.seeking_complete()
+		docs_nav.set_target(Vector2(0,0))
+		await docs_nav.navigation_finished
+		docs_nav.set_target(quest.get_navpoint_position("Exit"))
+		await docs_nav.navigation_finished
 		Global.set_fast_travel_enabled(true)

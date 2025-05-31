@@ -1,3 +1,5 @@
+res://scenes/npc_builders
+res://scenes/default
 res://dialogic/characters/SunnySmiles
 res://dialogic/timelines
 res://scenes/levels/prospectors_saloon
@@ -6,14 +8,12 @@ res://scenes/level_builders
 res://scripts/node_managers
 res://scripts/icon_extenders
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scenes/levels/doc_mitchell's_house
-res://scenes/default
 res://scripts/singletons
 res://scenes/levels/goodsprings
 res://scenes
 res://dialogic/characters/DocMitchell
 res://dialogic/characters
 res://scenes/levels
-res://scenes/npc_builders
 res://scripts/classes
 res://scripts/quests
 res://Scenes

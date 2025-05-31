@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
 [ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="2_kjkh3"]
-[ext_resource type="PackedScene" uid="uid://b20ddkj72vfmy" path="res://scenes/level_builders/interactable_object.tscn" id="3_khflj"]
+[ext_resource type="PackedScene" uid="uid://b20ddkj72vfmy" path="res://scenes/level_builders/custom_interactable_object.tscn" id="3_khflj"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_nrx6f"]
 [ext_resource type="Texture2D" uid="uid://dmiv2bmqsjs2k" path="res://assets/vit_machine.png" id="5_ou502"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="6_28y3f"]
@@ -20,23 +20,21 @@ size = Vector2(30, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoints", "interactables", "navpoints", "portals")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoint_manager", "navpoint_manager", "interactables", "portals")]
 script = ExtResource("1_ejuju")
 level = 1
 tiles = NodePath("Tiles")
 npcs = [NodePath("DocMitchell")]
-waypoints = NodePath("Waypoints")
+waypoint_manager = NodePath("Navpoints")
+navpoint_manager = NodePath("Navpoints")
 interactables = [NodePath("VitMachine")]
-navpoints = NodePath("Navpoints")
 portals = [NodePath("DoorToGoodsprings")]
 
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
-base_speed = 100.0
-faction = 20
-character = 1
 timeline = 1
+character = 1
 
 [node name="VitMachine" parent="." node_paths=PackedStringArray("click_detector_custom") instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)

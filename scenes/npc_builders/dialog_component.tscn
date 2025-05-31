@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1miocpocuslf"]
+
+[ext_resource type="Script" uid="uid://biwbpin0addov" path="res://scenes/npc_builders/dialog_component.gd" id="1_fvuwo"]
+
+[node name="DialogComponent" type="Node"]
+script = ExtResource("1_fvuwo")

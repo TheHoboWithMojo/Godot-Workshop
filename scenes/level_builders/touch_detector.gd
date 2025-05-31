@@ -55,7 +55,7 @@ func _on_mouse_exited() -> void:
 			return
 		mouse_exited_area.emit(self)
 
-func set_ignored_menu(menu: Control) -> void:
+func set_ignored_menu(menu: Control) -> void: # prevents the mouse_exited signal from procking when the mouse overlaps the control
 	ignored_menu = menu
 	ignored_zone = ignored_menu.get_global_rect()
 

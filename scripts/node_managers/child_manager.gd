@@ -27,6 +27,7 @@ func get_children_names() -> Array[String]:
 	return names
 
 
+
 func get_children_coordinates() -> Array[Vector2]:
 	var coords: Array[Vector2]
 	for child: Node in children:

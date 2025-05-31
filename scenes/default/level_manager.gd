@@ -1,5 +1,6 @@
 @icon("res://assets/Icons/16x16/entity_move.png")
 extends Node
+var game_data: Dictionary = {} # stores ALL GAME DATA
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
@@ -16,9 +17,6 @@ signal level_loaded
 # =========================================================================
 # PUBLIC FUNCTIONS
 # =========================================================================
-func _ready() -> void:
-	if not Data.is_data_loaded:
-		await Data.data_loaded
 
 func is_level_loaded() -> bool:
 	return _level_loaded

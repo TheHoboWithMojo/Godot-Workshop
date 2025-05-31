@@ -18,6 +18,7 @@ extends Node2D
 @onready var quest_manager: Node = $QuestManager
 @onready var level_manager: Node = $LevelManager
 @onready var mob_manager: Node = $MobManager
+@onready var save_manager: Node = $SaveManager
 @onready var is_ready_to_start: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
 # =========================================================================
@@ -57,12 +58,12 @@ func boot_dialogic() -> void:
 
 func load_data() -> void:
 	if not use_save_data:
-		Data.clear_data()
-		if Data.is_data_cleared != true:
-			await Data.data_cleared
-	Data.load_game_data()
-	if not Data.is_data_loaded:
-		await Data.data_loaded
+		save_manager.clear_data()
+		if save_manager.is_data_cleared != true:
+			await save_manager.data_cleared
+	save_manager.load_game_data()
+	if not save_manager.is_loading_complete:
+		await save_manager.loading_complete
 
 
 func ready_up() -> void:
@@ -91,5 +92,5 @@ func autosave() -> void:
 			_currently_autosaving = true
 			await Global.delay(self, 10)
 			Global.speed_mult = 0.0
-			Data.save_data_changes()
+			save_manager.data()
 			Global.speed_mult = 1.0
