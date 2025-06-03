@@ -85,8 +85,8 @@ func is_character_alive(character: CHARACTERS) -> bool:
 
 
 func set_alive(character: CHARACTERS, value: bool) -> void:
-	if not is_character_alive(character):
-		Debug.throw_error(self, "kill_character", "Character %s is already dead." % [get_character_name(character)])
+	if Debug.throw_warning_if(not is_character_alive(character), "Character %s is already dead." % [get_character_name(character)], self):
+		return
 	characters[character]["alive"] = value
 
 

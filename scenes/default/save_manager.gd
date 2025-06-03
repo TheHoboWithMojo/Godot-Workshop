@@ -1,4 +1,6 @@
+@icon("res://assets/Icons/16x16/disk.png")
 extends Node
+class_name SaveManager
 
 # ----- Variables -----
 var is_loading_complete: bool = false

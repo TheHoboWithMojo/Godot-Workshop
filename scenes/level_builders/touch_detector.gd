@@ -7,7 +7,7 @@ class_name TouchDetector
 @export var detect_mouse: bool = true
 @export var collider: Collider = null
 @export_group("Tweaks")
-@export var debugging_enabled: bool = false
+@export var debugging: bool = false
 @export var ignored_menu: Control = null
 @export var send_signal_to_parent: bool = true
 @export var set_touching_to_self: bool = false
@@ -23,9 +23,9 @@ var ignored_zone: Rect2
 func _ready() -> void:
 	if not collider:
 		collider = %Collider
-		assert(collider, "area2ds need hit detection")
+		Debug.enforce(collider != null, "area2ds need hit detection", self)
 	collider.reparent(self)
-	assert(monitored_parent, "all mouse/player detectors must have a parent to monitor")
+	Debug.enforce(monitored_parent != null, "all mouse/player detectors must have a parent to monitor", self)
 	if detect_player:
 		area_entered.connect(_on_area2d_entered)
 		area_exited.connect(_on_area2d_exited)
@@ -70,8 +70,7 @@ func get_collider() -> Collider:
 
 func _on_area2d_entered(area: Area2D) -> void:
 	if area == Global.player_bubble:
-		if debugging_enabled:
-			print(monitored_parent, " player entered")
+		Debug.debug("player entered.", self, "_on_area2d_entered",)
 		Global.player_touching_node = self if set_touching_to_self else monitored_parent
 		if send_signal_to_parent:
 			if emit_self_as_argument:
@@ -82,9 +81,8 @@ func _on_area2d_entered(area: Area2D) -> void:
 
 func _on_area2d_exited(area: Area2D) -> void:
 	if area == Global.player_bubble:
-		if debugging_enabled:
-			print(monitored_parent, " player exited")
-		if not get_overlapping_bodies().has(Global.player_bubble):
+		Debug.debug("player exited", self, "_on_area2d_exited")
+		if not get_overlapping_areas().has(Global.player_bubble):
 			Global.player_touching_node = null
 			if send_signal_to_parent:
 				if emit_self_as_argument:

@@ -31,7 +31,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	if save_selection:
-		assert(level)
+		Debug.enforce(level != Levels.LEVELS.UNASSIGNED, "To save with the vector placer the level you're in must be declared", self)
 		save_path = Levels.get_level_path(level).replace(".tscn", "_navpoints.txt")
 
 	popup.hide()
@@ -65,7 +65,7 @@ func _on_line_edit_text_submitted(new_text: String) -> void:
 		return
 	if nomen.to_lower() == "s":
 		if not name_vector_dict:
-			Debug.throw_error(self, "[Vector Placer] _on_line_edit_text_submitted", "Tried to save an empty name_vector_dict")
+			Debug.throw_warning("Tried to save an empty name_vector_dict", self)
 			popup.hide()
 			processing = false
 			Player.set_movement_enabled(true)

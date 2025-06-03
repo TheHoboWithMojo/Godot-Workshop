@@ -13,7 +13,7 @@ class_name Waypoint
 signal player_touched_me
 
 func _ready() -> void:
-	assert(quest != 0, "All waypoints must link to a quest.")
+	Debug.enforce(quest != 0, "All waypoints must link to a quest.", self)
 	sprite.set_visible(false)
 	add_to_group("waypoints")
 	if not self in Global.waypoint_manager.get_children():

@@ -134,14 +134,13 @@ func _process(_delta: float) -> void:
 		check_for_achievements()
 
 
-func set_stat(stat: STATS, value: float, debugging: bool = false) -> bool:
+func set_stat(stat: STATS, value: float) -> bool:
 	var stat_category: STAT_CATEGORIES = _get_stat_category(stat)
 	var original_stat_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
 	var new_stat_value: float = _get_updated_stat(stat_category, stat, "=", value)
 	if new_stat_value == original_stat_value:
 		return false
-	if debugging:
-		_print_stat_change(stat, original_stat_value, new_stat_value)
+	Debug.debug("", Global.player, "set_stat", {_print_stat_change:[stat, original_stat_value, new_stat_value]})
 	player_stats_changed.emit()
 	return true
 
@@ -251,11 +250,11 @@ func _print_stat_change(stat: STATS, original_stat_value: float, new_stat_value:
 
 func _get_stat_category(stat: STATS) -> STAT_CATEGORIES:
 	for category: String in Data.game_data["stats"].keys():
-		if not str(stat) in Data.game_data["stats"][category]: # go through all categories until you find the stat
+		if not str(stat) in Data.game_data["stats"][category]:
 			continue
 		@warning_ignore("int_as_enum_without_cast")
-		return int(category) # return the category that had the stat
-	Debug.throw_error(self, "_get_stat_category", "Stat %s does not exist" % [stat])
+		return int(category)
+	Debug.throw_warning("Stat %s does not exist" % [stat], self)
 	return STAT_CATEGORIES.UNASSIGNED
 
 
@@ -272,8 +271,7 @@ func _get_updated_stat(stat_category: STAT_CATEGORIES, stat: STATS, operator: St
 		"+": current_value += value
 		"=": current_value = value
 		"/":
-			if value == 0:
-				Debug.throw_error(self, "_get_updated_stat", "Cannot divide by 0")
+			if Debug.throw_warning_if(value == 0, "Cannot divide by 0.", self):
 				return current_value
 			current_value /= value
 

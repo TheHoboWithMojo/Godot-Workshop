@@ -7,4 +7,4 @@ func _ready() -> void:
 	add_to_group("navpoints")
 	if related_quests:
 		for quest: Quests.QUESTS in related_quests:
-			assert(quest != Quests.QUESTS.UNASSIGNED)
+			Debug.enforce(quest != Quests.QUESTS.UNASSIGNED, "Each quest related to a navpoint must not be unassigned", self)

@@ -1,6 +1,7 @@
 extends NavigationAgent2D
 class_name NavigationComponent
-@export var debugging_enabled: bool = false
+@export var debugging: bool = false
+@export var inherit_debugging: bool = false
 @export var parent: Node
 @export var speed: int = 100
 @onready var parent_name: String = parent.name
@@ -10,15 +11,20 @@ signal target_changed
 
 
 func _ready() -> void:
-	assert(parent)
+	Debug.enforce(parent != null, "A navigation agent must reference a parent", self)
 	await parent.ready
 	target_reached.connect(_on_target_reached)
 	velocity_computed.connect(_on_velocity_computed)
+	if parent is NPC:
+		await parent.await_name_changed()
+	if inherit_debugging:
+		debugging = parent.debugging
+
 
 
 func seek() -> void:
 	target_position = navigation_target
-	if is_navigation_finished():
+	if is_navigation_finished() or target_position == Vector2.ZERO:
 		parent.velocity = Vector2.ZERO
 		return
 	set_velocity(parent.global_position.direction_to(get_next_path_position()) * speed * Global.speed_mult)
@@ -39,7 +45,7 @@ func set_target(target: Variant = navigation_target, up_down_left_right: String 
 	elif target is Node2D:
 		navigation_target = target.global_position
 	else:
-		Debug.throw_error(parent, "set_target", "can only target a vector2 or node2d")
+		Debug.throw_warning("Can only target a vector2 or node2d", parent)
 	match(up_down_left_right):
 		"left":
 			navigation_target -= (1.2 * Vector2(displacement, 0))
@@ -52,8 +58,7 @@ func set_target(target: Variant = navigation_target, up_down_left_right: String 
 	seeking_enabled = true
 	setting_target = false
 	target_changed.emit()
-	if debugging_enabled:
-		print("[Being] ", parent_name, "'s target has been changed to: ", navigation_target)
+	Debug.debug("target has been changed to %s." % [navigation_target], parent, "set_target")
 
 
 func set_seeking_enabled(value: bool) -> void:
@@ -63,7 +68,7 @@ func set_seeking_enabled(value: bool) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if seeking_enabled and navigation_target != Vector2.ZERO:
+	if seeking_enabled:
 		seek()
 	parent.move_and_slide()
 

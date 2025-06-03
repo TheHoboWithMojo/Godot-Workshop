@@ -52,15 +52,7 @@ var factions_data: Dictionary = {
 }
 
 func _ready() -> void:
-	if Global.level_manager:
-		Global.level_manager.level_loaded.connect(_on_level_loaded)
 	member_died.connect(_on_member_died)
-
-
-func _on_level_loaded() -> void:
-	for being: Node2D in get_tree().get_nodes_in_group("beings"):
-		if get_rep_status(being.character_manager._faction) == "hostile":
-			being.hostile = true
 
 
 func _on_member_died(member: Characters.CHARACTERS) -> void:
@@ -78,8 +70,7 @@ func _process_member_killed(_character: Characters.CHARACTERS, rep_loss: int = d
 
 
 func update_faction_data(faction: FACTIONS, property: String, value: Variant) -> bool:
-	if not property in Data.game_data["factions_data"][faction]:
-		Debug.throw_error(self, "update_faction_data", "Property " + property + " not found in faction " + get_faction_name(faction))
+	if Debug.throw_warning_if(not property in Data.game_data["factions_data"][faction], "Property " + property + " not found in faction " + get_faction_name(faction), self):
 		return false
 	Data.game_data["factions_data"][faction][property] = value
 	return true

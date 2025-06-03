@@ -4,16 +4,19 @@ class_name CharacterComponent
 @export var character: Characters.CHARACTERS
 @export var parent: Node2D
 @export var track_death: HealthComponent
+@export var debugging: bool = false
+@export var inherit_debugging: bool = false
 @onready var faction: Factions.FACTIONS
 @onready var character_name: String
 @onready var faction_name: String
 @onready var parent_has_health_component: bool = false
+@onready var current_level: Level = null
 
 func _ready() -> void:
-	assert(parent)
-	await parent.ready
-	assert(character != Characters.CHARACTERS.UNASSIGNED)
-	assert(track_death, "All characters must have a be connected to a health component in order to process their death.")
+	Debug.enforce(parent != null, "Character must reference a parent", self)
+	await parent.tree_entered
+	Debug.enforce(character != Characters.CHARACTERS.UNASSIGNED, "Character cannot be unassigned, parent (%s)" % [parent.name], parent)
+	Debug.enforce(track_death != null, "All characters must have a be connected to a health component in order to process their death.", parent)
 	if not Characters.is_character_alive(character):
 		parent.queue_free()
 		return
@@ -26,7 +29,8 @@ func _ready() -> void:
 	parent.add_to_group(faction_name)
 	parent.add_to_group("interactable")
 	parent.add_to_group("npc")
-	Global.level_manager.level_loaded.connect(_on_level_loaded)
+	if inherit_debugging:
+		debugging = parent.debugging
 
 
 func _on_death() -> void:
@@ -34,19 +38,15 @@ func _on_death() -> void:
 		return
 	Characters.set_alive(character, false)
 	Factions.member_died.emit(character)
-
-
-func _on_level_loaded() -> void:
-	pass
-	#if Factions.get_rep_status(faction) == "hostile":
-		#set_hostile(true)
+	Debug.debug("character died.", parent, "_on_death")
 
 
 func _on_tree_entered() -> void:
-	Characters.set_character_last_level(character, Levels.get_current_level().get_level())
+	current_level = await Levels.get_current_level()
+	Characters.set_character_last_level(character, current_level.get_level_enum())
 	Characters.set_character_last_position(character, parent.global_position)
 
 
 func _on_tree_exited() -> void:
-	Characters.set_character_last_level(character, Levels.get_current_level().get_level())
+	Characters.set_character_last_level(character, current_level.get_level_enum())
 	Characters.set_character_last_position(character, parent.global_position)

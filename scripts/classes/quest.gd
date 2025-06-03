@@ -30,7 +30,7 @@ func _init(self_node: Node, quest: Quests.QUESTS) -> void:
 	mainplot.quest = self
 
 	Dialogic.timeline_started.connect(_on_timeline_started)
-	Global.level_manager.level_loaded.connect(_on_level_loaded)
+	Global.level_manager.new_level_loaded.connect(_on_new_level_loaded)
 	caller.add_to_group("quests")
 
 
@@ -47,10 +47,7 @@ func navpoint_overview() -> void:
 
 
 func get_navpoint_position(navpoint_name: String) -> Vector2:
-	assert(navpoint_name in quest_navpoints.keys())
-	var navpoint: Navpoint = quest_navpoints[navpoint_name]
-	return navpoint.global_position
-
+	return quest_navpoints[navpoint_name].global_position if not Debug.throw_warning_if(navpoint_name not in quest_navpoints.keys(), "The navpoint provided %s does not exist" % [navpoint_name], self) else Vector2.ZERO
 
 func get_waypoint_position(waypoint_name: String) -> Vector2:
 	if not waypoint_name in quest_waypoints.keys():
@@ -87,9 +84,9 @@ func _on_timeline_started() -> void: # notify the caller if a related timeline h
 		caller._on_related_timeline_played(timeline)
 
 
-func _on_level_loaded() -> void:
+func _on_new_level_loaded() -> void:
 	if not completed:
-		var current_level: Node = Levels.get_current_level()
+		var current_level: Node = await Levels.get_current_level()
 		if current_level.scene_file_path in levels:
 			var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest) # update the linked waypoints every time a level is loaded
 			var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
@@ -131,22 +128,22 @@ func set_active(value: bool) -> void:
 
 
 func start() -> bool:
-	if not Levels.get_current_level():
-		await Global.level_manager.level_loaded
-	if not quest_waypoints and "waypoint_manager" in Levels.get_current_level():
+	if not await Levels.get_current_level():
+		await Global.level_manager.new_level_loaded
+	if not quest_waypoints and "waypoint_manager" in await Levels.get_current_level():
 		await waypoints_assigned
-	if not quest_navpoints and "navpoint_manager" in Levels.get_current_level():
+	if not quest_navpoints and "navpoint_manager" in await Levels.get_current_level():
 		await navpoints_assigned
 
 	if not mainplot.objectives:
-		Debug.throw_error("quest.gd", "start", "Quest plot %'s objectives have not been declared" % [mainplot.nomen])
+		Debug.throw_warning("Quest plot %'s objectives have not been declared" % [mainplot.nomen], caller)
 		return false
 	mainplot._start()
 	set_active(true) # quests always are set active on start
 	for plot_name: String in sideplots:
 		var plot: Plot = sideplots[plot_name]
 		if not plot.objectives:
-			Debug.throw_error("quest.gd", "start", "Quest %'s objectives have not been declared" % [plot.nomen])
+			Debug.throw_warning("Quest %'s objectives have not been declared" % [plot.nomen], caller)
 			return false
 		if not plot.activate_on_main:
 			continue
@@ -157,7 +154,7 @@ func start() -> bool:
 
 func make_choice(choice: int) -> bool:
 	if not choice in caller.CHOICES.values():
-		Debug.throw_error("quest.gd", "make_choice", "choice '%s' is not in the CHOICE enum" % [choice])
+		Debug.throw_warning("choice '%s' is not in the CHOICE enum" % [choice], caller)
 		return false
 	choices.append(choice)
 	Player.choices.append(Global.enum_to_title(choice, caller.CHOICES))
@@ -218,10 +215,10 @@ class Plot:
 
 	func advance() -> bool: # moves forward in the plot
 		if not is_started():
-			Debug.throw_error("quest.gd", "advance", "Cannot advance the plot '%s' without first starting the quest '%s'" % [nomen, quest.nomen])
+			Debug.throw_warning("Cannot advance the plot '%s' without first starting the quest '%s'" % [nomen, quest.nomen], quest.caller)
 			return false
 		if is_complete():
-			Debug.throw_error("quest.gd", "advance", "Trying to advance a plot that was already completed")
+			Debug.throw_warning("Trying to advance a plot that was already completed", quest.caller)
 			return false
 
 		var objectives_array: Array[Objective] = objectives.keys()
@@ -250,16 +247,16 @@ class Plot:
 
 	func skip_to_objective(objective: Objective) -> bool: # move to a specific plot objective
 		if not objective in objectives:
-			Debug.throw_error("quest.gd", "skip_to", "event '%s' has not been declared" % [objective.nomen])
+			Debug.throw_warning("event '%s' has not been declared" % [objective.nomen], quest.caller)
 			return false
 		var _objectives: Array[Objective] = objectives.keys()
 		var target_index: int = _objectives.find(objective)
 		var current_index: int = _objectives.find(current_objective)
 		if target_index == current_index:
-			Debug.throw_error("quest.gd", "skip_to", "cannot skip to the same event")
+			Debug.throw_warning("cannot skip to the same event", quest.caller)
 			return false
 		if target_index < current_index:
-			Debug.throw_error("quest.gd", "skip_to", "cannot skip to a past event")
+			Debug.throw_warning("cannot skip to a past event", quest.caller)
 			return false
 		if target_index == _objectives.size() - 1:
 			current_objective = objective
@@ -338,7 +335,7 @@ class Objective:
 	func pair_waypoints(waypoint_names: Array[String]) -> bool:
 		for waypoint_name: String in waypoint_names:
 			if not waypoint_name in quest.quest_waypoints.keys():
-				Debug.throw_error(quest.caller, "pair_waypoints", "waypoint %s does not exist" % [waypoint_name])
+				Debug.throw_warning("waypoint %s does not exist" % [waypoint_name], quest.caller)
 				return false
 			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
 			objective_waypoints.append(waypoint)

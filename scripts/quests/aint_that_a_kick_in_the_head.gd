@@ -28,11 +28,8 @@ var vit_machine: Interactable
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE:
-		#level.get_portals_overview()
-		#print(level.get_interactables())
-		#print(level.get_npcs())
-		doc_mitchell = level.find_child(Characters.get_character_name(Characters.CHARACTERS.DOC_MITCHELL))
-		doc_mitchells_house = Levels.get_current_level()
+		doc_mitchells_house = await Levels.get_current_level()
+		doc_mitchell = await Global.npc_manager.get_npc(Characters.CHARACTERS.DOC_MITCHELL)
 		vit_machine = doc_mitchells_house.find_child("VitMachine")
 
 # quest progression function, tracks when timelines and choreographs accordingly

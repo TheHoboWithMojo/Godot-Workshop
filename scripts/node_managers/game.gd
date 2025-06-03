@@ -68,10 +68,9 @@ func load_data() -> void:
 
 func ready_up() -> void:
 	if not use_save_data: # load doc mitchells house if saving is disabled
-		level_manager.set_current_level(load(Levels.get_level_path(Levels.LEVELS.DOC_MITCHELLS_HOUSE)).instantiate())
-	if not level_manager.is_level_loaded():
-		await level_manager.level_loaded
-
+		level_manager.set_current_level(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
+	if level_manager.is_level_loading():
+		await level_manager.new_level_loaded
 	is_ready_to_start = true
 	ready_to_start.emit()
 	await Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)

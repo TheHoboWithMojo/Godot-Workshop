@@ -1,5 +1,6 @@
 @icon("res://assets/Icons/16x16/entity_move.png")
 extends Node
+class_name LevelManager
 var game_data: Dictionary = {} # stores ALL GAME DATA
 # =========================================================================
 # RUNTIME VARIABLES
@@ -9,73 +10,64 @@ var game_data: Dictionary = {} # stores ALL GAME DATA
 @onready var checkpoints: Dictionary[String, Vector2]
 @onready var current_tile_map: TileMapLayer
 @onready var spawnable_enemies: Array[PackedScene]
-@onready var _level_loaded: bool = false
+@onready var _level_loading: bool = false
 # =========================================================================
 # SIGNALS
 # =========================================================================
-signal level_loaded
+signal new_level_loaded
 # =========================================================================
 # PUBLIC FUNCTIONS
 # =========================================================================
 
-func is_level_loaded() -> bool:
-	return _level_loaded
+func is_level_loading() -> bool:
+	return _level_loading
 
 
 func get_spawnable_enemies() -> Array[PackedScene]:
-	if not is_level_loaded():
-		Debug.throw_error(self, "get_spawnable_enemies", "Level is still loading...")
-		return []
+	await get_current_level()
 	return spawnable_enemies
 
 
 func get_enemy_spawnpoints() -> Array[Vector2]:
-	if not is_level_loaded():
-		Debug.throw_error(self, "get_enemy_spawnpoints", "Level is still loading...")
-		return []
+	await get_current_level()
 	return enemy_spawnpoints
 
 
 func get_current_level() -> Node:
-	if not is_level_loaded():
-		Debug.throw_error(self, "get_current_level", "Level is still loading...")
-		return null
+	if is_level_loading():
+		await new_level_loaded
 	return current_level
 
 
 func get_current_tile_map() -> TileMapLayer:
-	if not is_level_loaded():
-		Debug.throw_error(self, "get_spawnable_enemies", "Level is still loading...")
-		return null
+	await get_current_level()
 	return current_tile_map
 
 
-func set_current_level(node: Node2D) -> void: # bypass level switch
-	if not is_level_loaded():
-		current_level = node
+func set_current_level(level: Levels.LEVELS) -> void: # bypass level switch
+	if not is_level_loading():
+		_level_loading = true
+		current_level = load(Levels.get_level_path(level)).instantiate()
 		_update_level_data()
 		add_child(current_level)
-		_level_loaded = true
-		level_loaded.emit()
+		_level_loading = false
+		new_level_loaded.emit()
 
 
-@onready var changing_level: bool = false
 func change_level(old_level: Node, new_level_path: String) -> void:
-	if changing_level:
+	if _level_loading:
 		return
-	changing_level = true
-	_level_loaded = false
+	_level_loading = true
 	current_level = load(new_level_path).instantiate()
 	add_child(current_level)
 	_update_level_data()
-	var new_spawn_position: Vector2 = current_level.find_child("PortalTo" + old_level.name).spawn_point.global_position
-	Global.player.global_position = new_spawn_position
-	Global.player_camera.global_position = new_spawn_position
+	var spawn_position: Vector2 = current_level.get_portal_to_level(old_level.get_level_enum()).get_spawn_point_position()
+	Global.player.global_position = spawn_position
+	Global.player_camera.global_position = spawn_position
 	Global.player_camera.reset_smoothing()
 	old_level.queue_free()
-	_level_loaded = true
-	level_loaded.emit()
-	changing_level = false
+	_level_loading = false
+	new_level_loaded.emit()
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================

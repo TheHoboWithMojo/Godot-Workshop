@@ -2,6 +2,7 @@
 extends StaticBody2D
 class_name Portal
 
+@export var debugging: bool = false
 @export_category("REQS")
 @export var send_from_level: Node2D
 @export var send_to_level: Levels.LEVELS
@@ -13,18 +14,19 @@ class_name Portal
 @export_category("TWEAKS")
 @export var emit_interaction_signals: bool = true
 
+
 signal player_touched_me(self_node: Node)
 
 func _ready() -> void:
-	assert(send_from_level)
+	Debug.enforce(send_from_level != null, "Portals must reference the level they're in", self)
 
-	assert(send_to_level != Levels.LEVELS.UNASSIGNED)
+	Debug.enforce(send_to_level != Levels.LEVELS.UNASSIGNED, "Portals must reference the level they lead to", self)
 	name = "PortalTo%s" % Levels.get_level_name(send_to_level)
 
-	assert(click_detector)
+	Debug.enforce(click_detector != null, "Portals must have click detection to register interaction", self)
 	click_detector.pressed.connect(_on_portal_clicked)
 
-	assert(touch_detector)
+	Debug.enforce(touch_detector != null, "Portals must have touch detection in order to ensure the player is touching them", self)
 	touch_detector.set_ignored_menu(click_detector) # stops the touch detector from setting mouse_touching_node to false when the click detector is touched
 
 	add_to_group("portal")
@@ -39,3 +41,7 @@ func _on_portal_clicked() -> void:
 	player_touched_me.emit(self)
 	Global.level_manager.change_level(send_from_level, send_to_level_path)
 	processing_click = false
+
+
+func get_spawn_point_position() -> Vector2:
+	return spawn_point.global_position

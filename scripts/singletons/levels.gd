@@ -28,14 +28,13 @@ func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
 
 func get_current_level() -> Level:
-	return Global.level_manager.get_current_level()
+	return await Global.level_manager.get_current_level()
 
 
 func print_vector_tool_level_navpoints(level: LEVELS) -> bool: # loads the files created by vector placing tool
 	var level_name: String = get_level_name(level)
 	var access_path: String = get_level_path(level).replace(".tscn", "_navpoints.txt")
-	if not FileAccess.file_exists(access_path):
-		Debug.throw_error(self, "print_level_navpoints", "The level %s does not have an associated navpoint file at %s" % [level_name, access_path])
+	if Debug.throw_warning_if(!FileAccess.file_exists(access_path), "The level %s does not have an associated navpoint file at %s" % [level_name, access_path], self):
 		return false
 	var navpoint_dict: Dictionary = Data.load_json_file(access_path)
 	for navpoint_name: String in navpoint_dict:

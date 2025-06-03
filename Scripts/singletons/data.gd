@@ -5,18 +5,15 @@ var game_data: Dictionary = {}
 func save_json(data: Dictionary, file_path: String) -> bool: # Quick function that stores a dict as a json at a specific file path
 	var json_string: String = JSON.stringify(data, "", false)
 
-	# Check if JSON conversion was successful
-	if json_string.is_empty() and not data.is_empty():
-		Debug.throw_error(self, "save_json", "Failed to convert data to JSON string", file_path)
+
+	if Debug.throw_warning_if(json_string.is_empty() and not data.is_empty(), "Failed to convert data to JSON string", self):
 		return false
 
 	# Try to open the file
 	var file: FileAccess = FileAccess.open(file_path, FileAccess.WRITE)
 
 	# Check if file was opened successfully
-	if file == null:
-		var error: int = FileAccess.get_open_error()
-		Debug.throw_error(self, "save_json", "Failed to open file for writing. Error code: " + str(error), file_path)
+	if Debug.throw_warning_if(file == null, "Failed to open file for writing. Error code: " + str(FileAccess.get_open_error()), self):
 		return false
 
 	# Write to file and close it
@@ -24,19 +21,13 @@ func save_json(data: Dictionary, file_path: String) -> bool: # Quick function th
 	file.close()
 
 	# Verify file was written by checking if it exists and has content
-	if not FileAccess.file_exists(file_path):
-		Debug.throw_error(self, "save_json", "File was not created successfully", file_path)
-		return false
+	return !Debug.throw_warning_if(not FileAccess.file_exists(file_path), "File was not created successfully", self)
 
-	return true
 
 func load_json_file(path: String) -> Dictionary: # Quick function for loading a json as a dict
 	var json_as_text: String = FileAccess.get_file_as_string(path)
 	var json_as_dict: Dictionary = JSON.parse_string(json_as_text)
-	if json_as_dict == null:
-		Debug.throw_error(self, "load_json_file", "Could not parse input", path)
-		return {}
-	return json_as_dict
+	return {} if Debug.throw_warning_if(json_as_dict == null, "Could not parse input", self) else json_as_dict
 
 
 func get_current_path(data_name: String) -> String:

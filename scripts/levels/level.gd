@@ -16,7 +16,7 @@ class_name Level
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
 func _ready() -> void:
-	assert(level, "All members of the level class must have a level association")
+	Debug.enforce(level, "All members of the level class must have a level association", self)
 	self.set_name(Levels.get_level_name(level)) # enforce naming conventions
 	if navpoint_manager:
 		await navpoint_manager.ready
@@ -28,7 +28,8 @@ func _ready() -> void:
 		navpoints = navpoint_manager.get_children(false).filter(func(c: Node) -> bool: return c is Navpoint)
 
 
-func get_level() -> Levels.LEVELS:
+
+func get_level_enum() -> Levels.LEVELS:
 	return level
 
 
@@ -50,6 +51,13 @@ func get_portals_overview() -> void:
 
 func get_npcs() -> Array[NPC]:
 	return npcs
+
+
+func get_portal_to_level(_level: Levels.LEVELS) -> Portal:
+	for portal: Portal in portals:
+		if portal.send_to_level_path == Levels.get_level_path(_level):
+			return portal
+	return null
 
 
 func get_waypoints_overview() -> void:

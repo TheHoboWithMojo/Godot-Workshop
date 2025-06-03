@@ -32,21 +32,14 @@ signal navigation_target_changed
 # ===== Initialization =====
 func _init(self_node: Node) -> void:
 	_slave = self_node
-	if _slave == null:
-		Debug.throw_error(self, "init", "Could not initiate being")
+	if Debug.throw_warning_if(_slave == null, "Could not initiate being", self):
 		return
 
 	_slave.add_to_group("beings")
-	_debugging = self_node.get("debugging")
-	if _debugging:
-		print("[Being] Constructor called by ", _slave.name)
+	Debug.debug("[Being] Constructor called by %s" % [_slave.name], _slave, "_init")
 
 	_init_vars()
 	_init_nodes()
-
-	if _debugging and _missing_components.size() > 0:
-		pass
-		#_print_missing_components()
 
 
 func _init_vars() -> void:
@@ -188,8 +181,7 @@ func _set_paused(value: bool) -> bool:
 func _set_collision(value: bool) -> bool:
 	if not _alive:
 		return false
-	if not _collider:
-		Debug.throw_error(_slave, "set_collision", "%s does not have a collider" % [_nomen])
+	if Debug.throw_warning_if(not _collider, "%s does not have a collider" % [_nomen], _slave):
 		return false
 	_collider.set_disabled(!value)
 	return true

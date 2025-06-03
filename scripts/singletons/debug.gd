@@ -1,22 +1,61 @@
 # Holds advanced printing functions
 extends Node
+#func warn(caller_or_file_name: Variant, function_name: String, reason: String, input: Variant = null) -> void:
+	#var file_name: String
+	#if caller_or_file_name is Node:
+		#file_name = caller_or_file_name.get_script().resource_path.get_file()
+	#else:
+		#file_name = caller_or_file_name
+#
+	#var caller_script_name: String = get_stack()[-1].source.get_file()
+	#var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
+#
+	#if input == null:
+		#print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
+		#return
+#
+	#print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
 
-# Public Functions:
-func throw_error(self_node_or_file_name: Variant, function_name: String, reason: String, input: Variant = null) -> void:
-	var file_name: String
-	if self_node_or_file_name is Node:
-		file_name = self_node_or_file_name.get_script().resource_path.get_file()
-	else:
-		file_name = self_node_or_file_name
 
-	var caller_script_name: String = get_stack()[-1].source.get_file()
-	var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
+func throw_warning_if(condition: bool, warning: String, caller: Node) -> bool:
+	if condition == false:
+		return false
+	throw_warning(warning, caller)
+	return true
 
-	if input == null:
-		print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
-		return
 
-	print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
+func throw_warning(warning: String, caller: Node) -> void:
+	push_warning("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, warning])
+
+
+func throw_error(error: String, caller: Node) -> void:
+	push_error("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
+
+
+func enforce(condition: bool, error: String, caller: Node) -> bool:
+	if condition == true:
+		return true
+	throw_error(error, caller)
+	return false
+
+
+func debug(message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> void:
+	if caller.debugging:
+		message = " " + message if message else ""
+		var class_nomen: String = Global.get_class_of(caller)
+		var caller_nomen: String = caller.name
+		caller_nomen = " " + caller_nomen if caller_nomen and not caller_nomen == class_nomen else ""
+		class_nomen = "[" + class_nomen + "]"
+		print("%s%s:%s (%s)" % [class_nomen, caller_nomen, message, function_name])
+		for callable: Callable in callable_argument_dict:
+			callable.callv(callable_argument_dict[callable])
+
+
+func debug_if(condition: bool, message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> bool:
+	if condition == false or not caller.debugging:
+		return false
+	debug(message, caller, function_name, callable_argument_dict)
+	return true
 
 
 func pretty_print_dict(dictionary: Dictionary) -> void:
@@ -43,7 +82,7 @@ func get_array_as_pretty_string(array: Array) -> String:
 
 func frame_print(input: Variant, frame_print_delay: int) -> void:
 	if not Global.game_manager.track_frames:
-		throw_error(self, "frame_print", "Cannot be called if track frames isn't on.")
+		throw_warning("Cannot be called if track frames isn't on.", self)
 		return
 	if Global.frames % frame_print_delay == 0:
 		print(input)

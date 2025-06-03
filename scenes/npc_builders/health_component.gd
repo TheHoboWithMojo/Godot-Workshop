@@ -3,6 +3,8 @@ extends Node
 class_name HealthComponent
 
 # --- Exported Variables ---
+@export var debugging: bool = false
+@export var inherit_debugging: bool = false
 @export var parent: Node2D
 @export var health: int = 100
 @export var regen_rate: int = 1
@@ -11,7 +13,6 @@ class_name HealthComponent
 @export var health_bar: Node = null
 
 # --- Internal State ---
-@onready var parent_name: String = parent.name
 @onready var max_health: int = health
 var alive: bool = true
 
@@ -19,11 +20,16 @@ var alive: bool = true
 signal died
 
 func _ready() -> void:
-	assert(parent)
+	Debug.enforce(parent != null, "A health component must reference a parent", self)
 	await parent.ready
 	if health_bar:
 		health_bar.set_value(max_health)
 		health_bar.set_visible(false)
+	if parent is NPC:
+		await parent.await_name_changed()
+	if inherit_debugging:
+		debugging = parent.debugging
+
 
 # --- Health Interface ---
 func set_health(value: int) -> bool:
@@ -82,7 +88,7 @@ func _set_alive(value: bool) -> bool:
 
 	if not value and alive:
 		if not health_bar:
-			Debug.throw_error(parent, "_die", "%s must have a health bar in order to die" % [parent_name])
+			Debug.throw_error("%s must have a health bar in order to die" % [parent.name], parent)
 			return false
 		alive = false
 		await __process_death()

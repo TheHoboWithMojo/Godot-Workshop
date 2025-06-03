@@ -13,6 +13,7 @@ const WAYPOINT_MANAGER_PATH: String = "/root/GameManager/WaypointManager"
 const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
 const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
 const SAVE_MANAGER_PATH: String = "/root/GameManager/SaveManager"
+const NPC_MANAGER_PATH: String = "/root/GameManager/NPCManager"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
@@ -21,16 +22,17 @@ signal references_updated
 # Global Variables
 @onready var frames: int = 0
 @onready var speed_mult: float = 1.0
-@onready var player: CharacterBody2D = get_node(PLAYER_PATH)
+@onready var player: PlayerManager = get_node(PLAYER_PATH)
 @onready var player_camera: Camera2D = get_node(PLAYER_CAMERA_PATH)
 @onready var player_bubble: Area2D = get_node(PLAYER_BUBBLE_PATH)
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 @onready var quest_displayer: Control = get_node(QUEST_DISPLAYER_PATH)
 @onready var waypoint_manager: Node = get_node(WAYPOINT_MANAGER_PATH)
-@onready var level_manager: Node = get_node(LEVEL_MANAGER_PATH)
-@onready var quest_manager: Node = get_node(QUEST_MANAGER_PATH)
-@onready var mob_manager: Node = get_node(MOB_MANAGER_PATH)
-@onready var save_manager: Node = get_node(SAVE_MANAGER_PATH)
+@onready var level_manager: LevelManager = get_node(LEVEL_MANAGER_PATH)
+@onready var quest_manager: QuestManager = get_node(QUEST_MANAGER_PATH)
+@onready var npc_manager: NPCManager = get_node(NPC_MANAGER_PATH)
+@onready var mob_manager: MobManager = get_node(MOB_MANAGER_PATH)
+@onready var save_manager: SaveManager = get_node(SAVE_MANAGER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
@@ -144,7 +146,7 @@ func get_rawname(scene_or_node_or_path: Variant) -> String:
 		TYPE_STRING:
 			return scene_or_node_or_path.get_file().get_basename()
 
-	Debug.throw_error(self, "get_name", "Input does not have a filepath property", scene_or_node_or_path)
+	Debug.throw_warning("Input '%s' does not have a filepath property" % [scene_or_node_or_path], self)
 	return ""
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
@@ -194,18 +196,23 @@ func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
 
 
+
+func get_class_of(node: Node) -> String:
+	var class_nomen: String = node.get_script().get_global_name()
+	return class_nomen if class_nomen else node.get_class()
+
+
+
+func get_collider_global_rect(collider: Collider) -> Rect2:
+	return Rect2(collider.global_position, collider.shape.get_rect().size)
+
+
 func get_vector_to_player(self_node: Node2D) -> Vector2:
-	if not player:
-		Debug.throw_error(self, "get_vector_to_player", "Player path has changed")
-		return Vector2.ZERO
-	return player.global_position - self_node.global_position
+	return player.global_position - self_node.global_position if !Debug.throw_warning_if(not player, "Player camera path has changed", self) else Vector2.ZERO
 
 
 func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
-	if not player_camera:
-		Debug.throw_error(self, "get_vector_to_player_camera", "Player camera path has changed")
-		return Vector2.ZERO
-	return player_camera.global_position - self_node.global_position
+	return player_camera.global_position - self_node.global_position if !Debug.throw_warning_if(not player_camera, "Player camera path has changed", self) else Vector2.ZERO
 
 
 func get_collider(node: Node2D) -> CollisionShape2D:
@@ -236,5 +243,6 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	level_manager = get_node(LEVEL_MANAGER_PATH)
 	quest_manager = get_node(QUEST_MANAGER_PATH)
 	mob_manager = get_node(MOB_MANAGER_PATH)
+	npc_manager = get_node(NPC_MANAGER_PATH)
 	references_updated.emit()
 	print("[Global] Global references reloaded!")

@@ -1,6 +1,6 @@
 @icon("res://assets/Icons/16x16/skull_delete.png")
 extends Node
-
+class_name MobManager
 # =========================================================================
 # CONFIGURATION
 # =========================================================================
@@ -29,7 +29,7 @@ signal mob_died
 func _ready() -> void:
 	mob_died.connect(_on_mob_death)
 	await Global.active_and_ready(self)
-	level_manager.level_loaded.connect(_on_level_loaded)
+	level_manager.new_level_loaded.connect(_on_new_level_loaded)
 
 
 func _process(_delta: float) -> void:
@@ -40,7 +40,7 @@ func _process(_delta: float) -> void:
 		disable_unseen_enemies() # Stops processing enemies outside of view
 
 
-func _on_level_loaded() -> void:
+func _on_new_level_loaded() -> void:
 	spawnable_enemies = level_manager.get_spawnable_enemies()
 	enemy_spawnpoints = level_manager.get_enemy_spawnpoints()
 

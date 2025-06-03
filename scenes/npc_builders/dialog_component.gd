@@ -5,6 +5,7 @@ class_name DialogComponent
 # --- Exported Variables ---
 @export var parent: Node2D
 @export var debugging: bool = false
+@export var inherit_debugging: bool = false
 @export var timeline: Dialogue.TIMELINES
 @export var max_trigger_distance: float = 1000.0
 
@@ -17,7 +18,6 @@ class_name DialogComponent
 enum TRIGGER_MODES { CLICK, ENTRY, CLICK_AND_ENTRY, CLICK_OR_ENTRY }
 
 # --- Internal State ---
-@onready var parent_name: String = parent.name
 var processing_press: bool = false
 var processing_entry: bool = false
 
@@ -28,40 +28,44 @@ signal dialog_ended(self_node: Node)
 
 # --- Setup ---
 func _ready() -> void:
-	assert(parent)
-	await parent.ready
-	if timeline == Dialogue.TIMELINES.UNASSIGNED:
-		push_warning("Dialog Components should be initiated with a boot timeline")
+	Debug.enforce(parent != null, "A DialogComponent must reference a parent node", self)
+	await parent.tree_entered
+
+	Debug.throw_warning_if(timeline == Dialogue.TIMELINES.UNASSIGNED, "Dialog Components should be initiated with a boot timeline", parent)
 
 	match trigger_mode:
 		TRIGGER_MODES.CLICK:
-			assert(click_detector)
+			Debug.enforce(click_detector != null, "Trigger mode CLICK requires a ClickDetector", parent)
 			click_detector.pressed.connect(_on_button_pressed)
 
 		TRIGGER_MODES.ENTRY:
-			assert(touch_detector)
+			Debug.enforce(touch_detector != null, "Trigger mode ENTRY requires a TouchDetector", parent)
 			touch_detector.area_entered.connect(_on_area_entered)
 
 		TRIGGER_MODES.CLICK_AND_ENTRY:
-			assert(touch_detector and click_detector)
+			Debug.enforce(click_detector != null and touch_detector != null, "Trigger mode CLICK_AND_ENTRY requires both ClickDetector and TouchDetector", parent)
 			click_detector.pressed.connect(_on_button_pressed)
 			touch_detector.set_ignored_menu(click_detector)
 
 		TRIGGER_MODES.CLICK_OR_ENTRY:
-			assert(touch_detector and click_detector)
+			Debug.enforce(click_detector != null and touch_detector != null, "Trigger mode CLICK_OR_ENTRY requires both ClickDetector and TouchDetector", parent)
 			click_detector.pressed.connect(_on_button_pressed)
 			touch_detector.area_entered.connect(_on_area_entered)
 			touch_detector.set_ignored_menu(click_detector)
 
+	if parent is NPC:
+		await parent.await_name_changed()
+
+	if inherit_debugging:
+		debugging = parent.debugging
+
 # --- Timeline Management ---
 func set_timeline(new_timeline: Dialogue.TIMELINES) -> bool:
 	if Dialogue.is_timeline_completed(new_timeline) and not Dialogue.is_timeline_repeatable(new_timeline):
-		Debug.throw_error(parent, "set_timeline", "Trying to assign a timeline that has been completed and is not repeatable")
+		Debug.throw_warning("Trying to assign a completed, non-repeatable timeline", parent)
 		return false
 
-	if debugging:
-		print("[Being] %s's timeline has been changed to %s." % [parent_name, Dialogue.get_timeline_name(new_timeline)])
-
+	Debug.debug("timeline changed to %s." % [Dialogue.get_timeline_name(new_timeline)], parent, "set_timeline")
 	timeline = new_timeline
 	return true
 

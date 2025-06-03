@@ -6,10 +6,10 @@ class_name ChildManager
 
 
 func _ready() -> void:
-	assert(enforce_node_type)
+	Debug.enforce(enforce_node_type != null, "Child Managers must be given a node to enforce its class", self)
 	var enforced_class: Variant = enforce_node_type.get_class()
 	for child: Node in children:
-		assert(child.get_class() == enforced_class, "All children of a child manager must be of the same class.")
+		Debug.enforce(child.get_class() == enforced_class, "All children of a child manager must be of the same class.", self)
 	var names: Array[String] = get_children_names()
 	var coords: Array[Vector2] = get_children_coordinates()
 	for i: int in children.size():

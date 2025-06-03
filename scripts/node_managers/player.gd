@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name PlayerManager
 # EXPORTS
 @export_group("Control")
 @export var active: bool = true
@@ -137,7 +138,7 @@ func _get_direction(x_or_y: String) -> float:
 		var direction: float = Input.get_axis("move_up", "move_down")
 		return direction
 	else:
-		Debug.throw_error(self, "_get_direction", "x or y only", x_or_y)
+		Debug.throw_warning("x or y only.", self)
 		return 0.0
 
 func die() -> void:

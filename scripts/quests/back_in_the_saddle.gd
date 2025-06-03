@@ -49,16 +49,12 @@ var sunny_smiles: NPC = null
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.PROSPECTORS_SALOON:
-		sunny_smiles = level.find_child(Characters.get_character_name(Characters.CHARACTERS.SUNNY_SMILES))
-		saloon = Levels.get_current_level()
+		sunny_smiles = await Global.npc_manager.get_npc(Characters.CHARACTERS.SUNNY_SMILES)
+		saloon = await Levels.get_current_level()
 
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
-	var sunny_nav: NavigationComponent = sunny_smiles.navigation_manager
 	if timeline == Dialogue.TIMELINES.SUNNY_GREETING:
 		await Dialogic.timeline_ended
-		sunny_nav.set_target(saloon.find_child("PortalToGoodsprings").spawn_point)
-		await sunny_nav.navigation_finished
-		sunny_smiles.queue_free()
+		await sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
 		main.advance()
-		#sunny_smiles.set_timeline(SHOOTBOTTLE)
