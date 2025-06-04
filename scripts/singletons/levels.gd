@@ -27,8 +27,12 @@ func get_level_path(level: LEVELS) -> String:
 func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
 
-func get_current_level() -> Level:
-	return await Global.level_manager.get_current_level()
+func get_current_level_node() -> Level:
+	return await Global.level_manager.get_current_level_node()
+
+
+func get_current_level_enum() -> Levels.LEVELS:
+	return await Global.level_manager.get_current_level_enum()
 
 
 func print_vector_tool_level_navpoints(level: LEVELS) -> bool: # loads the files created by vector placing tool

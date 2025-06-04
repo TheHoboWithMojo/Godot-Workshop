@@ -1,3 +1,4 @@
+res://scenes/levels/doc_mitchells_house
 res://scenes/npc_builders
 res://scenes/default
 res://dialogic/characters/SunnySmiles
@@ -7,7 +8,6 @@ res://scenes/tools
 res://scenes/level_builders
 res://scripts/node_managers
 res://scripts/icon_extenders
-C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scenes/levels/doc_mitchell's_house
 res://scripts/singletons
 res://scenes/levels/goodsprings
 res://scenes

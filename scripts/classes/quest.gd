@@ -84,10 +84,9 @@ func _on_timeline_started() -> void: # notify the caller if a related timeline h
 		caller._on_related_timeline_played(timeline)
 
 
-func _on_new_level_loaded() -> void:
+func _on_new_level_loaded(new_level: Level) -> void:
 	if not completed:
-		var current_level: Node = await Levels.get_current_level()
-		if current_level.scene_file_path in levels:
+		if new_level.scene_file_path in levels:
 			var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest) # update the linked waypoints every time a level is loaded
 			var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
 			for waypoint: Waypoint in new_waypoints:
@@ -96,9 +95,9 @@ func _on_new_level_loaded() -> void:
 			for navpoint: Navpoint in new_navpoints:
 				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
 			navpoints_assigned.emit()
-			caller._on_related_level_loaded(current_level)
+			caller._on_related_level_loaded(new_level)
 		if quest_waypoints:
-			var level_waypoints: Array[Waypoint] = current_level.get_waypoints()
+			var level_waypoints: Array[Waypoint] = new_level.get_waypoints()
 			for waypoint: Waypoint in quest_waypoints.values():
 				if not waypoint in level_waypoints:
 					waypoint.set_visible(false)
@@ -128,11 +127,11 @@ func set_active(value: bool) -> void:
 
 
 func start() -> bool:
-	if not await Levels.get_current_level():
+	if not await Levels.get_current_level_node():
 		await Global.level_manager.new_level_loaded
-	if not quest_waypoints and "waypoint_manager" in await Levels.get_current_level():
+	if not quest_waypoints and "waypoint_manager" in await Levels.get_current_level_node():
 		await waypoints_assigned
-	if not quest_navpoints and "navpoint_manager" in await Levels.get_current_level():
+	if not quest_navpoints and "navpoint_manager" in await Levels.get_current_level_node():
 		await navpoints_assigned
 
 	if not mainplot.objectives:

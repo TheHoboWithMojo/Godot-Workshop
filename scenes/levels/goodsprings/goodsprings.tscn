@@ -5,11 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="2_y5w72"]
 [ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="5_77bbt"]
 
-[node name="GoodSprings" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "portals")]
+[node name="GoodSprings" type="Node2D" node_paths=PackedStringArray("tiles", "default_npcs", "portals")]
 script = ExtResource("1_y5w72")
 level = 2
 tiles = NodePath("Tiles")
-npcs = [NodePath("JoeCobb"), NodePath("OldManPete")]
+default_npcs = [NodePath("JoeCobb"), NodePath("OldManPete")]
 portals = [NodePath("DoorToDocMitchellsHouse"), NodePath("DoorToProspectorsSaloon")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]

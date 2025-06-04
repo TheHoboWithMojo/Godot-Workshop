@@ -14,7 +14,7 @@ var game_data: Dictionary = {} # stores ALL GAME DATA
 # =========================================================================
 # SIGNALS
 # =========================================================================
-signal new_level_loaded
+signal new_level_loaded(level: Level)
 # =========================================================================
 # PUBLIC FUNCTIONS
 # =========================================================================
@@ -24,23 +24,29 @@ func is_level_loading() -> bool:
 
 
 func get_spawnable_enemies() -> Array[PackedScene]:
-	await get_current_level()
+	await get_current_level_node()
 	return spawnable_enemies
 
 
 func get_enemy_spawnpoints() -> Array[Vector2]:
-	await get_current_level()
+	await get_current_level_node()
 	return enemy_spawnpoints
 
 
-func get_current_level() -> Node:
+func get_current_level_node() -> Node:
 	if is_level_loading():
 		await new_level_loaded
 	return current_level
 
 
+func get_current_level_enum() -> Levels.LEVELS:
+	if is_level_loading():
+		await new_level_loaded
+	return current_level.get_level_enum()
+
+
 func get_current_tile_map() -> TileMapLayer:
-	await get_current_level()
+	await get_current_level_node()
 	return current_tile_map
 
 
@@ -51,7 +57,7 @@ func set_current_level(level: Levels.LEVELS) -> void: # bypass level switch
 		_update_level_data()
 		add_child(current_level)
 		_level_loading = false
-		new_level_loaded.emit()
+		new_level_loaded.emit(current_level)
 
 
 func change_level(old_level: Node, new_level_path: String) -> void:
@@ -67,7 +73,7 @@ func change_level(old_level: Node, new_level_path: String) -> void:
 	Global.player_camera.reset_smoothing()
 	old_level.queue_free()
 	_level_loading = false
-	new_level_loaded.emit()
+	new_level_loaded.emit(current_level)
 # =========================================================================
 # SIGNAL HANDLERS
 # =========================================================================

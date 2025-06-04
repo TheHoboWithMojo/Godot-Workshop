@@ -40,7 +40,7 @@ func _process(_delta: float) -> void:
 		disable_unseen_enemies() # Stops processing enemies outside of view
 
 
-func _on_new_level_loaded() -> void:
+func _on_new_level_loaded(_level: Level) -> void:
 	spawnable_enemies = level_manager.get_spawnable_enemies()
 	enemy_spawnpoints = level_manager.get_enemy_spawnpoints()
 

@@ -20,11 +20,11 @@ size = Vector2(30, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "npcs", "waypoint_manager", "navpoint_manager", "interactables", "portals")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "default_npcs", "waypoint_manager", "navpoint_manager", "interactables", "portals")]
 script = ExtResource("1_ejuju")
 level = 1
 tiles = NodePath("Tiles")
-npcs = [NodePath("DocMitchell")]
+default_npcs = [NodePath("DocMitchell")]
 waypoint_manager = NodePath("Navpoints")
 navpoint_manager = NodePath("Navpoints")
 interactables = [NodePath("VitMachine")]
@@ -35,12 +35,13 @@ position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
 timeline = 1
 character = 1
+debugging = true
 
-[node name="VitMachine" parent="." node_paths=PackedStringArray("click_detector_custom") instance=ExtResource("3_khflj")]
+[node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)
-click_detector_custom = NodePath("ClickDetector")
-play_mode_custom = 1
-scene_path_custom = "res://scenes/levels/doc_mitchells_house/vit_machine.tscn"
+custom_click_detector = NodePath("ClickDetector")
+custom_play_mode = 1
+custom_scene_path = "uid://bxetckwqxatr6"
 
 [node name="Collider" type="CollisionShape2D" parent="VitMachine"]
 position = Vector2(-4.76837e-07, -0.5)

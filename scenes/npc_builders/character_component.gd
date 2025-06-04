@@ -9,7 +9,7 @@ class_name CharacterComponent
 @onready var faction: Factions.FACTIONS
 @onready var character_name: String
 @onready var faction_name: String
-@onready var parent_has_health_component: bool = false
+@onready var parent_health: HealthComponent = parent.get_health_component() if parent is NPC else null
 @onready var current_level: Level = null
 
 func _ready() -> void:
@@ -41,12 +41,9 @@ func _on_death() -> void:
 	Debug.debug("character died.", parent, "_on_death")
 
 
-func _on_tree_entered() -> void:
-	current_level = await Levels.get_current_level()
-	Characters.set_character_last_level(character, current_level.get_level_enum())
-	Characters.set_character_last_position(character, parent.global_position)
+func get_character_enum() -> Characters.CHARACTERS:
+	return character
 
 
-func _on_tree_exited() -> void:
-	Characters.set_character_last_level(character, current_level.get_level_enum())
-	Characters.set_character_last_position(character, parent.global_position)
+func get_character_name() -> String:
+	return Characters.get_character_name(character)

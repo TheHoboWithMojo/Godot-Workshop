@@ -46,15 +46,17 @@ func _ready() -> void:
 @onready var shoot_the_bottles: Quest.Objective = main.new_objective("Shoot the Sarsparilla Bottles")
 var saloon: Level = null
 var sunny_smiles: NPC = null
+var sunny_nav: NavigationComponent = null
 
 func _on_related_level_loaded(level: Level) -> void:
 	if level.level == Levels.LEVELS.PROSPECTORS_SALOON:
 		sunny_smiles = await Global.npc_manager.get_npc(Characters.CHARACTERS.SUNNY_SMILES)
-		saloon = await Levels.get_current_level()
+		sunny_nav = sunny_smiles.get_navigator()
+		saloon = await Levels.get_current_level_node()
 
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	if timeline == Dialogue.TIMELINES.SUNNY_GREETING:
 		await Dialogic.timeline_ended
-		await sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
+		await sunny_nav.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
 		main.advance()

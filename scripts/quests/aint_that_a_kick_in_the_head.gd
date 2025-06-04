@@ -27,16 +27,16 @@ var doc_mitchells_house: Node
 var vit_machine: Interactable
 
 func _on_related_level_loaded(level: Level) -> void:
-	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE:
-		doc_mitchells_house = await Levels.get_current_level()
+	if level.level == Levels.LEVELS.DOC_MITCHELLS_HOUSE and not walk_to_vit.is_complete() and not use_the_vit.is_complete():
+		doc_mitchells_house = await Levels.get_current_level_node()
 		doc_mitchell = await Global.npc_manager.get_npc(Characters.CHARACTERS.DOC_MITCHELL)
 		vit_machine = doc_mitchells_house.find_child("VitMachine")
 
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
-	var docs_nav: NavigationComponent = doc_mitchell.navigation_manager
-	var docs_speech: DialogComponent = doc_mitchell.dialog_manager
-	if timeline == Dialogue.TIMELINES.YOURE_AWAKE:
+	var docs_nav: NavigationComponent = doc_mitchell.get_navigator()
+	var docs_speech: DialogComponent = doc_mitchell.get_dialog_component()
+	if timeline == Dialogue.TIMELINES.YOURE_AWAKE and not walk_to_vit.is_complete():
 		await Dialogic.timeline_ended
 		quest.start()
 		docs_nav.set_target(quest.get_navpoint_position("VitMachine"))
@@ -48,7 +48,7 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 		docs_nav.set_target(quest.get_navpoint_position("Couch"))
 		await docs_nav.navigation_finished
 		docs_speech.set_timeline(Dialogue.TIMELINES.PICKTAGS)
-	elif timeline == Dialogue.TIMELINES.PICKTAGS:
+	elif timeline == Dialogue.TIMELINES.PICKTAGS and not use_the_vit.is_complete():
 		await Dialogic.timeline_ended
 		main.advance()
 		docs_nav.set_target(Vector2(0,0))

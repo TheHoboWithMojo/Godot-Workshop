@@ -5,7 +5,7 @@ class_name Level
 # READ BY GAME MANAGER SECTION #
 @export var tiles: TileMapLayer
 @export var enemies: Array[PackedScene] = []
-@export var npcs: Array[NPC]
+@export var default_npcs: Array[NPC]
 @export var waypoint_manager: ChildManager
 @onready var waypoints: Array[Waypoint]
 @export var navpoint_manager: ChildManager
@@ -50,7 +50,7 @@ func get_portals_overview() -> void:
 
 
 func get_npcs() -> Array[NPC]:
-	return npcs
+	return default_npcs
 
 
 func get_portal_to_level(_level: Levels.LEVELS) -> Portal:

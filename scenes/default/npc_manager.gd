@@ -2,43 +2,52 @@
 extends Node
 class_name NPCManager
 @export var debugging: bool = false
-signal npc_assigned(character: Characters.CHARACTERS)
+signal duplicate_npc_loaded(npc: NPC)
+signal new_npc_loaded(npc: NPC)
 
 
 func _ready() -> void:
-	if Global.level_manager:
-		Global.level_manager.new_level_loaded.connect(_on_new_level_loaded)
+	duplicate_npc_loaded.connect(_on_duplicate_npc_loaded)
+	new_npc_loaded.connect(_on_new_npc_loaded)
+	Global.level_manager.new_level_loaded.connect(_on_new_level_loaded)
 
 
-func _on_child_entered_tree(node: Node) -> void:
-	npc_assigned.emit(node)
-	Debug.debug("NPC %s added, displaying current children:" % [node.name], self, "_on_child_entered_tree", {Debug.pretty_print_array:[get_npcs()]})
-
-
-func _on_new_level_loaded() -> void:
-	var new_level: Level = await Levels.get_current_level()
-	_replace_duplicates(new_level)
-	for npc: NPC in get_npcs(): # hide all npcs that arent moving to the next level
-		if Characters.get_character_last_level(npc.character) == new_level.get_level_enum():
-			await set_npc_enabled(npc, true)
-		else:
-			await set_npc_enabled(npc, false)
-
-
-func _replace_duplicates(new_level: Level) -> void:
-	for new_level_npc: NPC in new_level.get_npcs(): # prevent duplicates
-		if not is_character_stored(new_level_npc.character):
-			new_level_npc.reparent(self)
-			Characters.set_character_last_level(new_level_npc.character, new_level.get_level_enum())
+func _on_new_level_loaded(level: Level) -> void:
+	for npc: NPC in get_children():
+		var nav: NavigationComponent = npc.get_navigator()
+		if nav and nav.moving_to_level == level.get_level_enum(): # leave logic up to move to level function
 			continue
-		var duplicate_npc: NPC = new_level_npc
-		var stored_npc: NPC = await get_npc(duplicate_npc.character)
-		duplicate_npc.queue_free()
-		await set_npc_enabled(stored_npc, true)
-		stored_npc.set_global_position(Characters.get_character_last_position(stored_npc.character))
+		if Characters.get_character_last_level(npc.character) == level.get_level_enum():
+			var spawn_position: Vector2 = Characters.get_character_last_position(npc.character)
+			npc.set_global_position(spawn_position)
+			await set_npc_enabled(npc, true)
+			continue
+		Debug.debug("%s not a resident or pathfinder to current level %s, disabling" % [npc.name, level.name], self, "_on_new_level_loaded")
+		set_npc_enabled(npc, false)
+
+
+
+
+func _on_new_npc_loaded(node: NPC) -> void:
+	if node in get_children():
+		return
+	node.reparent.call_deferred(self, true)
+	if node.get_character():
+		Characters.set_character_last_level(node.get_character_enum(), await Levels.get_current_level_enum())
+		Characters.set_character_last_position(node.get_character_enum(), node.global_position)
+	await child_entered_tree
+	Debug.debug("NPC %s added." % [node.name], self, "_on_new_npc_loaded")
+
+
+
+func _on_duplicate_npc_loaded(dup_npc: NPC) -> void:
+	dup_npc.set_process(false) # stop from updating position
+	dup_npc.queue_free()
+
 
 
 func set_npc_enabled(npc: NPC, value: bool) -> void:
+	await get_tree().process_frame
 	npc.set_visible(value)
 	npc.collider.set_disabled(!value)
 	npc.set_physics_process(value)
@@ -68,12 +77,20 @@ func get_npcs() -> Array[Node]:
 
 
 func get_npc(character: Characters.CHARACTERS) -> NPC:
-	if not get_npcs(): # ensure an npc is stored
-		await npc_assigned
-	if not Characters.is_character_alive(character) or not is_character_stored(character):
+	var char_name: String = Characters.get_character_name(character)
+	if not get_children(): # ensure at least one npc is stored
+		Debug.debug("NPC Manager has no children, waiting for one to be added", self, "get_npc")
+		await child_entered_tree
+		Debug.debug("Child added, resuming function", self, "get_npc")
+	if not Characters.is_character_alive(character):
+		Debug.debug("NPC %s is dead and could not be retrieved" % [char_name], self, "get_npc")
 		return null
-	for npc: NPC in get_npcs():
+	if not is_character_stored(character):
+		Debug.debug("NPC %s hasn't been stored, delaying and trying again." % [char_name], self, "get_npc")
+		await get_tree().process_frame # give a moment for the npc to load if its a new scene
+	for npc: NPC in get_children():
 		if npc.get_character_enum() == character:
+			Debug.debug("Returning npc %s" % [npc.name], self, "get_npc")
 			return npc
 	return null
 
