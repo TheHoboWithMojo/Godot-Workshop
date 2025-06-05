@@ -31,7 +31,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	if save_selection:
-		Debug.enforce(level != Levels.LEVELS.UNASSIGNED, "To save with the vector placer the level you're in must be declared", self)
+		assert(level != Levels.LEVELS.UNASSIGNED, Debug.define_error("To save with the vector placer the level you're in must be declared", self))
 		save_path = Levels.get_level_path(level).replace(".tscn", "_navpoints.txt")
 
 	popup.hide()

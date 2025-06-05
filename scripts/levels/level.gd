@@ -6,9 +6,9 @@ class_name Level
 @export var tiles: TileMapLayer
 @export var enemies: Array[PackedScene] = []
 @export var default_npcs: Array[NPC]
-@export var waypoint_manager: ChildManager
+@export var waypoint_manager: WaypointManager
 @onready var waypoints: Array[Waypoint]
-@export var navpoint_manager: ChildManager
+@export var navpoint_manager: NavpointManager
 @onready var navpoints: Array[Navpoint]
 @export var interactables: Array[Interactable]
 @export var portals: Array[Portal]
@@ -16,18 +16,8 @@ class_name Level
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
 func _ready() -> void:
-	Debug.enforce(level, "All members of the level class must have a level association", self)
+	assert(level, Debug.define_error("All members of the level class must have a level association", self))
 	self.set_name(Levels.get_level_name(level)) # enforce naming conventions
-	if navpoint_manager:
-		await navpoint_manager.ready
-		Levels.levels[level]["Waypoints"] = navpoint_manager.children_dict
-		waypoints = waypoint_manager.get_children(false).filter(func(c: Node) -> bool: return c is Waypoint)
-	if waypoint_manager:
-		await waypoint_manager.ready
-		Levels.levels[level]["Navpoints"] = navpoint_manager.children_dict
-		navpoints = navpoint_manager.get_children(false).filter(func(c: Node) -> bool: return c is Navpoint)
-
-
 
 func get_level_enum() -> Levels.LEVELS:
 	return level
@@ -66,11 +56,16 @@ func get_waypoints_overview() -> void:
 
 
 func get_navpoints() -> Array[Navpoint]:
-	return navpoints
+	if navpoint_manager:
+		return navpoint_manager.get_navpoints()
+	return []
 
 
 func get_waypoints() -> Array[Waypoint]:
-	return waypoints
+	if waypoint_manager:
+		return waypoint_manager.get_waypoints()
+	return []
+
 
 
 func get_navpoints_overview() -> void:

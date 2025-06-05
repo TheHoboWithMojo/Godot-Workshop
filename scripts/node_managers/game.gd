@@ -15,10 +15,10 @@ extends Node2D
 # RUNTIME VARIABLES
 # =========================================================================
 @onready var waypoint_manager: Node = $WaypointManager
-@onready var quest_manager: Node = $QuestManager
-@onready var level_manager: Node = $LevelManager
-@onready var mob_manager: Node = $MobManager
-@onready var save_manager: Node = $SaveManager
+@onready var quest_manager: QuestManager = $QuestManager
+@onready var level_manager: LevelManager = $LevelManager
+@onready var mob_manager: MobManager = $MobManager
+@onready var save_manager: SaveManager = $SaveManager
 @onready var is_ready_to_start: bool = false # Updated by ready_to_start signal
 @onready var total_mobs: int
 # =========================================================================
@@ -33,8 +33,7 @@ func _ready() -> void:
 		push_warning("Game Manager set to Inactive")
 		queue_free()
 		return
-	update_global_references()
-	boot_dialogic()
+	await update_global_references()
 	load_data()
 	ready_up()
 
@@ -51,10 +50,8 @@ func _process(_delta: float) -> void:
 # =========================================================================
 func update_global_references() -> void:
 	Global.game_reloaded.emit()
+	await get_tree().process_frame
 
-
-func boot_dialogic() -> void:
-	pass
 
 func load_data() -> void:
 	if not use_save_data:
@@ -69,11 +66,10 @@ func load_data() -> void:
 func ready_up() -> void:
 	if not use_save_data: # load doc mitchells house if saving is disabled
 		level_manager.set_current_level(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
-	if level_manager.is_level_loading():
-		await level_manager.new_level_loaded
 	is_ready_to_start = true
 	ready_to_start.emit()
 	await Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
+	level_manager.new_level_loaded.emit(await level_manager.get_current_level_node()) # refresh an scripts that rely on the new level signal on boot
 
 # =========================================================================
 # PROCESS FUNCTIONS

@@ -13,10 +13,10 @@ var levels: Dictionary[LEVELS, Dictionary] = {
 		"Waypoints": {},
 		"Navpoints": {},
 	},
-		LEVELS.PROSPECTORS_SALOON: {
-		"Path": "res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn",
-		"Waypoints": {},
-		"Navpoints": {},
+	LEVELS.PROSPECTORS_SALOON: {
+	"Path": "res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn",
+	"Waypoints": {},
+	"Navpoints": {},
 	},
 }
 
@@ -24,8 +24,10 @@ var levels: Dictionary[LEVELS, Dictionary] = {
 func get_level_path(level: LEVELS) -> String:
 	return levels[level]["Path"]
 
+
 func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
+
 
 func get_current_level_node() -> Level:
 	return await Global.level_manager.get_current_level_node()
@@ -33,7 +35,6 @@ func get_current_level_node() -> Level:
 
 func get_current_level_enum() -> Levels.LEVELS:
 	return await Global.level_manager.get_current_level_enum()
-
 
 func print_vector_tool_level_navpoints(level: LEVELS) -> bool: # loads the files created by vector placing tool
 	var level_name: String = get_level_name(level)

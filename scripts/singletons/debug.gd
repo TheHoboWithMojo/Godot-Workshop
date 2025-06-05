@@ -1,20 +1,7 @@
 # Holds advanced printing functions
 extends Node
-#func warn(caller_or_file_name: Variant, function_name: String, reason: String, input: Variant = null) -> void:
-	#var file_name: String
-	#if caller_or_file_name is Node:
-		#file_name = caller_or_file_name.get_script().resource_path.get_file()
-	#else:
-		#file_name = caller_or_file_name
-#
-	#var caller_script_name: String = get_stack()[-1].source.get_file()
-	#var caller_function_name: String = get_stack()[-1].function  # Get the last function in the call stack
-#
-	#if input == null:
-		#print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s)." % [function_name, file_name, reason, caller_script_name, caller_function_name])
-		#return
-#
-	#print("Error: when calling %s() (%s). Reason: %s. Caller: %s (%s). Input: %s" % [function_name, file_name, reason, caller_script_name, caller_function_name, input])
+func throw_warning(warning: String, caller: Node) -> void:
+	push_warning(define_error(warning, caller))
 
 
 func throw_warning_if(condition: bool, warning: String, caller: Node) -> bool:
@@ -24,19 +11,19 @@ func throw_warning_if(condition: bool, warning: String, caller: Node) -> bool:
 	return true
 
 
-func throw_warning(warning: String, caller: Node) -> void:
-	push_warning("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, warning])
-
-
 func throw_error(error: String, caller: Node) -> void:
-	push_error("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
+	push_error(define_error(error, caller))
 
 
-func enforce(condition: bool, error: String, caller: Node) -> bool:
-	if condition == true:
-		return true
-	throw_error(error, caller)
-	return false
+func throw_error_if(condition: bool, warning: String, caller: Node) -> bool:
+	if condition == false:
+		return false
+	throw_error(warning, caller)
+	return true
+
+
+func define_error(error: String, caller: Node) -> String:
+	return ("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
 
 
 func debug(message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> void:

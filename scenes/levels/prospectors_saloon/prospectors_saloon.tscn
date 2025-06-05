@@ -1,18 +1,20 @@
-[gd_scene load_steps=9 format=4 uid="uid://ckkwucoj1mfu5"]
+[gd_scene load_steps=10 format=4 uid="uid://ckkwucoj1mfu5"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kryoy"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_2u73p"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_lfjp6"]
 [ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="4_slmuk"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_2u73p"]
-[ext_resource type="Script" uid="uid://c5vmlmggmw0w5" path="res://scripts/node_managers/child_manager.gd" id="6_slmuk"]
+[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="6_hhryp"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
+[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="8_2fjxs"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="8_hhryp"]
 
 [node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "default_npcs", "waypoint_manager", "navpoint_manager", "portals")]
 script = ExtResource("1_kryoy")
 level = 3
 tiles = NodePath("Tiles")
+enemies = null
 default_npcs = [NodePath("SunnySmiles"), NodePath("Tammy")]
 waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
@@ -38,21 +40,19 @@ character = 5
 [node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]
 position = Vector2(48, 0)
 rotation = -1.57079
+debugging = null
 send_from_level = NodePath("..")
 send_to_level = 2
+emit_interaction_signals = null
 
-[node name="Waypoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
-script = ExtResource("6_slmuk")
-enforce_node_type = NodePath("PortalToGoodsprings")
-metadata/_custom_type_script = "uid://c5vmlmggmw0w5"
+[node name="Navpoints" parent="." instance=ExtResource("6_hhryp")]
+
+[node name="DoorToGoodprings" parent="Navpoints" instance=ExtResource("8_hhryp")]
+related_level = 3
+
+[node name="Waypoints" parent="." instance=ExtResource("8_2fjxs")]
 
 [node name="PortalToGoodsprings" parent="Waypoints" instance=ExtResource("7_wbjm1")]
 position = Vector2(24, -32)
 quest = 2
-
-[node name="Navpoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
-script = ExtResource("6_slmuk")
-enforce_node_type = NodePath("DoorToGoodprings")
-metadata/_custom_type_script = "uid://c5vmlmggmw0w5"
-
-[node name="DoorToGoodprings" parent="Navpoints" instance=ExtResource("8_hhryp")]
+related_level = 3

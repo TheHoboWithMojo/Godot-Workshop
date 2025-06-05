@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfhlwtgg45xb5"]
+
+[ext_resource type="Script" uid="uid://bg11h1dnbhlw4" path="res://scenes/level_builders/navpoint_manager.gd" id="1_t417b"]
+
+[node name="NavpointManager" type="Node"]
+script = ExtResource("1_t417b")
+enforced_class = 7

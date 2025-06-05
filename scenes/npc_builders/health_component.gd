@@ -20,7 +20,7 @@ var alive: bool = true
 signal died
 
 func _ready() -> void:
-	Debug.enforce(parent != null, "A health component must reference a parent", self)
+	assert(parent != null, Debug.define_error("A health component must reference a parent", self))
 	await parent.ready
 	if health_bar:
 		health_bar.set_value(max_health)

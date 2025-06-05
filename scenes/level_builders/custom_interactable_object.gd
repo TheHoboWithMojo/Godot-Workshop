@@ -6,6 +6,8 @@ enum TEMPLATES {CUSTOM, CUTSCENE_MODE, POINT_AND_CLICK_MODE}
 enum TRIGGER_MODES {CLICK, ENTRY, CLICK_AND_ENTRY, CLICK_OR_ENTRY}
 enum PLAY_MODES {DIALOG, SCENE}
 
+@export var parent_level: Levels.LEVELS
+@export var related_quest: Quests.QUESTS
 @export var mode: TEMPLATES = TEMPLATES.CUSTOM
 @export_subgroup("Mode Reqs/Cutscene", "cutscene")
 @export var cutscene_touch_detector: TouchDetector
@@ -53,6 +55,9 @@ signal player_touched_me(self_node: Node)
 func _ready() -> void:
 	_assert_mode_requirements()
 	await get_tree().process_frame
+
+func get_related_quest() -> Quests.QUESTS:
+	return related_quest
 
 @onready var processing_press: bool = false
 func _on_button_pressed() -> void:
@@ -115,16 +120,16 @@ func _assert_mode_requirements() -> void:
 			_assert_custom_mode()
 
 func _assert_cutscene_mode() -> void:
-	Debug.enforce(cutscene_touch_detector != null, "An interactable set to cutscene mode must define a touch detector", self)
-	Debug.enforce(cutscene_scene_path != "", "An interactable set to cutscene mode must define a scene path", self)
+	assert(cutscene_touch_detector != null, Debug.define_error("An interactable set to cutscene mode must define a touch detector", self))
+	assert(cutscene_scene_path != "", Debug.define_error("An interactable set to cutscene mode must define a scene path", self))
 
 	trigger_mode = TRIGGER_MODES.ENTRY
 	_configure_trigger(null, cutscene_touch_detector)
 	_configure_play(PLAY_MODES.SCENE, Dialogue.TIMELINES.UNASSIGNED, cutscene_scene_path)
 
 func _assert_point_and_click_mode() -> void:
-	Debug.enforce(point_click_detector != null, "An interactable set to point and click mode must define a click detector", self)
-	Debug.enforce(point_timeline != Dialogue.TIMELINES.UNASSIGNED, "An interactable set to point and click mode must define a timeline", self)
+	assert(point_click_detector != null, Debug.define_error("An interactable set to point and click mode must define a click detector", self))
+	assert(point_timeline != Dialogue.TIMELINES.UNASSIGNED, Debug.define_error("An interactable set to point and click mode must define a timeline", self))
 
 	trigger_mode = TRIGGER_MODES.CLICK
 	_configure_trigger(point_click_detector)
@@ -135,38 +140,38 @@ func _assert_custom_mode() -> void:
 
 	match trigger_mode:
 		TRIGGER_MODES.CLICK:
-			Debug.enforce(custom_click_detector != null, "Custom trigger mode CLICK requires a click detector", self)
+			assert(custom_click_detector != null, Debug.define_error("Custom trigger mode CLICK requires a click detector", self))
 			_configure_trigger(custom_click_detector)
 		TRIGGER_MODES.ENTRY:
-			Debug.enforce(custom_touch_detector != null, "Custom trigger mode ENTRY requires a touch detector", self)
+			assert(custom_touch_detector != null, Debug.define_error("Custom trigger mode ENTRY requires a touch detector", self))
 			_configure_trigger(null, custom_touch_detector)
 		TRIGGER_MODES.CLICK_AND_ENTRY, TRIGGER_MODES.CLICK_OR_ENTRY:
-			Debug.enforce(custom_click_detector_alt != null, "Custom trigger mode CLICK_AND_ENTRY or CLICK_OR_ENTRY requires a click detector", self)
-			Debug.enforce(custom_touch_detector_alt != null, "Custom trigger mode CLICK_AND_ENTRY or CLICK_OR_ENTRY requires a touch detector", self)
+			assert(custom_click_detector_alt != null, Debug.define_error("Custom trigger mode CLICK_AND_ENTRY or CLICK_OR_ENTRY requires a click detector", self))
+			assert(custom_touch_detector_alt != null, Debug.define_error("Custom trigger mode CLICK_AND_ENTRY or CLICK_OR_ENTRY requires a touch detector", self))
 			_configure_trigger(custom_click_detector_alt, custom_touch_detector_alt)
 
-	Debug.enforce(custom_play_mode != null, "Custom play mode must be defined", self)
+	assert(custom_play_mode != null, Debug.define_error("Custom play mode must be defined", self))
 	play_mode = custom_play_mode
 
 	match play_mode:
 		PLAY_MODES.DIALOG:
-			Debug.enforce(custom_timeline != Dialogue.TIMELINES.UNASSIGNED, "Custom play mode DIALOG requires a timeline", self)
+			assert(custom_timeline != Dialogue.TIMELINES.UNASSIGNED, Debug.define_error("Custom play mode DIALOG requires a timeline", self))
 			_configure_play(PLAY_MODES.DIALOG, custom_timeline)
 		PLAY_MODES.SCENE:
-			Debug.enforce(custom_scene_path != "", "Custom play mode SCENE requires a scene path", self)
+			assert(custom_scene_path != "", Debug.define_error("Custom play mode SCENE requires a scene path", self))
 			_configure_play(PLAY_MODES.SCENE, Dialogue.TIMELINES.UNASSIGNED, custom_scene_path)
 
 @onready var click_detector_assigned: bool = false
 @onready var touch_detector_assigned: bool = false
 func _configure_trigger(click: ClickDetector, touch: TouchDetector = null) -> void:
-	Debug.enforce(not (click_detector_assigned or touch_detector_assigned), "Only follow the guidelines of one mode.", self)
+	assert(not (click_detector_assigned or touch_detector_assigned), Debug.define_error("Only follow the guidelines of one mode.", self))
 	if click != null:
 		click_detector = click
 		click_detector_assigned = true
 		click_detector.pressed.connect(_on_button_pressed)
 
 	if touch != null:
-		Debug.enforce(touch.get_collider() != null, "Interactables with a touch detector must have an Area2D collider", self)
+		assert(touch.get_collider() != null, Debug.define_error("Interactables with a touch detector must have an Area2D collider", self))
 		touch_detector = touch
 		touch_detector_assigned = true
 		touch_detector.set_monitored_parent(self)

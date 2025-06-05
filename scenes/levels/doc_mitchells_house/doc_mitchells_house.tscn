@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://5qmyahukkvx"]
+[gd_scene load_steps=17 format=4 uid="uid://5qmyahukkvx"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
 [ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="2_kjkh3"]
@@ -9,8 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="6_ejuju"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="7_58nvt"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="8_pmyaa"]
-[ext_resource type="Script" uid="uid://c5vmlmggmw0w5" path="res://scripts/node_managers/child_manager.gd" id="9_kjkh3"]
+[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="9_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="10_8rqal"]
+[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="11_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="13_khflj"]
 [ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="14_nrx6f"]
 
@@ -20,15 +21,12 @@ size = Vector2(30, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "default_npcs", "waypoint_manager", "navpoint_manager", "interactables", "portals")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "navpoint_manager")]
 script = ExtResource("1_ejuju")
 level = 1
+enemies = null
 tiles = NodePath("Tiles")
-default_npcs = [NodePath("DocMitchell")]
-waypoint_manager = NodePath("Navpoints")
 navpoint_manager = NodePath("Navpoints")
-interactables = [NodePath("VitMachine")]
-portals = [NodePath("DoorToGoodsprings")]
 
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
@@ -39,9 +37,10 @@ debugging = true
 
 [node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)
-custom_click_detector = NodePath("ClickDetector")
+parent_level = 1
 custom_play_mode = 1
 custom_scene_path = "uid://bxetckwqxatr6"
+custom_click_detector = NodePath("ClickDetector")
 
 [node name="Collider" type="CollisionShape2D" parent="VitMachine"]
 position = Vector2(-4.76837e-07, -0.5)
@@ -61,6 +60,23 @@ tile_map_data = PackedByteArray("AAD9//3/AQAAABYAAAD9//7/AQAAABcAAAD+//3/AQABABY
 tile_set = ExtResource("6_28y3f")
 script = ExtResource("7_58nvt")
 
+[node name="Waypoints" parent="." instance=ExtResource("9_nrx6f")]
+
+[node name="VitMachine" parent="Waypoints" instance=ExtResource("10_8rqal")]
+position = Vector2(0, -64)
+quest = 1
+related_level = 1
+
+[node name="Couch" parent="Waypoints" instance=ExtResource("10_8rqal")]
+position = Vector2(144, -144)
+quest = 1
+related_level = 1
+
+[node name="Exit" parent="Waypoints" instance=ExtResource("10_8rqal")]
+position = Vector2(-88, -64)
+quest = 1
+related_level = 1
+
 [node name="DocMitchellsCouch" type="StaticBody2D" parent="."]
 position = Vector2(144, -64)
 scale = Vector2(0.744253, 0.75703)
@@ -79,44 +95,28 @@ scale = Vector2(1.07748, 1.17117)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Waypoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
-script = ExtResource("9_kjkh3")
-enforce_node_type = NodePath("VitMachine")
-
-[node name="VitMachine" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(0, -64)
-quest = 1
-local_waypoints = NodePath("..")
-
-[node name="Couch" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(144, -144)
-quest = 1
-local_waypoints = NodePath("..")
-
-[node name="Exit" parent="Waypoints" node_paths=PackedStringArray("local_waypoints") instance=ExtResource("10_8rqal")]
-position = Vector2(-88, -64)
-quest = 1
-local_waypoints = NodePath("..")
-
-[node name="Navpoints" type="Node" parent="." node_paths=PackedStringArray("enforce_node_type")]
-script = ExtResource("9_kjkh3")
-enforce_node_type = NodePath("VitMachine")
-
-[node name="VitMachine" parent="Navpoints" instance=ExtResource("13_khflj")]
-position = Vector2(32, -100)
-related_quests = Array[int]([1])
+[node name="Navpoints" parent="." instance=ExtResource("11_nrx6f")]
 
 [node name="Couch" parent="Navpoints" instance=ExtResource("13_khflj")]
 position = Vector2(144, -96)
 related_quests = Array[int]([1])
+related_level = 1
 
 [node name="Exit" type="Marker2D" parent="Navpoints"]
 position = Vector2(-144, -100)
 script = ExtResource("14_nrx6f")
 related_quests = Array[int]([1])
+related_level = 1
 metadata/_custom_type_script = "uid://v843ummj070b"
+
+[node name="VitMachine" parent="Navpoints" instance=ExtResource("13_khflj")]
+position = Vector2(32, -100)
+related_quests = Array[int]([1])
+related_level = 1
 
 [node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
 position = Vector2(-176, -40)
-send_from_level = NodePath("..")
+debugging = null
 send_to_level = 2
+emit_interaction_signals = null
+send_from_level = NodePath("..")

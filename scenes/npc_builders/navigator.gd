@@ -13,7 +13,7 @@ signal moved_level
 
 
 func _ready() -> void:
-	Debug.enforce(parent != null, "A navigation agent must reference a parent", self)
+	assert(parent != null, Debug.define_error("A navigation agent must reference a parent", self))
 	await parent.ready
 	target_reached.connect(_on_target_reached)
 	velocity_computed.connect(_on_velocity_computed)
@@ -96,7 +96,7 @@ var moving_to_level: Levels.LEVELS = Levels.LEVELS.UNASSIGNED
 
 func move_to_new_level(level: Levels.LEVELS) -> void:
 
-	Debug.enforce(level != Levels.LEVELS.UNASSIGNED, "Cannot move to an unassigned level", self)
+	assert(level != Levels.LEVELS.UNASSIGNED, Debug.define_error("Cannot move to an unassigned level", self))
 
 	Debug.debug("[NPC] '%s' preparing to move to level '%s'" % [name, Levels.get_level_name(level)], parent, "move_to_new_level")
 

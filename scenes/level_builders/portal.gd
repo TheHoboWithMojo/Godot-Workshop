@@ -18,15 +18,15 @@ class_name Portal
 signal player_touched_me(self_node: Node)
 
 func _ready() -> void:
-	Debug.enforce(send_from_level != null, "Portals must reference the level they're in", self)
+	assert(send_from_level != null, Debug.define_error("Portals must reference the level they're in", self))
 
-	Debug.enforce(send_to_level != Levels.LEVELS.UNASSIGNED, "Portals must reference the level they lead to", self)
+	assert(send_to_level != Levels.LEVELS.UNASSIGNED, Debug.define_error("Portals must reference the level they lead to", self))
 	name = "PortalTo%s" % Levels.get_level_name(send_to_level)
 
-	Debug.enforce(click_detector != null, "Portals must have click detection to register interaction", self)
+	assert(click_detector != null, Debug.define_error("Portals must have click detection to register interaction", self))
 	click_detector.pressed.connect(_on_portal_clicked)
 
-	Debug.enforce(touch_detector != null, "Portals must have touch detection in order to ensure the player is touching them", self)
+	assert(touch_detector != null, Debug.define_error("Portals must have touch detection in order to ensure the player is touching them", self))
 	touch_detector.set_ignored_menu(click_detector) # stops the touch detector from setting mouse_touching_node to false when the click detector is touched
 
 	add_to_group("portal")

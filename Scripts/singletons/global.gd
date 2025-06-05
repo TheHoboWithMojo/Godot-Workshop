@@ -47,7 +47,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	delta = _delta
 
-
 # =============================================
 # PUBLIC FUNCTIONS
 # =============================================

@@ -65,11 +65,15 @@ script = ExtResource("5_0leiu")
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("6_4g1ug")
 
+[node name="LevelManager" type="Node" parent="."]
+script = ExtResource("11_dogt3")
+
+[node name="MobManager" type="Node" parent="."]
+script = ExtResource("12_0leiu")
+spawn_enemies = false
+
 [node name="QuestManager" type="Node" parent="."]
 script = ExtResource("6_0leiu")
-
-[node name="BackInTheSaddle" type="Node" parent="QuestManager"]
-script = ExtResource("5_pi5r2")
 
 [node name="ByACampfireOnTheTrail" type="Node" parent="QuestManager"]
 script = ExtResource("12_f32yu")
@@ -82,12 +86,16 @@ script = ExtResource("14_4g1ug")
 
 [node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
 script = ExtResource("10_f32yu")
+linked_quest = 1
+characters = Array[int]([1])
+timelines = Array[int]([1, 2])
+levels = Array[int]([1])
 
-[node name="LevelManager" type="Node" parent="."]
-script = ExtResource("11_dogt3")
-
-[node name="MobManager" type="Node" parent="."]
-script = ExtResource("12_0leiu")
-spawn_enemies = false
+[node name="BackInTheSaddle" type="Node" parent="QuestManager"]
+script = ExtResource("5_pi5r2")
+linked_quest = 2
+characters = Array[int]([2, 5])
+timelines = Array[int]([3])
+levels = Array[int]([3, 2])
 
 [connection signal="child_entered_tree" from="NPCManager" to="NPCManager" method="_on_child_entered_tree"]

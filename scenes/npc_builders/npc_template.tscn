@@ -88,7 +88,10 @@ parent = NodePath("..")
 track_death = NodePath("../HealthComponent")
 
 [node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("7_tlv0r")]
+debugging = null
+inherit_debugging = null
 parent = NodePath("..")
+speed = null
 
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("parent", "health_bar") instance=ExtResource("8_bxylu")]
 parent = NodePath("..")

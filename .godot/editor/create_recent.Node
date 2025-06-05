@@ -1,8 +1,9 @@
-Collider
 Node
+Quest
+ChildManager
+Collider
 NavigationAgent2D
 Waypoint
-ChildManager
 Navpoint
 Camera2D
 TDCamera2D
@@ -11,4 +12,3 @@ Level
 ClickDetector
 RichTextLabel
 ColorRect
-SpawnPoint

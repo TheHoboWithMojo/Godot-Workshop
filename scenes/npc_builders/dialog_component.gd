@@ -28,27 +28,27 @@ signal dialog_ended(self_node: Node)
 
 # --- Setup ---
 func _ready() -> void:
-	Debug.enforce(parent != null, "A DialogComponent must reference a parent node", self)
+	assert(parent != null, Debug.define_error("A DialogComponent must reference a parent node", self))
 	await parent.tree_entered
 
 	Debug.throw_warning_if(timeline == Dialogue.TIMELINES.UNASSIGNED, "Dialog Components should be initiated with a boot timeline", parent)
 
 	match trigger_mode:
 		TRIGGER_MODES.CLICK:
-			Debug.enforce(click_detector != null, "Trigger mode CLICK requires a ClickDetector", parent)
+			assert(click_detector != null, Debug.define_error("Trigger mode CLICK requires a ClickDetector", parent))
 			click_detector.pressed.connect(_on_button_pressed)
 
 		TRIGGER_MODES.ENTRY:
-			Debug.enforce(touch_detector != null, "Trigger mode ENTRY requires a TouchDetector", parent)
+			assert(touch_detector != null, Debug.define_error("Trigger mode ENTRY requires a TouchDetector", parent))
 			touch_detector.area_entered.connect(_on_area_entered)
 
 		TRIGGER_MODES.CLICK_AND_ENTRY:
-			Debug.enforce(click_detector != null and touch_detector != null, "Trigger mode CLICK_AND_ENTRY requires both ClickDetector and TouchDetector", parent)
+			assert(click_detector != null and touch_detector != null, Debug.define_error("Trigger mode CLICK_AND_ENTRY requires both ClickDetector and TouchDetector", parent))
 			click_detector.pressed.connect(_on_button_pressed)
 			touch_detector.set_ignored_menu(click_detector)
 
 		TRIGGER_MODES.CLICK_OR_ENTRY:
-			Debug.enforce(click_detector != null and touch_detector != null, "Trigger mode CLICK_OR_ENTRY requires both ClickDetector and TouchDetector", parent)
+			assert(click_detector != null and touch_detector != null, Debug.define_error("Trigger mode CLICK_OR_ENTRY requires both ClickDetector and TouchDetector", parent))
 			click_detector.pressed.connect(_on_button_pressed)
 			touch_detector.area_entered.connect(_on_area_entered)
 			touch_detector.set_ignored_menu(click_detector)

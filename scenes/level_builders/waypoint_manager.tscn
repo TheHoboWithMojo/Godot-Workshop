@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://f667j8r5scej"]
+
+[ext_resource type="Script" uid="uid://du2hfydid0r87" path="res://scenes/levels/doc_mitchells_house/waypoint_manager.gd" id="1_r7u7v"]
+
+[node name="Waypoints" type="Node"]
+script = ExtResource("1_r7u7v")
+enforced_class = 8

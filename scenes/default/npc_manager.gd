@@ -2,15 +2,11 @@
 extends Node
 class_name NPCManager
 @export var debugging: bool = false
-signal duplicate_npc_loaded(npc: NPC)
 signal new_npc_loaded(npc: NPC)
 
 
 func _ready() -> void:
-	duplicate_npc_loaded.connect(_on_duplicate_npc_loaded)
-	new_npc_loaded.connect(_on_new_npc_loaded)
 	Global.level_manager.new_level_loaded.connect(_on_new_level_loaded)
-
 
 func _on_new_level_loaded(level: Level) -> void:
 	for npc: NPC in get_children():
@@ -25,10 +21,7 @@ func _on_new_level_loaded(level: Level) -> void:
 		Debug.debug("%s not a resident or pathfinder to current level %s, disabling" % [npc.name, level.name], self, "_on_new_level_loaded")
 		set_npc_enabled(npc, false)
 
-
-
-
-func _on_new_npc_loaded(node: NPC) -> void:
+func add_new_npc(node: NPC) -> void:
 	if node in get_children():
 		return
 	node.reparent.call_deferred(self, true)
@@ -36,14 +29,13 @@ func _on_new_npc_loaded(node: NPC) -> void:
 		Characters.set_character_last_level(node.get_character_enum(), await Levels.get_current_level_enum())
 		Characters.set_character_last_position(node.get_character_enum(), node.global_position)
 	await child_entered_tree
+	new_npc_loaded.emit(node)
 	Debug.debug("NPC %s added." % [node.name], self, "_on_new_npc_loaded")
 
 
-
-func _on_duplicate_npc_loaded(dup_npc: NPC) -> void:
+func remove_duplicate_npc(dup_npc: NPC) -> void:
 	dup_npc.set_process(false) # stop from updating position
 	dup_npc.queue_free()
-
 
 
 func set_npc_enabled(npc: NPC, value: bool) -> void:

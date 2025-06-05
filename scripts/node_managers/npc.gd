@@ -60,9 +60,9 @@ func _ready() -> void:
 	if not active:
 		queue_free()
 	if not Global.npc_manager.is_character_stored(character):
-		Global.npc_manager.new_npc_loaded.emit(self)
+		Global.npc_manager.add_new_npc(self)
 	else:
-		Global.npc_manager.duplicate_npc_loaded.emit(self)
+		Global.npc_manger.remove_duplicate_npc(self)
 		return
 	if character_manager:
 		character_manager.character = character

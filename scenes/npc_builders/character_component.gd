@@ -13,10 +13,10 @@ class_name CharacterComponent
 @onready var current_level: Level = null
 
 func _ready() -> void:
-	Debug.enforce(parent != null, "Character must reference a parent", self)
+	assert(parent != null, Debug.define_error("Character must reference a parent", self))
 	await parent.tree_entered
-	Debug.enforce(character != Characters.CHARACTERS.UNASSIGNED, "Character cannot be unassigned, parent (%s)" % [parent.name], parent)
-	Debug.enforce(track_death != null, "All characters must have a be connected to a health component in order to process their death.", parent)
+	assert(character != Characters.CHARACTERS.UNASSIGNED, Debug.define_error("Character cannot be unassigned, parent (%s)" % [parent.name], parent))
+	assert(track_death != null, Debug.define_error("All characters must have a be connected to a health component in order to process their death.", parent))
 	if not Characters.is_character_alive(character):
 		parent.queue_free()
 		return

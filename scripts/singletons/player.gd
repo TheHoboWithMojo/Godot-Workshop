@@ -238,7 +238,7 @@ func set_objective(objective: Quest.Objective) -> void:
 
 
 func set_quest(quest: Quest) -> void:
-	Global.quest_displayer.get_node("Quest").set_text(quest.nomen + ":")
+	Global.quest_displayer.get_node("Quest").set_text(quest.name + ":")
 
 
 func _print_stat_change(stat: STATS, original_stat_value: float, new_stat_value: float) -> void:
