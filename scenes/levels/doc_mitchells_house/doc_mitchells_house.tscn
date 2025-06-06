@@ -21,26 +21,26 @@ size = Vector2(30, 45)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "navpoint_manager")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portals")]
 script = ExtResource("1_ejuju")
 level = 1
-enemies = null
 tiles = NodePath("Tiles")
+waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
+portals = [NodePath("DoorToGoodsprings")]
 
 [node name="DocMitchell" parent="." instance=ExtResource("2_kjkh3")]
 position = Vector2(104, 0)
 wall_min_slide_angle = 0.0
 timeline = 1
 character = 1
-debugging = true
 
 [node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") instance=ExtResource("3_khflj")]
 position = Vector2(0, -104)
 parent_level = 1
+custom_click_detector = NodePath("ClickDetector")
 custom_play_mode = 1
 custom_scene_path = "uid://bxetckwqxatr6"
-custom_click_detector = NodePath("ClickDetector")
 
 [node name="Collider" type="CollisionShape2D" parent="VitMachine"]
 position = Vector2(-4.76837e-07, -0.5)
@@ -65,17 +65,17 @@ script = ExtResource("7_58nvt")
 [node name="VitMachine" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(0, -64)
 quest = 1
-related_level = 1
+home_level = 1
 
 [node name="Couch" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(144, -144)
 quest = 1
-related_level = 1
+home_level = 1
 
 [node name="Exit" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(-88, -64)
 quest = 1
-related_level = 1
+home_level = 1
 
 [node name="DocMitchellsCouch" type="StaticBody2D" parent="."]
 position = Vector2(144, -64)
@@ -116,7 +116,5 @@ related_level = 1
 
 [node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
 position = Vector2(-176, -40)
-debugging = null
-send_to_level = 2
-emit_interaction_signals = null
 send_from_level = NodePath("..")
+send_to_level = 2

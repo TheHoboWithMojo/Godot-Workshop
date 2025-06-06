@@ -45,7 +45,7 @@ func get_npcs() -> Array[NPC]:
 
 func get_portal_to_level(_level: Levels.LEVELS) -> Portal:
 	for portal: Portal in portals:
-		if portal.send_to_level_path == Levels.get_level_path(_level):
+		if portal.send_to_level == _level:
 			return portal
 	return null
 

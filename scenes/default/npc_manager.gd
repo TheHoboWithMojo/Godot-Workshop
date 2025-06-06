@@ -8,6 +8,7 @@ signal new_npc_loaded(npc: NPC)
 func _ready() -> void:
 	Global.level_manager.new_level_loaded.connect(_on_new_level_loaded)
 
+
 func _on_new_level_loaded(level: Level) -> void:
 	for npc: NPC in get_children():
 		var nav: NavigationComponent = npc.get_navigator()
@@ -19,7 +20,8 @@ func _on_new_level_loaded(level: Level) -> void:
 			await set_npc_enabled(npc, true)
 			continue
 		Debug.debug("%s not a resident or pathfinder to current level %s, disabling" % [npc.name, level.name], self, "_on_new_level_loaded")
-		set_npc_enabled(npc, false)
+		await set_npc_enabled(npc, false)
+
 
 func add_new_npc(node: NPC) -> void:
 	if node in get_children():
@@ -39,12 +41,18 @@ func remove_duplicate_npc(dup_npc: NPC) -> void:
 
 
 func set_npc_enabled(npc: NPC, value: bool) -> void:
-	await get_tree().process_frame
-	npc.set_visible(value)
-	npc.collider.set_disabled(!value)
-	npc.set_physics_process(value)
-	npc.set_process(value)
-	await get_tree().physics_frame
+	# Immediately freeze physics processing
+	npc.set_physics_process(false)
+	npc.set_process(false)
+	npc.collider.set_disabled(true)
+	npc.set_visible(false)
+
+	if value:
+		await get_tree().process_frame  # Wait one frame for stability
+		npc.set_visible(true)
+		npc.collider.set_disabled(false)
+		npc.set_physics_process(true)
+		npc.set_process(true)
 
 
 func store_npc(npc: NPC) -> bool:

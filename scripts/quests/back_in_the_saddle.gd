@@ -32,18 +32,19 @@ func _ready() -> void:
 	talk_to_sunny.pair_waypoints(["PortalToGoodsprings"])
 	meet_sunny_in_the_back = mainplot.new_objective("Meet Sunny at the back of the Prospector Saloon.")
 	shoot_the_bottles = mainplot.new_objective("Shoot the Sarsparilla Bottles")
-	await start()
+
 
 func _on_related_character_loaded(character: Characters.CHARACTERS) -> void:
 	match(character):
 		Characters.CHARACTERS.SUNNY_SMILES:
-			sunny_smiles = await Global.npc_manager.get_npc(Characters.CHARACTERS.DOC_MITCHELL) if not sunny_smiles else sunny_smiles
+			sunny_smiles = await Global.npc_manager.get_npc(Characters.CHARACTERS.SUNNY_SMILES) if not sunny_smiles else sunny_smiles
 			sunny_nav = sunny_smiles.get_navigator() if not sunny_nav else sunny_nav
 
 
 func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 	match(level):
 		Levels.LEVELS.PROSPECTORS_SALOON:
+			start()
 			saloon = await Levels.get_current_level_node()
 
 

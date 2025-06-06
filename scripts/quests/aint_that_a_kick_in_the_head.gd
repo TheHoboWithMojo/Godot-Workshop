@@ -11,6 +11,7 @@ var doc_mitchells_house: Node
 var vit_machine: Interactable
 
 func _ready() -> void:
+	name = Quests.get_quest_name(linked_quest)
 	await quest_created
 	await waypoints_assigned
 	walk_to_vit = mainplot.new_objective("Walk to the Vit-o-Matic Vigor Tester.")

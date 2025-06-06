@@ -35,6 +35,7 @@ scale = Vector2(0.25, 0.25)
 
 [node name="WaypointManager" type="Node" parent="."]
 script = ExtResource("5_o4eyc")
+enforced_class = 8
 
 [node name="UI" type="CanvasLayer" parent="."]
 

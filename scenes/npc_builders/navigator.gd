@@ -101,9 +101,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 	Debug.debug("[NPC] '%s' preparing to move to level '%s'" % [name, Levels.get_level_name(level)], parent, "move_to_new_level")
 
 
-
 	moving_to_level = level
-
 
 
 	var old_level: Level = await Levels.get_current_level_node()
@@ -112,28 +110,20 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	var target: Vector2 = old_level.get_portal_to_level(level).get_spawn_point_position()
 
-
-
 	set_target(target)
-
 
 
 	# Wait for either the navigation to finish or the level to change
 
-	while (await Levels.get_current_level_node() == old_level) and (not is_navigation_finished()):
-
+	while (await Levels.get_current_level_enum() == old_level_enum) and (not is_navigation_finished()):
 		await get_tree().process_frame
-
-
 
 	# Disable the NPC until the new_level is loaded
 
 	await Global.npc_manager.set_npc_enabled(parent, false)
 
 
-
-	if is_navigation_finished() and (await Levels.get_current_level() == old_level):
-
+	if is_navigation_finished() and (await Levels.get_current_level_enum() == old_level_enum):
 		await Global.level_manager.new_level_loaded
 
 
@@ -159,7 +149,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 
 	# Get the spawn position from the portal of the new level
-
+	print(new_level.get_portals())
 	var spawn_position: Vector2 = new_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
 
 	Debug.debug("New level spawnpoint location calculated, targeting it now", parent, "move_to_new_level")

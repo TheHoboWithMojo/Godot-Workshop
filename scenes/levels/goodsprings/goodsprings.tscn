@@ -9,7 +9,6 @@
 script = ExtResource("1_y5w72")
 level = 2
 tiles = NodePath("Tiles")
-enemies = null
 default_npcs = [NodePath("JoeCobb"), NodePath("OldManPete")]
 portals = [NodePath("DoorToDocMitchellsHouse"), NodePath("DoorToProspectorsSaloon")]
 
@@ -21,10 +20,8 @@ tile_set = ExtResource("1_n7gug")
 [node name="DoorToDocMitchellsHouse" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
 position = Vector2(96, -24)
 rotation = -3.14159
-debugging = null
 send_from_level = NodePath("..")
 send_to_level = 1
-emit_interaction_signals = null
 
 [node name="JoeCobb" parent="." instance=ExtResource("5_77bbt")]
 position = Vector2(-80, -80)
@@ -37,7 +34,5 @@ character = 6
 [node name="DoorToProspectorsSaloon" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
 position = Vector2(24, 96)
 rotation = -1.57079
-debugging = null
 send_from_level = NodePath("..")
 send_to_level = 3
-emit_interaction_signals = null

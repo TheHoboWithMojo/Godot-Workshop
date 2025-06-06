@@ -45,3 +45,7 @@ func _on_portal_clicked() -> void:
 
 func get_spawn_point_position() -> Vector2:
 	return spawn_point.global_position
+
+
+func get_connected_level_enum() -> Levels.LEVELS:
+	return send_to_level

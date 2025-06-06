@@ -1,6 +1,6 @@
 @icon("res://assets/Icons/16x16/disk.png")
-extends Node
-class_name SaveManager
+class_name SaveManager extends Node
+@export var debugging: bool = false
 
 # ----- Variables -----
 var is_loading_complete: bool = false
@@ -22,13 +22,12 @@ signal saving_complete
 }
 
 var reload_data: Dictionary = {
-	"last_level": "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn", # these are set to level one values by default
+	"last_level": "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
 	"last_position": Vector2(0, 0),
 	"acquired_weapons": [],
 }
 
-
-var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing csvs
+var spreadsheets: Dictionary[String, Dictionary] = {
 	"items": {
 		"id": "1J16pLFRq0sskkJiUBQhY4QvSbcZ4VGSB00Zy3yi-1Vc",
 	},
@@ -39,22 +38,20 @@ var spreadsheets: Dictionary[String, Dictionary] = { # dictionary for syncing cs
 
 # ----- Initialization -----
 func load_game_data() -> void:
-	print("[SaveManager] Loading game data...")
+	Debug.debug("Loading game data...", self, "load_game_data")
 	_load_static_data()
 	_load_dynamic_data()
 	_process_reload_data()
 	_convert_faction_keys()
 	_ensure_player_health()
 
-	print("[SaveManager] Game data loaded...")
+	Debug.debug("Game data loaded...", self, "load_game_data")
 	is_loading_complete = true
 	loading_complete.emit()
 
-
-func _load_static_data() -> void: # quests is outdated
+func _load_static_data() -> void:
 	Data.game_data["items"] = Data.load_json_file(Data.get_current_path("items").replace("_current", ""))
 	Data.game_data["quests"] = Data.load_json_file(Data.get_current_path("quests"))
-
 
 func _load_dynamic_data() -> void:
 	for data_name: String in reference_data.keys():
@@ -67,17 +64,16 @@ func _load_dynamic_data() -> void:
 		var current_data: Dictionary = JSON.parse_string(current_data_str)
 		var backup_data: Dictionary = JSON.parse_string(backup_data_str)
 
-
 		if current_data == null or current_data.is_empty():
-			print("[SaveManager] Warning: Current data for %s is invalid or empty" % data_name)
+			push_error(Debug.define_error("Current data for %s is invalid or empty" % data_name, self))
 
 			if backup_data != null and not backup_data.is_empty():
-				print("[SaveManager] Restoring from backup for %s" % data_name)
+				Debug.debug("Restoring from backup for %s" % data_name, self, "_load_dynamic_data")
 				Data.game_data[data_name] = backup_data
 				Data.save_json(backup_data, current_data_path)
 				continue
 
-			print("[SaveManager] Using default data for %s" % data_name)
+			Debug.debug("Using default data for %s" % data_name, self, "_load_dynamic_data")
 			Data.game_data[data_name] = reference_data[data_name].duplicate(true)
 			Data.save_json(Data.game_data[data_name], current_data_path)
 			Data.save_json(Data.game_data[data_name], backup_data_path)
@@ -85,9 +81,8 @@ func _load_dynamic_data() -> void:
 
 		Data.game_data[data_name] = current_data
 		if current_data_str != backup_data_str:
-			print("[SaveManager] Updating backup for %s" % data_name)
+			Debug.debug("Updating backup for %s" % data_name, self, "_load_dynamic_data")
 			Data.save_json(current_data, backup_data_path)
-
 
 func _process_reload_data() -> void:
 	if not Data.game_data.has("reload_data"):
@@ -108,10 +103,8 @@ func _process_reload_data() -> void:
 	if _reload_data.has("last_level"):
 		Global.level_manager.current_level = load(_reload_data["last_level"]).instantiate()
 
-
 	for character: String in _character_data:
 		_character_data[character]["last_position"] = Global.string_to_vector2(_character_data[character]["last_position"])
-
 
 func _convert_faction_keys() -> void:
 	if not Data.game_data.has("factions_data"):
@@ -122,21 +115,20 @@ func _convert_faction_keys() -> void:
 	for faction_number: String in factions_copy.keys():
 		Data.game_data["factions_data"][int(faction_number)] = factions_copy[faction_number]
 
-
 func _ensure_player_health() -> void:
 	if Player.get_stat(Player.STATS.HEALTH) == 0:
 		Player.set_stat(Player.STATS.HEALTH, 100.0)
+
 # ----- Data Backup And Clearing -----
 func verify_data_integrity() -> bool:
 	var all_valid: bool = true
 
-	# Check all data files
 	for data_name: String in reference_data.keys():
 		var current_path: String = Data.get_current_path(data_name)
 		var backup_path: String = Data.get_backup_path(data_name)
 
 		if not FileAccess.file_exists(current_path) or not FileAccess.file_exists(backup_path):
-			print("[SaveManager] Missing data file for: ", data_name)
+			push_error(Debug.define_error("Missing data file for: %s" % [data_name], self))
 			all_valid = false
 			continue
 
@@ -144,76 +136,64 @@ func verify_data_integrity() -> bool:
 		var backup_data: Dictionary = Data.load_json_file(backup_path)
 
 		if current_data.is_empty() and not Data.game_data[data_name].is_empty():
-			print("[SaveManager] Current data file is empty for: ", data_name)
+			push_error(Debug.define_error("Current data file is empty for: %s" % data_name, self))
 			all_valid = false
 
 		if backup_data.is_empty() and not Data.game_data[data_name].is_empty():
-			print("[SaveManager] Backup data file is empty for: ", data_name)
+			push_error(Debug.define_error("Backup data file is empty for: %s" % data_name, self))
 			all_valid = false
 
 	return all_valid
 
 func save() -> void:
 	saving_started.emit()
-	# Save quests data with backup
 	_save_data_with_backup("quests")
 
-	# Save all reference data with backup
 	for data_name: String in reference_data.keys():
 		_save_data_with_backup(data_name)
 
-	# Verify data integrity
 	var is_valid: bool = verify_data_integrity()
 	if is_valid:
-		print("[SaveManager] All data saved successfully and verified.")
+		Debug.debug("All data saved successfully and verified.", self, "save")
 	else:
-		print("[SaveManager] WARNING: Some data may not have been saved correctly!")
+		push_warning(Debug.define_error("Some data may not have been saved correctly!", self))
 
 	saving_complete.emit()
 
 func _save_data_with_backup(data_name: String) -> void:
-	# Get file paths
 	var current_data_path: String = Data.get_current_path(data_name)
 	var backup_data_path: String = Data.get_backup_path(data_name)
 	var temp_data_path: String = current_data_path.replace("_current", "_temp")
 
-	# Step 1: Save the NEW data to temp file first
 	var new_data: Dictionary = Data.game_data[data_name]
 	var success_temp_save: bool = Data.save_json(new_data, temp_data_path)
 	if not success_temp_save:
-		print("[SaveManager] Failed to create temporary file for: ", data_name)
+		push_error(Debug.define_error("Failed to create temporary file for: %s" % data_name, self))
 		return
 
-	# Step 2: Verify temp file was written correctly
 	var temp_data: Dictionary = Data.load_json_file(temp_data_path)
 	if temp_data.is_empty() and not new_data.is_empty():
-		print("[SaveManager] Temp file verification failed for: ", data_name)
+		push_error(Debug.define_error("Temp file verification failed for: %s" % data_name, self))
 		return
 
-	# Step 3: Move current to backup (only if current exists and is valid)
 	if FileAccess.file_exists(current_data_path):
 		var current_data: Dictionary = Data.load_json_file(current_data_path)
 		if not current_data.is_empty():
 			var success_backup: bool = Data.save_json(current_data, backup_data_path)
 			if not success_backup:
-				print("[SaveManager] Failed to create backup for: ", data_name)
+				push_error(Debug.define_error("Failed to create backup for: %s" % data_name, self))
 				return
 
-	# Step 4: Move temp to current
 	var success_current: bool = Data.save_json(new_data, current_data_path)
 	if not success_current:
-		print("[SaveManager] Failed to save current data for: ", data_name)
+		push_error(Debug.define_error("Failed to save current data for: %s" % data_name, self))
 		return
 
-	# Clean up temp file
 	var cleanup_dir: DirAccess = DirAccess.open("res://data/")
 	if cleanup_dir:
 		cleanup_dir.remove(temp_data_path)
 
-	#print("Successfully saved changes for: ", data_name)
-
-func clear_data() -> void: # Resets all current and backup files to default
-	# Reset reference data (perks, player_stats, faction_stats)
+func clear_data() -> void:
 	for data_name: String in reference_data.keys():
 		var current_path: String = Data.get_current_path(data_name)
 		var backup_path: String = current_path.replace("_current", "_backup")
@@ -222,14 +202,13 @@ func clear_data() -> void: # Resets all current and backup files to default
 		Data.save_json(reference_data[data_name], backup_path)
 		Data.game_data[data_name] = reference_data[data_name].duplicate(true)
 
-	# Reset quests (using reference data)
 	var quests_ref_path: String = Data.get_current_path("quests").replace("_current", "")
 	var quests_ref_data: Dictionary = Data.load_json_file(quests_ref_path)
 	Data.save_json(quests_ref_data, Data.get_current_path("quests"))
 	Data.save_json(quests_ref_data, Data.get_backup_path("quests"))
 	Data.game_data["quests"] = quests_ref_data.duplicate(true)
 
-	print("[SaveManager] All data have been reset to defaults.")
+	Debug.debug("All data have been reset to defaults.", self, "clear_data")
 
 	is_data_cleared = true
 	data_cleared.emit()
