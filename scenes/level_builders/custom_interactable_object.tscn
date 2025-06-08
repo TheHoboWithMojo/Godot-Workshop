@@ -4,15 +4,3 @@
 
 [node name="CustomInteractableObject" type="StaticBody2D"]
 script = ExtResource("1_264io")
-parent_level = null
-related_quest = null
-mode = null
-cutscene_scene_path = null
-point_timeline = null
-custom_trigger_mode = null
-custom_play_mode = null
-custom_timeline = null
-custom_scene_path = null
-max_trigger_distance = null
-repeat_event = null
-emit_interaction_signals = null

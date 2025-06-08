@@ -104,15 +104,20 @@ func set_active(value: bool) -> void:
 			mainplot._set_active_all_waypoints(objective, false)
 
 func start() -> bool:
+	Debug.debug("Starting quest", self, "start")
 	if not await Levels.get_current_level_node():
+		Debug.debug("not level loaded, waiting level loaded", self, "start")
 		await Global.level_manager.new_level_loaded
 	if not quest_waypoints and "waypoint_manager" in await Levels.get_current_level_node():
+		Debug.debug("No quest waypoints, waiting for assignment", self, "start")
 		await waypoints_assigned
 	if not quest_navpoints and "navpoint_manager" in await Levels.get_current_level_node():
+		Debug.debug("No quest navpoints, waiting for assignment", self, "start")
 		await navpoints_assigned
 	if not mainplot.objectives:
 		push_warning(Debug.define_error("Quest plot %'s objectives have not been declared" % [mainplot.nomen], self))
 		return false
+	Debug.debug("Attempting to start mainplot", self, "start")
 	mainplot._start()
 	for plot_name: String in sideplots:
 		var plot: Plot = sideplots[plot_name]
@@ -155,7 +160,7 @@ func overview() -> void:
 
 func get_active_waypoints() -> Array[Waypoint]:
 	if not started:
-		push_warning(Debug.define_error("Trying to get waypoints before the quest has started, waiting for start", self))
+		push_warning(Debug.define_error("Tried to get waypoints before the quest has started, waiting for start", self))
 		await quest_started
 	var waypoints: Array[Waypoint] = []
 	var mainplot_waypoints: Array[Waypoint] = mainplot.current_objective.get_waypoints()
@@ -166,6 +171,48 @@ func get_active_waypoints() -> Array[Waypoint]:
 		if plot_waypoints:
 			waypoints += plot_waypoints
 	return waypoints
+
+
+var awaiting_event: bool = false
+func level_dependent_event(level_specific_node: Node, boolean_completion_method: String, get_child_string_arg: String, check_delay: float = 0.5, error_timer_duration: float = 30.0) -> void:
+	awaiting_event = true
+	if level_specific_node == null:
+		push_error(Debug.define_error("Tried to call method with null level_specific_node", self))
+		awaiting_event = false
+		return
+	if not level_specific_node.has_method("get_parent_level"):
+		push_error(Debug.define_error("To await level_dependent_event, the level_specific_node must reference a parent level", self))
+		awaiting_event = false
+		return
+	if not level_specific_node.has_method(boolean_completion_method):
+		push_error(Debug.define_error("Node %s does not have the completion method %s" % [level_specific_node.name, boolean_completion_method], self))
+		awaiting_event = false
+		return
+	var parent_level: Levels.LEVELS = level_specific_node.get_parent_level()
+	var nomen: String = level_specific_node.name
+
+	var time_elapsed: float = 0.0
+	var times_warned: int = 0
+
+	while true:
+		while level_specific_node and not level_specific_node.call(boolean_completion_method):
+			await Global.delay(self, check_delay)
+			time_elapsed += check_delay
+			if time_elapsed >= error_timer_duration * (times_warned + 1):
+				times_warned += 1
+				push_error(Debug.define_error("Waiting for node %s's method %s to return true for more than %.1f seconds, warning #%s" % [nomen, boolean_completion_method, error_timer_duration * (times_warned + 1), times_warned], self))
+		if level_specific_node and level_specific_node.call(boolean_completion_method):
+			awaiting_event = false
+			return
+		while parent_level != await Levels.get_current_level_enum():
+			await Global.level_manager.new_level_loaded
+		var new_level: Level= await Levels.get_current_level_node()
+		level_specific_node = new_level.find_child(get_child_string_arg)
+		parent_level = level_specific_node.get_parent_level()
+
+
+func is_awaiting_event() -> bool:
+	return awaiting_event
 
 
 class Plot:
@@ -183,15 +230,23 @@ class Plot:
 		nomen = _nomen
 		activate_on_main = _activate_on_main
 
-	func _start() -> void:
+	func _start() -> bool:
 		if started:
 			Debug.debug("Plot '%s': already started, skipping _start()" % [nomen], quest, "_start")
-			return
+			return true
+		if not objectives:
+			Debug.debug("Cannot start a plot without any objectives declared", quest, "_start")
+			return false
+		if not current_objective:
+			current_objective = objectives.keys()[0]
 		if not current_objective.objective_waypoints:
+			Debug.debug("Waiting for mainplot current objective waypoint to be assigned before starting", quest, "_start")
 			await current_objective.waypoint_paired
+			Debug.debug("Current objective has been paired, starting mainplot", quest, "_start")
 		Debug.debug("Plot '%s': starting, activating waypoint '%s'" % [nomen, current_objective.objective_waypoints[0].name], quest, "_start")
 		current_objective.objective_waypoints[0].set_active(true)
 		started = true
+		return true
 
 	func advance() -> bool:
 		if not is_started():
@@ -312,11 +367,17 @@ class Objective:
 
 	func pair_waypoints(waypoint_names: Array[String]) -> bool:
 		for waypoint_name: String in waypoint_names:
+			Debug.debug("Attempting to pair waypoint '%s' to objective '%s' of plot '%s'" % [waypoint_name, nomen, plot.nomen], quest, "pair_waypoints")
+			if not quest.quest_waypoints:
+				Debug.debug("No quest waypoints, awaiting assignment", quest, "pair_waypoints")
+				await quest.waypoints_assigned
+				Debug.debug("Waypoints assigned, continuing function", quest, "pair_waypoints")
 			if not waypoint_name in quest.quest_waypoints.keys():
 				push_warning(Debug.define_error("waypoint %s does not exist" % [waypoint_name], quest))
 				return false
 			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
 			objective_waypoints.append(waypoint)
 			plot.objective_waypoint_dict[self].append(waypoint.global_position)
+			Debug.debug("Successfully Added waypoint %s to objective %s of plot %s" % [waypoint_name, nomen, plot.nomen], quest, "pair_waypoints")
 		waypoint_paired.emit()
 		return true

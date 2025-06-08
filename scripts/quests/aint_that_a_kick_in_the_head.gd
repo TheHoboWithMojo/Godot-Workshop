@@ -26,7 +26,7 @@ func _ready() -> void:
 
 	related_level_loaded.connect(_on_related_level_loaded)
 	related_timeline_played.connect(_on_related_timeline_played)
-	# force the signals - default level so it's tricky
+
 	_on_related_level_loaded(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
 	_on_related_timeline_played(Dialogue.TIMELINES.YOURE_AWAKE)
 
@@ -40,28 +40,31 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 			vit_machine = doc_mitchells_house.find_child("VitMachine") if not vit_machine else vit_machine
 
 
+var in_tree: bool = false
 # quest progression function, tracks when timelines and choreographs accordingly
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
-	match(timeline):
-		Dialogue.TIMELINES.YOURE_AWAKE:
-			if not walk_to_vit.is_complete():
-				await Dialogic.timeline_ended
-				start()
-				doc_mitchell.set_target(get_navpoint_position("VitMachine"))
-				await vit_machine.event_started
-				mainplot.advance()
-				await vit_machine.event_ended
-				mainplot.advance()
-				await doc_mitchell.navigation_finished
-				doc_mitchell.set_target(get_navpoint_position("Couch"))
-				await doc_mitchell.navigation_finished
-				doc_mitchell.set_timeline(Dialogue.TIMELINES.PICKTAGS)
-		Dialogue.TIMELINES.PICKTAGS:
-			if not use_the_vit.is_complete():
-				await Dialogic.timeline_ended
-				mainplot.advance()
-				doc_mitchell.set_target(Vector2(0,0))
-				await doc_mitchell.navigation_finished
-				doc_mitchell.set_target(get_navpoint_position("Exit"))
-				await doc_mitchell.navigation_finished
-				Global.set_fast_travel_enabled(true)
+		match(timeline):
+			Dialogue.TIMELINES.YOURE_AWAKE:
+				if not walk_to_vit.is_complete() and not in_tree:
+					in_tree = true
+					await Dialogic.timeline_ended
+					start()
+					doc_mitchell.set_target(get_navpoint_position("VitMachine"))
+					await level_dependent_event(vit_machine, "is_event_started", "VitMachine")
+					mainplot.advance()
+					await level_dependent_event(vit_machine, "is_event_completed", "VitMachine")
+					mainplot.advance()
+					await doc_mitchell.navigation_finished
+					doc_mitchell.set_target(get_navpoint_position("Couch"))
+					await doc_mitchell.navigation_finished
+					doc_mitchell.set_timeline(Dialogue.TIMELINES.PICKTAGS)
+					in_tree = false
+			Dialogue.TIMELINES.PICKTAGS:
+				if not use_the_vit.is_complete():
+					await Dialogic.timeline_ended
+					mainplot.advance()
+					doc_mitchell.set_target(Vector2(0,0))
+					await doc_mitchell.navigation_finished
+					doc_mitchell.set_target(get_navpoint_position("Exit"))
+					await doc_mitchell.navigation_finished
+					Global.set_fast_travel_enabled(true)

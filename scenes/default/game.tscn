@@ -68,7 +68,6 @@ script = ExtResource("5_0leiu")
 
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("6_4g1ug")
-debugging = true
 
 [node name="LevelManager" type="Node" parent="."]
 script = ExtResource("11_dogt3")
@@ -91,6 +90,7 @@ script = ExtResource("14_4g1ug")
 
 [node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
 script = ExtResource("10_f32yu")
+debugging = true
 linked_quest = 1
 characters = Array[int]([1])
 timelines = Array[int]([1, 2])

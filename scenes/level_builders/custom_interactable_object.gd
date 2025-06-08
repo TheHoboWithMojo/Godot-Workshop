@@ -47,15 +47,18 @@ var click_detector: ClickDetector
 var touch_detector: TouchDetector
 var timeline_to_play: Dialogue.TIMELINES
 var scene_path_to_play: String
-var event_completed: bool = false
+var _is_event_started: bool = false
+var _is_event_completed: bool = false
 
 signal event_ended(self_node: Node)
 signal event_started(self_node: Node)
 signal player_touched_me(self_node: Node)
 
+
 func _ready() -> void:
 	_assert_mode_requirements()
 	await get_tree().process_frame
+
 
 func get_related_quest() -> Quests.QUESTS:
 	return related_quest
@@ -71,6 +74,7 @@ func _on_button_pressed() -> void:
 	await _try_play_event()
 	processing_press = false
 
+
 func _on_area_entered(area: Area2D) -> void:
 	if not area == Global.player_bubble or not is_event_playable():
 		return
@@ -79,10 +83,24 @@ func _on_area_entered(area: Area2D) -> void:
 			await _try_play_event()
 	await get_tree().process_frame
 
+
 func is_event_playable() -> bool:
 	return (Global.get_vector_to_player(self).length() < max_trigger_distance
-		and not (event_completed and not repeat_event)
+		and not (_is_event_completed and not repeat_event)
 		and not Player.is_occupied())
+
+
+func get_parent_level() -> Levels.LEVELS:
+	return parent_level
+
+
+func is_event_completed() -> bool:
+	return _is_event_completed
+
+
+func is_event_started() -> bool:
+	return _is_event_started
+
 
 func _try_play_event() -> void:
 	match play_mode:
@@ -91,24 +109,27 @@ func _try_play_event() -> void:
 		PLAY_MODES.SCENE:
 			await _try_play_scene()
 
+
 func _try_play_dialog() -> void:
 	match(trigger_mode):
 		pass
 	if await Dialogue.start(timeline_to_play):
+		_is_event_started = true
 		event_started.emit(self)
 		await Dialogic.timeline_ended
-	event_completed = true
+	_is_event_completed = true
 	event_ended.emit(self)
 
 func _try_play_scene() -> void:
 	match(trigger_mode):
 		pass
 	event_started.emit(self)
+	_is_event_started = true
 	var node: Node = load(scene_path_to_play).instantiate()
 	Global.game_manager.add_child(node)
 	node.global_position = Global.player.global_position
 	await node.tree_exited
-	event_completed = true
+	_is_event_completed = true
 	event_ended.emit(self)
 
 func _assert_mode_requirements() -> void:
