@@ -1,3 +1,6 @@
+NavigationObstacle2D
+NavigationRegion2D
+NPC
 Node
 Quest
 ChildManager
@@ -10,5 +13,3 @@ TDCamera2D
 Tiles
 Level
 ClickDetector
-RichTextLabel
-ColorRect

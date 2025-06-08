@@ -125,7 +125,7 @@ var perks: Dictionary = {
 
 func _ready() -> void:
 	set_process(false)
-	await Global.active_and_ready(self)
+	await Global.ready_to_start()
 	set_process(true)
 
 
@@ -185,8 +185,7 @@ func get_perk_name(perk: PERKS) -> String:
 
 
 func check_for_achievements() -> void:
-	if Player.get_stat(Player.STATS.ENEMIES_KILLED) > 5:
-		Player.set_perk_active(Player.PERKS.ASSHOLE, true)
+	Global.if_do(Player.get_stat(Player.STATS.ENEMIES_KILLED) > 5, [{Player.set_perk_active: [Player.PERKS.ASSHOLE, true]}])
 
 
 func damage(amount: float) -> bool:
@@ -219,9 +218,7 @@ func set_movement_enabled(value: bool) -> void:
 		Global.player.movement_enabled = value
 		return
 	var player: Node2D = get_tree().root.get_node("/Player")
-	print(player)
-	if player:
-		player.movement_enabled = value
+	Global.if_do(player != null, [{set_movement_enabled: [true]}])
 
 
 func change_name(nomen: String) -> void:
@@ -254,7 +251,7 @@ func _get_stat_category(stat: STATS) -> STAT_CATEGORIES:
 			continue
 		@warning_ignore("int_as_enum_without_cast")
 		return int(category)
-	Debug.throw_warning("Stat %s does not exist" % [stat], self)
+	push_warning(Debug.define_error("Stat %s does not exist" % [stat], self))
 	return STAT_CATEGORIES.UNASSIGNED
 
 
@@ -271,7 +268,8 @@ func _get_updated_stat(stat_category: STAT_CATEGORIES, stat: STATS, operator: St
 		"+": current_value += value
 		"=": current_value = value
 		"/":
-			if Debug.throw_warning_if(value == 0, "Cannot divide by 0.", self):
+			if value == 0:
+				push_warning(Debug.define_error("Cannot divide by 0.", self))
 				return current_value
 			current_value /= value
 

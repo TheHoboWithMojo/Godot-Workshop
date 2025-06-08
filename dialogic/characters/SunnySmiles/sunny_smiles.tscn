@@ -1,0 +1,98 @@
+[gd_scene load_steps=12 format=3 uid="uid://rm4wg00ehxmn"]
+
+[ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_m7tn0"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="2_6b2fa"]
+[ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="3_yc8di"]
+[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="4_u0agm"]
+[ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="5_mxixi"]
+[ext_resource type="PackedScene" uid="uid://b1miocpocuslf" path="res://scenes/npc_builders/dialog_component.tscn" id="6_m3lo3"]
+[ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="7_fsm30"]
+[ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="8_ie3rr"]
+[ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="9_cjjt7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
+size = Vector2(30, 30)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
+
+[node name="SunnySmiles" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
+motion_mode = 1
+script = ExtResource("1_m7tn0")
+default_spawn_position = Vector2(96, -150)
+dialog_manager = NodePath("DialogComponent")
+health_manager = NodePath("HealthComponent")
+navigation_manager = NodePath("NavigationComponent")
+character_manager = NodePath("CharacterComponent")
+collider = NodePath("Collider")
+
+[node name="HealthBar" parent="." instance=ExtResource("2_6b2fa")]
+offset_left = -16.0
+offset_top = 16.0
+offset_right = 844.0
+offset_bottom = 253.0
+
+[node name="Texture" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+color = Color(0, 0.145098, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="NameTag" type="RichTextLabel" parent="Texture"]
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+theme_override_font_sizes/normal_font_size = 8
+text = "Name"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_i1lge")
+script = ExtResource("3_yc8di")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="ClickDetector" parent="." instance=ExtResource("4_u0agm")]
+offset_top = -16.0
+offset_bottom = 16.0
+
+[node name="TouchDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("5_mxixi")]
+scale = Vector2(2.94539, 2.94539)
+monitored_parent = NodePath("..")
+collider = NodePath("Collider")
+
+[node name="Collider" type="CollisionShape2D" parent="TouchDetector"]
+shape = SubResource("CircleShape2D_j4dpj")
+script = ExtResource("3_yc8di")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("6_m3lo3")]
+parent = NodePath("..")
+timeline = 3
+touch_detector = NodePath("../TouchDetector")
+
+[node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death", "nametag") instance=ExtResource("7_fsm30")]
+character = 2
+parent = NodePath("..")
+track_death = NodePath("../HealthComponent")
+nametag = NodePath("../Texture/NameTag")
+
+[node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("8_ie3rr")]
+parent = NodePath("..")
+
+[node name="HealthComponent" parent="." node_paths=PackedStringArray("parent", "health_bar") instance=ExtResource("9_cjjt7")]
+parent = NodePath("..")
+health_bar = NodePath("../HealthBar")

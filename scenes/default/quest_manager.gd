@@ -1,6 +1,5 @@
 @icon("res://assets/Icons/16x16/script_lightning_edit.png")
-extends Node
-class_name QuestManager
+class_name QuestManager extends Node
 
 signal new_quest_assigned
 

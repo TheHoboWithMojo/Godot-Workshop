@@ -1,62 +1,14 @@
-[gd_resource type="TileSet" load_steps=13 format=3 uid="uid://bhkqx7ki7durg"]
+[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://bhkqx7ki7durg"]
 
 [ext_resource type="Texture2D" uid="uid://dakfvo8hbxvou" path="res://assets/32rogues/tiles.png" id="1_c6cb2"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_qert4"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_wpnlw"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_8y8ej"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_ms3jd"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_x1i2l"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_48mom"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_sw6k1"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_ximhw"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_pnaot"]
-vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
-agent_radius = 0.0
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_u6fay"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
@@ -65,15 +17,15 @@ agent_radius = 0.0
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dga24"]
 texture = ExtResource("1_c6cb2")
 0:0/0 = 0
-0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_qert4")
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
 1:0/0 = 0
-1:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_sw6k1")
+1:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
 2:0/0 = 0
 3:0/0 = 0
 0:1/0 = 0
-0:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_wpnlw")
+0:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
 1:1/0 = 0
-1:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ximhw")
+1:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
 2:1/0 = 0
 3:1/0 = 0
 0:2/0 = 0
@@ -115,7 +67,9 @@ texture = ExtResource("1_c6cb2")
 1:9/0 = 0
 1:9/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_48mom")
 2:9/0 = 0
+2:9/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 3:9/0 = 0
+3:9/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 0:10/0 = 0
 1:10/0 = 0
 2:10/0 = 0
@@ -161,6 +115,7 @@ texture = ExtResource("1_c6cb2")
 6:14/0 = 0
 7:14/0 = 0
 8:14/0 = 0
+8:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 10:14/0 = 0
 11:14/0 = 0
 12:14/0 = 0
@@ -245,9 +200,9 @@ texture = ExtResource("1_c6cb2")
 12:21/0 = 0
 13:21/0 = 0
 0:22/0 = 0
-0:22/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
+0:22/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ms3jd")
 1:22/0 = 0
-1:22/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
+1:22/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ms3jd")
 2:22/0 = 0
 3:22/0 = 0
 4:22/0 = 0
@@ -260,9 +215,9 @@ texture = ExtResource("1_c6cb2")
 12:22/0 = 0
 13:22/0 = 0
 0:23/0 = 0
-0:23/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
+0:23/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ms3jd")
 1:23/0 = 0
-1:23/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_8y8ej")
+1:23/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ms3jd")
 2:23/0 = 0
 3:23/0 = 0
 4:23/0 = 0
@@ -319,9 +274,9 @@ texture = ExtResource("1_c6cb2")
 6:29/0 = 0
 7:29/0 = 0
 0:30/0 = 0
-0:30/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_ms3jd")
+0:30/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_x1i2l")
 1:30/0 = 0
-1:30/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_pnaot")
+1:30/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_x1i2l")
 2:30/0 = 0
 3:30/0 = 0
 4:30/0 = 0
@@ -331,7 +286,7 @@ texture = ExtResource("1_c6cb2")
 0:31/0 = 0
 0:31/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_x1i2l")
 1:31/0 = 0
-1:31/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_u6fay")
+1:31/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_x1i2l")
 2:31/0 = 0
 3:31/0 = 0
 4:31/0 = 0

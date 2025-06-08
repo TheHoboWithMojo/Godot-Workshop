@@ -1,8 +1,8 @@
 extends Node
 
-signal status_changed
-signal rep_changed
-signal member_died
+signal status_changed(faction: Factions.FACTIONS, old_status: STATUSES, new_status: STATUSES)
+signal rep_changed(faction: Factions.FACTIONS, new_rep: int)
+signal member_died(member: Characters.CHARACTERS, factions: Factions.FACTIONS)
 
 enum FACTIONS {
 	UNASSIGNED,
@@ -28,28 +28,33 @@ enum FACTIONS {
 	GOODSPRINGS,
 }
 
+
+enum PROPERTIES {REP, DECISIONS}
+
 var factions_data: Dictionary = {
-	FACTIONS.NEW_CALIFORNIA_REPUBLIC: { "rep": 50, "decisions": [] },
-	FACTIONS.GOODSPRINGS: { "rep": 50, "decisions": [] },
-	FACTIONS.CAESERS_LEGION: { "rep": 50, "decisions": [] },
-	FACTIONS.BROTHERHOOD_OF_STEEL: { "rep": 50, "decisions": [] },
-	FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE: { "rep": 50, "decisions": [] },
-	FACTIONS.GREAT_KHANS: { "rep": 50, "decisions": [] },
-	FACTIONS.GUN_RUNNERS: { "rep": 50, "decisions": [] },
-	FACTIONS.BOOMERS: { "rep": 50, "decisions": [] },
-	FACTIONS.ENCLAVE_REMNANTS: { "rep": 50, "decisions": [] },
-	FACTIONS.WHITE_GLOVE_SOCIETY: { "rep": 50, "decisions": [] },
-	FACTIONS.OMERTAS: { "rep": 50, "decisions": [] },
-	FACTIONS.CHAIRMEN: { "rep": 50, "decisions": [] },
-	FACTIONS.KINGS: { "rep": 50, "decisions": [] },
-	FACTIONS.POWDER_GANGERS: { "rep": 50, "decisions": [] },
-	FACTIONS.FIENDS: { "rep": 50, "decisions": [] },
-	FACTIONS.VAN_GRAFFS: { "rep": 50, "decisions": [] },
-	FACTIONS.CRIMSON_CARAVAN: { "rep": 50, "decisions": [] },
-	FACTIONS.JACOBSTOWN: { "rep": 50, "decisions": [] },
-	FACTIONS.WESTSIDE_COOPERATIVE: { "rep": 50, "decisions": [] },
-	FACTIONS.BROTHERHOOD_OUTCASTS: { "rep": 50, "decisions": [] }
+	FACTIONS.NEW_CALIFORNIA_REPUBLIC: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.GOODSPRINGS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.CAESERS_LEGION: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.BROTHERHOOD_OF_STEEL: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.FOLLOWERS_OF_THE_APOCALYPSE: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.GREAT_KHANS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.GUN_RUNNERS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.BOOMERS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.ENCLAVE_REMNANTS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.WHITE_GLOVE_SOCIETY: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.OMERTAS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.CHAIRMEN: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.KINGS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.POWDER_GANGERS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.FIENDS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.VAN_GRAFFS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.CRIMSON_CARAVAN: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.JACOBSTOWN: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.WESTSIDE_COOPERATIVE: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
+	FACTIONS.BROTHERHOOD_OUTCASTS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] }
 }
+
+enum STATUSES {HOSTILE, UNFRIENDLY, NEUTRAL, LIKED, IDOLIZED}
 
 func _ready() -> void:
 	member_died.connect(_on_member_died)
@@ -69,28 +74,21 @@ func _process_member_killed(_character: Characters.CHARACTERS, rep_loss: int = d
 			ally.set_hostile(true)
 
 
-func update_faction_data(faction: FACTIONS, property: String, value: Variant) -> bool:
-	if Debug.throw_warning_if(not property in Data.game_data["factions_data"][faction], "Property " + property + " not found in faction " + get_faction_name(faction), self):
-		return false
+func update_faction_data(faction: FACTIONS, property: PROPERTIES, value: Variant) -> void:
 	Data.game_data["factions_data"][faction][property] = value
-	return true
 
 
-func _change_rep(faction: FACTIONS, rep_change: int) -> bool:
-	var old_rep_status: String = get_rep_status(faction)
+func _change_rep(faction: FACTIONS, rep_change: int) -> void:
+	var old_rep_status: STATUSES = get_rep_status(faction)
 	var new_rep: int = get_rep_num(faction) + rep_change
-	if update_faction_data(faction, "rep", new_rep):
-		var new_rep_status: String = get_rep_status(faction)
-		if old_rep_status != new_rep_status:
-			status_changed.emit()
-		rep_changed.emit()
-		return true
-	return false
+	update_faction_data(faction, PROPERTIES.REP, new_rep)
+	var new_rep_status: STATUSES = get_rep_status(faction)
+	Global.if_do(old_rep_status != new_rep_status, [{emit_signal: [status_changed.get_name(), faction, old_rep_status, new_rep_status]}, {emit_signal: [rep_changed.get_name(), new_rep]}])
 
 
 func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 	_change_rep(faction, rep_change)
-	var decisions: Array = Data.game_data["factions_data"][faction]["decisions"]
+	var decisions: Array = Data.game_data["factions_data"][faction][PROPERTIES.DECISIONS]
 	var found: bool = false
 	for entry: Array in decisions:
 		if entry[0] == decision:
@@ -102,24 +100,25 @@ func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 	if not found:
 		decisions.append([decision, rep_change, 1])
 
-	update_faction_data(faction, "decisions", decisions)
+	update_faction_data(faction, PROPERTIES.DECISIONS, decisions)
 
 
-func get_rep_status(faction: FACTIONS) -> String:
-	var rep: int = Data.game_data["factions_data"][faction]["rep"]
+func get_rep_status(faction: FACTIONS) -> STATUSES:
+	var rep: int = Data.game_data["factions_data"][faction][PROPERTIES.REP]
 	if rep < 0:
-		return "hostile"
+		return STATUSES.HOSTILE
 	if rep < 25:
-		return "unfriendly"
+		return STATUSES.UNFRIENDLY
 	if rep < 50:
-		return "neutral"
+		return STATUSES.NEUTRAL
 	if rep < 75:
-		return "friendly"
-	return "allied"
+		return STATUSES.LIKED
+	return STATUSES.IDOLIZED
+
 
 
 func is_faction_hostile(_faction: FACTIONS) -> bool:
-	return get_rep_status(_faction) == "hostile"
+	return get_rep_status(_faction) == STATUSES.HOSTILE
 
 
 func get_faction_name(faction: FACTIONS) -> String:
@@ -131,12 +130,12 @@ func get_loaded_members(faction: FACTIONS) -> Array[Node]:
 
 
 func get_rep_num(faction: FACTIONS) -> int:
-	return Data.game_data["factions_data"][faction]["rep"]
+	return Data.game_data["factions_data"][faction][PROPERTIES.REP]
 
 
 func reset_faction(faction: FACTIONS) -> void:
-	update_faction_data(faction, "rep", 50.0)
-	update_faction_data(faction, "decisions", [])
+	update_faction_data(faction, PROPERTIES.REP, 50.0)
+	update_faction_data(faction, PROPERTIES.DECISIONS, [])
 
 
 # bulky fancy print function
@@ -148,7 +147,7 @@ func print_overview() -> void:
 		longest_name_length = max(longest_name_length, faction_name.length())
 	longest_name_length += 2
 
-	var header: String = "| %-*s | %-10s | %-5s |" % [longest_name_length, "FACTION", "STATUS", "REP"]
+	var header: String = "| %-*s | %-10s | %-5s |" % [longest_name_length, "FACTION", "STATUS", PROPERTIES.REP]
 	var divider: String = "-".repeat(header.length())
 	output += divider + "\n"
 	output += header + "\n"
@@ -157,7 +156,7 @@ func print_overview() -> void:
 	for faction_enum: int in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
 		var rep: int = get_rep_num(faction_enum)
-		var status: String = get_rep_status(faction_enum)
+		var status: String = Global.enum_to_title(get_rep_status(faction_enum), STATUSES)
 		output += "| %-*s | %-10s | %5d |" % [longest_name_length, faction_name, status, rep] + "\n"
 		output += divider + "\n\n"
 
@@ -166,7 +165,7 @@ func print_overview() -> void:
 
 	for faction_enum: int in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
-		var decisions: Array = Data.game_data["factions_data"][faction_enum]["decisions"]
+		var decisions: Array = Data.game_data["factions_data"][faction_enum][PROPERTIES.DECISIONS]
 		if decisions.size() > 0:
 			output += faction_name + ":\n"
 			var sorted_decisions: Array = decisions.duplicate()

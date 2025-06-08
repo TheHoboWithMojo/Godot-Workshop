@@ -28,7 +28,6 @@ signal mob_died
 # =========================================================================
 func _ready() -> void:
 	mob_died.connect(_on_mob_death)
-	await Global.active_and_ready(self)
 	level_manager.new_level_loaded.connect(_on_new_level_loaded)
 
 

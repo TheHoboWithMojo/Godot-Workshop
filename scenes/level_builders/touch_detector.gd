@@ -8,7 +8,7 @@ class_name TouchDetector
 @export var collider: Collider = null
 @export_group("Tweaks")
 @export var debugging: bool = false
-@export var ignored_menu: Control = null
+@export var ignored_control: Control = null
 @export var send_signal_to_parent: bool = true
 @export var set_touching_to_self: bool = false
 @export var emit_self_as_argument: bool = false
@@ -32,8 +32,8 @@ func _ready() -> void:
 	if detect_mouse:
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
-	if ignored_menu:
-		set_ignored_menu(ignored_menu)
+	if ignored_control:
+		set_ignored_control(ignored_control)
 
 
 func _on_mouse_entered() -> void:
@@ -46,7 +46,7 @@ func _on_mouse_entered() -> void:
 
 
 func _on_mouse_exited() -> void:
-	if ignored_menu and ignored_zone.has_point(get_global_mouse_position()):
+	if ignored_control and ignored_zone.has_point(get_global_mouse_position()):
 		return
 	Global.mouse_touching_node = null
 	if send_signal_to_parent:
@@ -55,9 +55,9 @@ func _on_mouse_exited() -> void:
 			return
 		mouse_exited_area.emit(self)
 
-func set_ignored_menu(menu: Control) -> void: # prevents the mouse_exited signal from procking when the mouse overlaps the control
-	ignored_menu = menu
-	ignored_zone = ignored_menu.get_global_rect()
+func set_ignored_control(menu: Control) -> void: # prevents the mouse_exited signal from procking when the mouse overlaps the control
+	ignored_control = menu
+	ignored_zone = ignored_control.get_global_rect()
 
 
 func set_monitored_parent(node: Node) -> void:

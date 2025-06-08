@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=16 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/default/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
@@ -14,12 +14,12 @@
 [ext_resource type="Script" uid="uid://b84n510w2nunx" path="res://scripts/quests/by_a_campfire_on_the_trail.gd" id="12_f32yu"]
 [ext_resource type="Script" uid="uid://cjv6qf28rc7c0" path="res://scripts/quests/run_goodsprings_run.gd" id="13_0leiu"]
 [ext_resource type="Script" uid="uid://ub78h3d0hpbl" path="res://scripts/quests/ghost_town_gunfight.gd" id="14_4g1ug"]
+[ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="15_ccl36"]
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_wrm1d")
 use_save_data = false
 autosaving_enabled = false
-show_mouse_pos = true
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3
@@ -43,12 +43,14 @@ enforced_class = 8
 custom_minimum_size = Vector2(320, 0)
 offset_right = 320.0
 offset_bottom = 64.0
+mouse_filter = 2
 
 [node name="Quest" type="RichTextLabel" parent="UI/QuestDisplayer"]
 custom_minimum_size = Vector2(320, 24)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+mouse_filter = 2
 text = "Quest Name:"
 fit_content = true
 
@@ -57,6 +59,7 @@ custom_minimum_size = Vector2(240, 32)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+mouse_filter = 2
 text = "Description"
 fit_content = true
 
@@ -65,6 +68,7 @@ script = ExtResource("5_0leiu")
 
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("6_4g1ug")
+debugging = true
 
 [node name="LevelManager" type="Node" parent="."]
 script = ExtResource("11_dogt3")
@@ -95,8 +99,9 @@ levels = Array[int]([1])
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("5_pi5r2")
 linked_quest = 2
-characters = Array[int]([2, 5])
+characters = Array[int]([2])
 timelines = Array[int]([3])
 levels = Array[int]([3, 2])
 
-[connection signal="child_entered_tree" from="NPCManager" to="NPCManager" method="_on_child_entered_tree"]
+[node name="VectorPlacer" parent="." instance=ExtResource("15_ccl36")]
+enabled = false

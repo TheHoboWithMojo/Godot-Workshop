@@ -1,75 +1,96 @@
 extends Node2D
 
-enum CHARACTERS {UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE, JOE_COBB}
+enum CHARACTERS { UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE, JOE_COBB, VICTOR }
+enum PROPERTIES { ALIVE, RESOURCE, STYLE, FACTION, LAST_LEVEL, DEFAULT_LEVEL, LAST_POSITION, SCENE_PATH }
 
 var characters: Dictionary = {
 	CHARACTERS.DOC_MITCHELL: {
-		"name": "doc_mitchell",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"style": "res://dialogic/styles/default.tres",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.STYLE: "res://dialogic/styles/default.tres",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.DOC_MITCHELLS_HOUSE,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/DocMitchell/doc_mitchell.tscn",
 	},
 	CHARACTERS.SUNNY_SMILES: {
-		"name": "sunny_smiles",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.PROSPECTORS_SALOON,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/SunnySmiles/sunny_smiles.tscn",
 	},
 	CHARACTERS.CHET: {
-		"name": "chet",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/Chet/chet.tscn",
 	},
 	CHARACTERS.RINGO: {
-		"name": "ringo",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/Ringo/ringo.tscn",
 	},
 	CHARACTERS.OLD_MAN_PETE: {
-		"name": "old_man_pete",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/OldManPete/old_man_pete.tscn",
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.GOODSPRINGS,
 	},
 	CHARACTERS.TAMMY: {
-		"name": "tammy",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.GOODSPRINGS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.GOODSPRINGS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.PROSPECTORS_SALOON,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/Tammy/tammy.tscn",
 	},
-	CHARACTERS.JOE_COBB:
-		{
-		"name": "joe_cobb",
-		"alive": true,
-		"resource": "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
-		"faction": Factions.FACTIONS.POWDER_GANGERS,
-		"last_level": 0,
-		"last_position": Vector2.ZERO
-		}
+	CHARACTERS.JOE_COBB: {
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.POWDER_GANGERS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.GOODSPRINGS,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/JoeCobb/joe_cobb.tscn",
+	},
+	CHARACTERS.VICTOR: {
+		PROPERTIES.ALIVE: true,
+		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
+		PROPERTIES.FACTION: Factions.FACTIONS.POWDER_GANGERS,
+		PROPERTIES.LAST_LEVEL: Levels.LEVELS.UNASSIGNED,
+		PROPERTIES.DEFAULT_LEVEL: Levels.LEVELS.GOODSPRINGS,
+		PROPERTIES.LAST_POSITION: Vector2.ZERO,
+		PROPERTIES.SCENE_PATH: "res://dialogic/characters/Victor/victor.tscn",
+	},
 }
 
-
-func character_exists(nomen: String) -> bool:
-	return nomen in Data.game_data["characters"].keys()
-
-
 func get_character_resource(character: CHARACTERS) -> DialogicCharacter:
-	return load(characters[character]["resource"])
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to access resource of unassigned character", self))
+		return null
+	return load(characters[character][PROPERTIES.RESOURCE])
+
+
+func get_character_instantiated_scene(character: CHARACTERS) -> NPC:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to instantiate unassigned character", self))
+		return null
+	return load(characters[character][PROPERTIES.SCENE_PATH]).instantiate() as NPC
 
 
 func get_character_name(character: CHARACTERS) -> String:
@@ -77,30 +98,76 @@ func get_character_name(character: CHARACTERS) -> String:
 
 
 func get_character_faction(character: CHARACTERS) -> Factions.FACTIONS:
-	return characters[character]["faction"]
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to access faction of unassigned character", self))
+		return Factions.FACTIONS.UNASSIGNED
+	return characters[character][PROPERTIES.FACTION]
 
 
 func is_character_alive(character: CHARACTERS) -> bool:
-	return characters[character]["alive"]
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to check alive status of unassigned character", self))
+		return false
+	return characters[character][PROPERTIES.ALIVE]
 
 
-func set_alive(character: CHARACTERS, value: bool) -> void:
-	if Debug.throw_warning_if(not is_character_alive(character), "Character %s is already dead." % [get_character_name(character)], self):
-		return
-	characters[character]["alive"] = value
+func set_alive(character: CHARACTERS, value: bool) -> bool:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to set alive on unassigned character", self))
+		return false
+	if not is_character_alive(character):
+		push_warning(Debug.define_error("Trying to set alive to the dead character %s" % [get_character_name(character)], self))
+		return false
+	characters[character][PROPERTIES.ALIVE] = value
+	return true
 
 
-func set_character_last_level(character: CHARACTERS, level: Levels.LEVELS) -> void:
-	characters[character]["last_level"] = level
+func set_character_last_level(character: CHARACTERS, level: Levels.LEVELS) -> bool:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to set last level on unassigned character", self))
+		return false
+	if level == Levels.LEVELS.UNASSIGNED:
+		push_warning(Debug.define_error("Trying to set character %s's last level to unassigned" % [get_character_name(character)], self))
+		return false
+	characters[character][PROPERTIES.LAST_LEVEL] = level
+	return true
 
 
 func get_character_last_level(character: CHARACTERS) -> Levels.LEVELS:
-	return characters[character]["last_level"]
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to access last level of unassigned character", self))
+		return Levels.LEVELS.UNASSIGNED
+	return characters[character][PROPERTIES.LAST_LEVEL]
+
+
+func set_character_default_level(character: CHARACTERS, level: Levels.LEVELS) -> bool:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to set default level of unassigned character", self))
+		return false
+	if level == Levels.LEVELS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to set default level of unassigned character", self))
+		return false
+	characters[character][PROPERTIES.DEFAULT_LEVEL] = level
+	return true
+
+
+func get_character_default_level(character: CHARACTERS) -> Levels.LEVELS:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to get default level of unassigned character", self))
+		return Levels.LEVELS.UNASSIGNED
+	return characters[character][PROPERTIES.DEFAULT_LEVEL]
 
 
 func get_character_last_position(character: CHARACTERS) -> Vector2:
-	return characters[character]["last_position"]
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to get last position of unassigned character", self))
+		return Vector2.ZERO
+	return characters[character][PROPERTIES.LAST_POSITION]
 
 
-func set_character_last_position(character: CHARACTERS, vector: Vector2) -> void:
-	characters[character]["last_position"] = vector
+func set_character_last_position(character: CHARACTERS, vector: Vector2) -> bool:
+	if character == CHARACTERS.UNASSIGNED:
+		push_warning(Debug.define_error("Tried to set last position of unassigned character", self))
+		return false
+	characters[character][PROPERTIES.LAST_POSITION] = vector
+	return true

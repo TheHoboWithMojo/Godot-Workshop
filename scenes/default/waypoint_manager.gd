@@ -77,7 +77,7 @@ func _place_waypoints_at_paths_to_home_level(level: Level) -> void:
 				var portals: Array[Portal] = level.get_portals()
 				for step: Levels.LEVELS in steps_toward_home_level:
 					for portal: Portal in portals:
-						if portal.get_connected_level_enum() == step:
+						if portal.get_send_to_level_enum() == step:
 							positions_to_move_to.append(portal.get_spawn_point_position())
 
 				if positions_to_move_to.size() > 0:

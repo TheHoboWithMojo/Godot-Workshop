@@ -19,7 +19,7 @@ extends Control
 @onready var show_frames: bool = false
 
 func _ready() -> void:
-	await Global.active_and_ready(self, active)
+	await Global.ready_to_start()
 	self.visible = false # If active, make sure menu starts invisible
 	clear_data()
 

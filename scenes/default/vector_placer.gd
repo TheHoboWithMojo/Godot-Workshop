@@ -1,13 +1,13 @@
-extends Control
+class_name VectorPlacer extends Control
 
 @onready var popup: Window = $VBoxContainer/NamePopup
 @onready var input_box: LineEdit = $VBoxContainer/NamePopup/Control/VBoxContainer/LineEdit
 @onready var coordinate_printer: RichTextLabel = $CoordinatePrinter
+@export var enabled: bool = true
 @export var show_coords: bool = true
 @export var ask_for_name: bool = true
-@export var save_selection: bool = true
+@export var save_selection: bool = false
 @export var level: Levels.LEVELS
-@export var enabled: bool = true
 var save_path: String = ""
 
 var processing: bool = false
@@ -21,6 +21,7 @@ var name_vector_dict: Dictionary[String, Vector2] = {
 func _ready() -> void:
 	if not enabled:
 		queue_free()
+	gui_input.connect(_on_gui_input)
 	# Make Control fill the screen
 	anchor_left = 0.0
 	anchor_top = 0.0
@@ -65,7 +66,7 @@ func _on_line_edit_text_submitted(new_text: String) -> void:
 		return
 	if nomen.to_lower() == "s":
 		if not name_vector_dict:
-			Debug.throw_warning("Tried to save an empty name_vector_dict", self)
+			push_warning(Debug.define_error("Tried to save an empty name_vector_dict", self))
 			popup.hide()
 			processing = false
 			Player.set_movement_enabled(true)

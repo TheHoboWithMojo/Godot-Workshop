@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=4 uid="uid://ckkwucoj1mfu5"]
+[gd_scene load_steps=9 format=4 uid="uid://ckkwucoj1mfu5"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kryoy"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_2u73p"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_lfjp6"]
-[ext_resource type="PackedScene" uid="uid://djbiv47x0t7gg" path="res://scenes/npc_builders/npc_template.tscn" id="4_slmuk"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_2u73p"]
 [ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="6_hhryp"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
@@ -14,7 +13,7 @@
 script = ExtResource("1_kryoy")
 level = 3
 tiles = NodePath("Tiles")
-default_npcs = [NodePath("SunnySmiles"), NodePath("Tammy")]
+default_npcs = [NodePath(""), NodePath("")]
 waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
 portals = [NodePath("DoorToGoodsprings")]
@@ -26,16 +25,6 @@ tile_map_data = PackedByteArray("AAD0//T/AQAAAAgAAAD0//X/AQAAAAkAAAD1//T/AQABAAg
 tile_set = ExtResource("2_2u73p")
 script = ExtResource("3_lfjp6")
 metadata/_custom_type_script = "uid://85so8xh35jkw"
-
-[node name="SunnySmiles" parent="." instance=ExtResource("4_slmuk")]
-position = Vector2(96, -152)
-timeline = 3
-character = 2
-debugging = true
-
-[node name="Tammy" parent="." instance=ExtResource("4_slmuk")]
-position = Vector2(-160, -152)
-character = 5
 
 [node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]
 position = Vector2(48, 0)

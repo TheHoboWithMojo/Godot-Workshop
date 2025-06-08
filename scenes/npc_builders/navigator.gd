@@ -1,35 +1,36 @@
-extends NavigationAgent2D
-class_name NavigationComponent
+
+class_name NavigationComponent extends NavigationAgent2D
 @export var debugging: bool = false
 @export var inherit_debugging: bool = false
 @export var parent: Node
+@export var self_parented: bool = false
 @export var speed: int = 100
-@onready var parent_name: String = parent.name
-@onready var parent_character: CharacterComponent = parent.get_character() if parent is NPC else null
+@onready var parent_character: CharacterComponent = parent.get_character_component() if parent is NPC else null
 var navigation_target: Vector2 = Vector2.ZERO
 var seeking_enabled: bool = true
-signal target_changed
-signal moved_level
+
+signal target_changed(target: Vector2)
+signal moved_level(level: Level)
 
 
 func _ready() -> void:
+	if self_parented:
+		parent = self
+		Debug.debug("In self_parent mode", parent, "_ready")
 	assert(parent != null, Debug.define_error("A navigation agent must reference a parent", self))
-	await parent.ready
+	debugging = parent.debugging if inherit_debugging else debugging
 	target_reached.connect(_on_target_reached)
 	velocity_computed.connect(_on_velocity_computed)
-	if parent_character:
-		await parent.await_name_changed()
-		parent_name = parent.name
-	if inherit_debugging:
-		debugging = parent.debugging
 
 
 @onready var last_position: Vector2 = Vector2.ZERO
 func _process(_delta: float) -> void:
 	if last_position != parent.global_position:
-		#Debug.debug("Position changed to %s" % [str(parent.parent.global_position)], self, "_process")
+		Debug.debug("Position changed to %s" % [str(parent.global_position)], self, "_process")
 		if parent_character:
 			Characters.set_character_last_position(parent_character.get_character_enum(), parent.global_position)
+			var npc: NPC = parent
+			Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_POSITION] = parent.global_position
 	last_position = parent.global_position
 
 
@@ -56,7 +57,7 @@ func set_target(target: Variant = navigation_target, up_down_left_right: String 
 	elif target is Node2D:
 		navigation_target = target.global_position
 	else:
-		Debug.throw_warning("Can only target a vector2 or node2d", parent)
+		push_warning(Debug.define_error("Can only target a vector2 or node2d", parent))
 	match(up_down_left_right):
 		"left":
 			navigation_target -= (1.2 * Vector2(displacement, 0))
@@ -68,7 +69,7 @@ func set_target(target: Variant = navigation_target, up_down_left_right: String 
 			navigation_target += (1.2 * Vector2(displacement, 0))
 	seeking_enabled = true
 	setting_target = false
-	target_changed.emit()
+	target_changed.emit(navigation_target)
 	Debug.debug("target has been changed to %s." % [navigation_target], parent, "set_target")
 
 
@@ -128,11 +129,12 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 
 	var new_level: Level = await Levels.get_current_level_node()
+	var new_level_enum: Levels.LEVELS = new_level.get_level_enum()
 
 
 	# If the new level is not the one we're moving to, abort
 
-	if Debug.debug_if(new_level.get_level_enum() != level, "[NPC] '%s' new level '%s' is not the target level '%s'" % [name, new_level.name, Levels.get_level_name(level)], parent, "move_to_new_level"):
+	if Debug.debug_if(new_level_enum != level, "[NPC] '%s' new level '%s' is not the target level '%s'" % [name, new_level.name, Levels.get_level_name(level)], parent, "move_to_new_level"):
 		# recursive function with a timer that goes until the correct level loads OR moves the npc to the level in the background idk how yet
 		return
 
@@ -141,7 +143,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	if not is_navigation_finished():
 
-		Debug.debug("[NPC] '%s' navigation to level '%s' was unfinished, simulating navigation." % [name, Levels.get_level_name(level)], parent, "move_to_new_level")
+		Debug.debug("[NPC] '%s' navigation to level '%s' was unfinished, simulating navigation." % [name, new_level.name], parent, "move_to_new_level")
 
 		await Global.delay(self, 2.0)
 
@@ -149,7 +151,6 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 
 	# Get the spawn position from the portal of the new level
-	print(new_level.get_portals())
 	var spawn_position: Vector2 = new_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
 
 	Debug.debug("New level spawnpoint location calculated, targeting it now", parent, "move_to_new_level")
@@ -158,10 +159,12 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 
 	# Update the reload data before spawning
-
-	Characters.set_character_last_position(parent.character, spawn_position)
-
-	Characters.set_character_last_level(parent.character, new_level.get_level_enum())
+	if parent is NPC:
+		var npc: NPC = parent
+		Characters.set_character_last_position(parent.get_character_enum(), spawn_position)
+		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_POSITION] = spawn_position
+		Characters.set_character_last_level(parent.get_character_enum(), new_level_enum)
+		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_LEVEL] = new_level_enum
 
 
 	# Get the player's collision details
@@ -189,4 +192,4 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	moving_to_level = Levels.LEVELS.UNASSIGNED
 
-	moved_level.emit()
+	moved_level.emit(new_level)

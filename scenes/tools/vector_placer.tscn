@@ -83,6 +83,5 @@ text = "Save"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="close_requested" from="VBoxContainer/NamePopup" to="." method="_on_name_popup_close_requested"]
 [connection signal="text_submitted" from="VBoxContainer/NamePopup/Control/VBoxContainer/LineEdit" to="." method="_on_line_edit_text_submitted"]

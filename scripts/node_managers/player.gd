@@ -1,6 +1,7 @@
 extends CharacterBody2D
 class_name PlayerManager
 # EXPORTS
+@export var debugging: bool = false
 @export_group("Control")
 @export var active: bool = true
 @export var collision_enabled: bool = true
@@ -20,7 +21,7 @@ class_name PlayerManager
 @export var nametag: RichTextLabel
 
 func _ready() -> void:
-	await Global.active_and_ready(self, active)
+	await Global.ready_to_start()
 	if not collision_enabled:
 		collider.queue_free()
 
@@ -138,7 +139,7 @@ func _get_direction(x_or_y: String) -> float:
 		var direction: float = Input.get_axis("move_up", "move_down")
 		return direction
 	else:
-		Debug.throw_warning("x or y only.", self)
+		push_warning(Debug.define_error("x or y only.", self))
 		return 0.0
 
 func die() -> void:

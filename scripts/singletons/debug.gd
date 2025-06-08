@@ -1,30 +1,7 @@
 # Holds advanced printing functions
 extends Node
-func throw_warning(warning: String, caller: Node) -> void:
-	push_warning(define_error(warning, caller))
-
-
-func throw_warning_if(condition: bool, warning: String, caller: Node) -> bool:
-	if condition == false:
-		return false
-	throw_warning(warning, caller)
-	return true
-
-
-func throw_error(error: String, caller: Node) -> void:
-	push_error(define_error(error, caller))
-
-
-func throw_error_if(condition: bool, warning: String, caller: Node) -> bool:
-	if condition == false:
-		return false
-	throw_error(warning, caller)
-	return true
-
-
 func define_error(error: String, caller: Node) -> String:
 	return ("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
-
 
 func debug(message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> void:
 	if caller.debugging:
@@ -36,6 +13,7 @@ func debug(message: String, caller: Node, function_name: String, callable_argume
 		print("%s%s:%s (%s)" % [class_nomen, caller_nomen, message, function_name])
 		for callable: Callable in callable_argument_dict:
 			callable.callv(callable_argument_dict[callable])
+
 
 
 func debug_if(condition: bool, message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> bool:
@@ -69,7 +47,7 @@ func get_array_as_pretty_string(array: Array) -> String:
 
 func frame_print(input: Variant, frame_print_delay: int) -> void:
 	if not Global.game_manager.track_frames:
-		throw_warning("Cannot be called if track frames isn't on.", self)
+		push_warning(define_error("Cannot be called if track frames isn't on.", self))
 		return
 	if Global.frames % frame_print_delay == 0:
 		print(input)

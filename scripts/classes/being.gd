@@ -1,3 +1,4 @@
+# DEPRECATED CLASS
 class_name Beings
 extends Node2D
 
@@ -32,7 +33,8 @@ signal navigation_target_changed
 # ===== Initialization =====
 func _init(self_node: Node) -> void:
 	_slave = self_node
-	if Debug.throw_warning_if(_slave == null, "Could not initiate being", self):
+	if _slave == null:
+		push_warning(Debug.define_error("Could not initiate being", self))
 		return
 
 	_slave.add_to_group("beings")
@@ -181,7 +183,8 @@ func _set_paused(value: bool) -> bool:
 func _set_collision(value: bool) -> bool:
 	if not _alive:
 		return false
-	if Debug.throw_warning_if(not _collider, "%s does not have a collider" % [_nomen], _slave):
+	if not _collider:
+		push_warning(Debug.define_error("%s does not have a collider" % [_nomen], _slave))
 		return false
 	_collider.set_disabled(!value)
 	return true

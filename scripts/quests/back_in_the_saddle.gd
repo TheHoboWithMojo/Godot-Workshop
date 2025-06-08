@@ -21,24 +21,16 @@ var meet_sunny_in_the_back: Objective
 var shoot_the_bottles: Objective
 var saloon: Level
 var sunny_smiles: NPC
-var sunny_nav: NavigationComponent
 
 func _ready() -> void:
-	related_character_loaded.connect(_on_related_character_loaded)
 	related_level_loaded.connect(_on_related_level_loaded)
 	related_timeline_played.connect(_on_related_timeline_played)
-	await waypoints_assigned
+	await quest_created
+	sunny_smiles = Global.npc_manager.get_npc(Characters.CHARACTERS.SUNNY_SMILES)
 	talk_to_sunny = mainplot.new_objective("Talk to Sunny Smiles at the prospector Saloon.")
 	talk_to_sunny.pair_waypoints(["PortalToGoodsprings"])
 	meet_sunny_in_the_back = mainplot.new_objective("Meet Sunny at the back of the Prospector Saloon.")
 	shoot_the_bottles = mainplot.new_objective("Shoot the Sarsparilla Bottles")
-
-
-func _on_related_character_loaded(character: Characters.CHARACTERS) -> void:
-	match(character):
-		Characters.CHARACTERS.SUNNY_SMILES:
-			sunny_smiles = await Global.npc_manager.get_npc(Characters.CHARACTERS.SUNNY_SMILES) if not sunny_smiles else sunny_smiles
-			sunny_nav = sunny_smiles.get_navigator() if not sunny_nav else sunny_nav
 
 
 func _on_related_level_loaded(level: Levels.LEVELS) -> void:
@@ -52,5 +44,5 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.SUNNY_GREETING:
 			await Dialogic.timeline_ended
-			await sunny_nav.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
+			sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
 			mainplot.advance()

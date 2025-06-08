@@ -1,34 +1,32 @@
 @icon("res://assets/Icons/16x16/heart.png")
-extends Node
-class_name HealthComponent
-
+class_name HealthComponent extends Node
 # --- Exported Variables ---
-@export var debugging: bool = false
 @export var inherit_debugging: bool = false
-@export var parent: Node2D
-@export var health: int = 100
+@export var debugging: bool = false
+@export var parent: Node
+@export var self_parented: bool = false
 @export var regen_rate: int = 1
 @export var vincible: bool = true
 @export var exp_per_kill: int = 10
-@export var health_bar: Node = null
-
+@export var health_bar: HealthBar = null
+@export var max_health: int = 100
 # --- Internal State ---
-@onready var max_health: int = health
 var alive: bool = true
-
+var health: int = 100
 # --- Signals ---
-signal died
+signal died(parent: Node)
 
 func _ready() -> void:
+	if self_parented:
+		parent = self
+		Debug.debug("In self_parent mode", parent, "_ready")
 	assert(parent != null, Debug.define_error("A health component must reference a parent", self))
-	await parent.ready
+	debugging = parent.debugging if inherit_debugging else debugging
 	if health_bar:
 		health_bar.set_value(max_health)
 		health_bar.set_visible(false)
-	if parent is NPC:
+	if parent is NPC and parent.get_dialog_component():
 		await parent.await_name_changed()
-	if inherit_debugging:
-		debugging = parent.debugging
 
 
 # --- Health Interface ---
@@ -43,22 +41,28 @@ func set_max_health(value: int) -> void:
 func get_health() -> int:
 	return health
 
+
 func take_damage(amount: int) -> bool:
 	return await _set_health(health - amount)
 
+
 func heal(amount: int) -> bool:
 	return await _set_health(health + amount)
+
 
 # --- Alive Interface ---
 func set_alive(value: bool) -> bool:
 	return await _set_alive(value)
 
+
 func is_alive() -> bool:
 	return alive
+
 
 # --- Vincibility Interface ---
 func set_vincible(value: bool) -> void:
 	_set_vincible(value)
+
 
 func is_vincible() -> bool:
 	return vincible
@@ -73,7 +77,6 @@ func _set_health(value: int) -> bool:
 	elif value > max_health:
 		health = max_health
 		return true
-
 	health = value
 	if health_bar:
 		health_bar.set_value(health)
@@ -88,7 +91,7 @@ func _set_alive(value: bool) -> bool:
 
 	if not value and alive:
 		if not health_bar:
-			Debug.throw_error("%s must have a health bar in order to die" % [parent.name], parent)
+			push_error(Debug.define_error("%s must have a health bar in order to die" % [parent.name], parent))
 			return false
 		alive = false
 		await __process_death()
@@ -111,6 +114,7 @@ func __process_revival() -> void:
 	__processing_revival = true
 	# Add revival behavior here
 	__processing_revival = false
+
 
 var __processing_death: bool = false
 func __process_death() -> void:

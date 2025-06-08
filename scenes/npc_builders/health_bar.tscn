@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c6ewpodeko760"]
+[gd_scene load_steps=4 format=3 uid="uid://c6ewpodeko760"]
 
 [ext_resource type="Texture2D" uid="uid://b7e5kekjf60qn" path="res://scenes/npc_builders/health_bar_empty.png" id="1_y3kqx"]
 [ext_resource type="Texture2D" uid="uid://c1xkb7xvjpafx" path="res://scenes/npc_builders/health_bar_full.png" id="2_6opq1"]
+[ext_resource type="Script" uid="uid://b02tpu0p0npcl" path="res://scenes/npc_builders/health_bar.gd" id="3_f7hyb"]
 
 [node name="HealthBar" type="TextureProgressBar"]
 offset_right = 860.0
@@ -9,3 +10,4 @@ offset_bottom = 237.0
 scale = Vector2(0.0370707, 0.0339111)
 texture_under = ExtResource("1_y3kqx")
 texture_progress = ExtResource("2_6opq1")
+script = ExtResource("3_f7hyb")

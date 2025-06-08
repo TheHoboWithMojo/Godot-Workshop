@@ -22,7 +22,7 @@ signal saving_complete
 }
 
 var reload_data: Dictionary = {
-	"last_level": "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
+	"last_level": Levels.LEVELS.DOC_MITCHELLS_HOUSE,
 	"last_position": Vector2(0, 0),
 	"acquired_weapons": [],
 }
@@ -101,10 +101,10 @@ func _process_reload_data() -> void:
 			Global.player.current_projectile = Global.player.projectiles[0]
 
 	if _reload_data.has("last_level"):
-		Global.level_manager.current_level = load(_reload_data["last_level"]).instantiate()
+		Global.level_manager.current_level = load(Levels.get_level_path(_reload_data["last_level"])).instantiate()
 
 	for character: String in _character_data:
-		_character_data[character]["last_position"] = Global.string_to_vector2(_character_data[character]["last_position"])
+		_character_data[str(character)][str(Characters.PROPERTIES.LAST_POSITION)] = Global.string_to_vector2(_character_data[str(character)][str(Characters.PROPERTIES.LAST_POSITION)])
 
 func _convert_faction_keys() -> void:
 	if not Data.game_data.has("factions_data"):

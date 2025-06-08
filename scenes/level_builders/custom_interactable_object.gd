@@ -6,6 +6,7 @@ enum TEMPLATES {CUSTOM, CUTSCENE_MODE, POINT_AND_CLICK_MODE}
 enum TRIGGER_MODES {CLICK, ENTRY, CLICK_AND_ENTRY, CLICK_OR_ENTRY}
 enum PLAY_MODES {DIALOG, SCENE}
 
+@export var debugging: bool = false
 @export var parent_level: Levels.LEVELS
 @export var related_quest: Quests.QUESTS
 @export var mode: TEMPLATES = TEMPLATES.CUSTOM
@@ -176,7 +177,7 @@ func _configure_trigger(click: ClickDetector, touch: TouchDetector = null) -> vo
 		touch_detector_assigned = true
 		touch_detector.set_monitored_parent(self)
 		if click != null:
-			touch_detector.set_ignored_menu(click_detector)
+			touch_detector.set_ignored_control(click_detector)
 
 func _configure_play(play: PLAY_MODES, timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.UNASSIGNED, scene_path: String = "") -> void:
 	play_mode = play

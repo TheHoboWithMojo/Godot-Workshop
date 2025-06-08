@@ -7,7 +7,6 @@ class_name Portal
 @export var send_from_level: Node2D
 @export var send_to_level: Levels.LEVELS
 @export var spawn_point: SpawnPoint
-@export var click_detector: ClickDetector
 @export var touch_detector: TouchDetector
 @onready var send_to_level_path: String = Levels.get_level_path(send_to_level) if send_to_level else ""
 
@@ -23,29 +22,32 @@ func _ready() -> void:
 	assert(send_to_level != Levels.LEVELS.UNASSIGNED, Debug.define_error("Portals must reference the level they lead to", self))
 	name = "PortalTo%s" % Levels.get_level_name(send_to_level)
 
-	assert(click_detector != null, Debug.define_error("Portals must have click detection to register interaction", self))
-	click_detector.pressed.connect(_on_portal_clicked)
-
 	assert(touch_detector != null, Debug.define_error("Portals must have touch detection in order to ensure the player is touching them", self))
-	touch_detector.set_ignored_menu(click_detector) # stops the touch detector from setting mouse_touching_node to false when the click detector is touched
+	touch_detector.player_entered_area.connect(_on_player_entered_area)
 
 	add_to_group("portal")
 	add_to_group("interactable")
 	await get_tree().process_frame
 
-@onready var processing_click: bool = false
-func _on_portal_clicked() -> void:
-	if processing_click or Player.is_occupied() or (not Global.player_bubble in touch_detector.get_overlapping_areas()):
+
+@onready var processing_interaction: bool = false
+func _on_player_entered_area() -> void:
+	if processing_interaction or Player.is_occupied():
+		Debug.debug("Processing transfer failed", self, "_on_portal_clicked")
 		return
-	processing_click = true
-	player_touched_me.emit(self)
-	Global.level_manager.change_level(send_from_level, send_to_level_path)
-	processing_click = false
+	while Global.player_bubble in touch_detector.get_overlapping_areas():
+		if Input.is_action_just_pressed("interact"):
+			processing_interaction = true
+			player_touched_me.emit(self)
+			Debug.debug("Processing click succeeded, changing level!", self, "_on_portal_clicked")
+			Global.level_manager.change_level(send_from_level, send_to_level_path)
+			processing_interaction = false
+		await get_tree().process_frame
 
 
 func get_spawn_point_position() -> Vector2:
 	return spawn_point.global_position
 
 
-func get_connected_level_enum() -> Levels.LEVELS:
+func get_send_to_level_enum() -> Levels.LEVELS:
 	return send_to_level

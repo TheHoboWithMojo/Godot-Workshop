@@ -10,7 +10,6 @@ extends Node2D
 @export var active: bool = true
 @export var use_save_data: bool = true
 @export var autosaving_enabled: bool = true
-@export var show_mouse_pos: bool = false
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
@@ -19,12 +18,11 @@ extends Node2D
 @onready var level_manager: LevelManager = $LevelManager
 @onready var mob_manager: MobManager = $MobManager
 @onready var save_manager: SaveManager = $SaveManager
-@onready var is_ready_to_start: bool = false # Updated by ready_to_start signal
-@onready var total_mobs: int
+var total_mobs: int
 # =========================================================================
 # SIGNALS
 # =========================================================================
-signal ready_to_start # Nodes read this to know when to begin processing
+signal ready_finished
 # =========================================================================
 # CORE LIFECYCLE METHODS
 # =========================================================================
@@ -34,11 +32,8 @@ func _ready() -> void:
 		queue_free()
 		return
 	await update_global_references()
-	load_data()
+	await load_data()
 	ready_up()
-
-	if show_mouse_pos:
-		add_child(load("res://scenes/tools/mouse_pos_printer.tscn").instantiate())
 
 
 func _process(_delta: float) -> void:
@@ -64,12 +59,9 @@ func load_data() -> void:
 
 
 func ready_up() -> void:
-	if not use_save_data: # load doc mitchells house if saving is disabled
-		level_manager.set_current_level(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
-	is_ready_to_start = true
-	ready_to_start.emit()
+	ready_finished.emit()
+	level_manager.set_current_level(int(Data.game_data["reload_data"]["last_level"]))
 	await Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
-	level_manager.new_level_loaded.emit(await level_manager.get_current_level_node()) # refresh an scripts that rely on the new level signal on boot
 
 # =========================================================================
 # PROCESS FUNCTIONS
@@ -82,10 +74,11 @@ func count_frames() -> void:
 
 var _currently_autosaving: bool = false
 func autosave() -> void:
-	if autosaving_enabled:
-		if not _currently_autosaving:
-			_currently_autosaving = true
-			await Global.delay(self, 10)
-			Global.speed_mult = 0.0
-			save_manager.data()
-			Global.speed_mult = 1.0
+	if not autosaving_enabled or _currently_autosaving:
+		return
+	_currently_autosaving = true
+	await Global.delay(self, 10)
+	Global.speed_mult = 0.0
+	save_manager.data()
+	Global.speed_mult = 1.0
+	_currently_autosaving = false

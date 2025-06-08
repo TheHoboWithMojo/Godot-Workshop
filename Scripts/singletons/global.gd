@@ -14,6 +14,7 @@ const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
 const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
 const SAVE_MANAGER_PATH: String = "/root/GameManager/SaveManager"
 const NPC_MANAGER_PATH: String = "/root/GameManager/NPCManager"
+const VECTOR_PLACER_PATH: String = "/root/GameManager/VectorPlacer"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
@@ -33,6 +34,7 @@ signal references_updated
 @onready var npc_manager: NPCManager = get_node(NPC_MANAGER_PATH)
 @onready var mob_manager: MobManager = get_node(MOB_MANAGER_PATH)
 @onready var save_manager: SaveManager = get_node(SAVE_MANAGER_PATH)
+@onready var vector_placer: VectorPlacer = get_node(VECTOR_PLACER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
@@ -87,6 +89,19 @@ func set_paused(value: bool) -> void:
 	speed_mult = 0.0
 	total_mobs = game_manager.total_mobs # Store actual mob count
 	mob_manager.total_mobs = mob_manager.MOB_CAP # Sets mob count to max to stop spawning
+
+
+func if_do(condition: bool, method_argument_dicts: Array[Dictionary]) -> bool:
+	if condition:
+		for method_argument_pair: Dictionary[Callable, Array] in method_argument_dicts:
+			var method: Callable = method_argument_pair.keys()[0]
+			var arguments: Array[Variant] = method_argument_pair[method]
+			if arguments:
+				method.callv(arguments)
+			else:
+				method.call()
+		return true
+	return false
 
 
 func is_in_menu() -> bool:
@@ -145,7 +160,7 @@ func get_rawname(scene_or_node_or_path: Variant) -> String:
 		TYPE_STRING:
 			return scene_or_node_or_path.get_file().get_basename()
 
-	Debug.throw_warning("Input '%s' does not have a filepath property" % [scene_or_node_or_path], self)
+	push_warning(Debug.define_error("Input '%s' does not have a filepath property" % [scene_or_node_or_path], self))
 	return ""
 
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
@@ -168,19 +183,6 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 	return positions
 
 
-# ESSENTIAL, UBIQUITOUS FUNCTION, CHECKS IF NODE IS SET TO ACTIVE AND WAITS FOR DATA TO BE LOADED
-func active_and_ready(self_node: Node, active: bool = true) -> void:
-	if not active: # Check is node is active and if the player exists
-		self_node.queue_free()
-		return
-
-	if not player:
-		await game_reloaded # if theres no player wait for references to update
-
-	if not game_manager.is_ready_to_start:
-		await game_manager.ready_to_start
-
-
 func string_to_vector2(input: String) -> Vector2:
 	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
 	var parts: PackedStringArray = trimmed.split(",")
@@ -195,6 +197,9 @@ func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
 
 
+func is_vector_placer_enabled() -> bool:
+	return vector_placer.enabled if vector_placer else false
+
 
 func get_class_of(node: Node) -> String:
 	var class_nomen: String = node.get_script().get_global_name()
@@ -207,11 +212,17 @@ func get_collider_global_rect(collider: Collider) -> Rect2:
 
 
 func get_vector_to_player(self_node: Node2D) -> Vector2:
-	return player.global_position - self_node.global_position if !Debug.throw_warning_if(not player, "Player camera path has changed", self) else Vector2.ZERO
+	if not player:
+		push_warning(Debug.define_error("Player camera path has changed", self))
+		return Vector2.ZERO
+	return player.global_position - self_node.global_position
 
 
 func get_vector_to_player_camera(self_node: Node2D) -> Vector2:
-	return player_camera.global_position - self_node.global_position if !Debug.throw_warning_if(not player_camera, "Player camera path has changed", self) else Vector2.ZERO
+	if player_camera == null:
+		push_warning(Debug.define_error("Player camera path has changed", self))
+		return Vector2.ZERO
+	return player_camera.global_position - self_node.global_position
 
 
 func get_collider(node: Node2D) -> CollisionShape2D:
@@ -243,5 +254,13 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	quest_manager = get_node(QUEST_MANAGER_PATH)
 	mob_manager = get_node(MOB_MANAGER_PATH)
 	npc_manager = get_node(NPC_MANAGER_PATH)
+	vector_placer = get_node(VECTOR_PLACER_PATH)
 	references_updated.emit()
 	print("[Global] Global references reloaded!")
+
+
+func ready_to_start() -> void:
+	if not game_manager:
+		await references_updated
+	if not game_manager.is_node_ready():
+		await game_manager.ready_finished

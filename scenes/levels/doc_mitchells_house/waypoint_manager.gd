@@ -7,8 +7,8 @@ func _ready() -> void:
 		if waypoint == null:
 			waypoints_unloaded = true
 			return
-		Levels.levels[waypoint.get_home_level()]["waypoints"][waypoint.name] = Vector2.ZERO
-		Levels.levels[waypoint.get_home_level()]["waypoints"][waypoint.name] = [waypoint.global_position]
+		Levels.levels[waypoint.get_home_level()][Levels.PROPERTIES.WAYPOINTS][waypoint.name] = Vector2.ZERO
+		Levels.levels[waypoint.get_home_level()][Levels.PROPERTIES.WAYPOINTS][waypoint.name] = [waypoint.global_position]
 
 func get_waypoints() -> Array[Waypoint]:
 	var waypoints: Array[Waypoint]

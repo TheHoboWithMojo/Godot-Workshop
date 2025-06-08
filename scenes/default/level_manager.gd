@@ -16,6 +16,7 @@ class_name LevelManager
 # SIGNALS
 # =========================================================================
 signal new_level_loaded(level: Level)
+signal about_to_change_level(level: Levels.LEVELS)
 # =========================================================================
 # PUBLIC FUNCTIONS
 # =========================================================================
@@ -35,7 +36,7 @@ func get_enemy_spawnpoints() -> Array[Vector2]:
 
 
 func get_current_level_node() -> Node:
-	if is_level_loading():
+	if is_level_loading() or not current_level:
 		await new_level_loaded
 	return current_level
 
@@ -53,6 +54,7 @@ func get_current_tile_map() -> TileMapLayer:
 
 func set_current_level(level: Levels.LEVELS) -> void: # bypass level switch
 	if not is_level_loading():
+		about_to_change_level.emit(level)
 		_level_loading = true
 		current_level = load(Levels.get_level_path(level)).instantiate()
 		_update_level_data()
@@ -68,7 +70,9 @@ func change_level(old_level: Node, new_level_path: String) -> void:
 	if _level_loading:
 		return
 	_level_loading = true
-	current_level = load(new_level_path).instantiate()
+	var new_level: Level = load(new_level_path).instantiate()
+	about_to_change_level.emit(new_level.get_level_enum())
+	current_level = new_level
 	add_child(current_level)
 	_update_level_data()
 	var spawn_position: Vector2 = current_level.get_portal_to_level(old_level.get_level_enum()).get_spawn_point_position()
@@ -78,6 +82,7 @@ func change_level(old_level: Node, new_level_path: String) -> void:
 	old_level.queue_free()
 	if not current_level.is_node_ready(): # wait for the level and all is children to be fully initialized
 		await get_tree().process_frame
+	current_level.set_visible(true)
 	_level_loading = false
 	new_level_loaded.emit(current_level)
 	Debug.debug("New Level %s loaded" % [current_level.name], self, "_change_level")
