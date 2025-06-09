@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6s20xy5mi331"]
+
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_y1o7q"]
+
+[node name="ChetsShop" type="Node2D"]
+script = ExtResource("1_y1o7q")
+level_enum = 5
+metadata/_custom_type_script = "uid://2pi66vkrsk8k"

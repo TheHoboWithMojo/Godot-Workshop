@@ -1,9 +1,13 @@
-res://scenes/level_builders/custom_interactable_object.tscn
+res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn
 res://dialogic/styles/alt.tres
 res://dialogic/styles/default.tres
 res://dialogic/styles/tryme.tres
-res://scripts/quests/aint_that_a_kick_in_the_head.gd
-res://scenes/level_builders/custom_interactable_object.gd
+res://assets/tiles.tres
 res://dialogic/characters/SunnySmiles/sunny_smiles.dch
+res://scenes/levels/goodsprings_gas_station/goodsprings_gas_station.tscn
+res://scenes/levels/goodsprings/goodsprings.tscn
+res://scenes/levels/chets_shop/chets_shop.tscn
+res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn
 res://scenes/default/game.tscn
-res://scripts/classes/quest.gd
+res://scripts/node_managers/object_manager.gd
+res://scripts/singletons/debug.gd

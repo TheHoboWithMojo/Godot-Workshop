@@ -45,7 +45,9 @@ func seek() -> void:
 
 var displacement: float = 0.0 # how much to nudge the target based on direction input
 var setting_target: bool = false
-func set_target(target: Variant = navigation_target, up_down_left_right: String = "") -> void:
+func set_target(target: Variant = navigation_target, move_level_call: bool = false, up_down_left_right: String = "") -> void:
+	if not move_level_call and moving_to_level:
+		await moved_level
 	if typeof(target) == typeof(navigation_target) and target == navigation_target:
 		return
 	setting_target = true
@@ -111,7 +113,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	var target: Vector2 = old_level.get_portal_to_level(level).get_spawn_point_position()
 
-	set_target(target)
+	set_target(target, true)
 
 
 	# Wait for either the navigation to finish or the level to change
@@ -147,7 +149,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 		await Global.delay(self, 2.0)
 
-		set_target(parent.global_position)
+		set_target(parent.global_position, true)
 
 
 	# Get the spawn position from the portal of the new level
@@ -155,7 +157,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	Debug.debug("New level spawnpoint location calculated, targeting it now", parent, "move_to_new_level")
 
-	set_target(spawn_position)
+	set_target(spawn_position, true)
 
 
 	# Update the reload data before spawning

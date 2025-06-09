@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck254y3333sjd"]
+
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kk5p5"]
+
+[node name="GoodspringsGasStation" type="Node2D"]
+script = ExtResource("1_kk5p5")
+level_enum = 4
+metadata/_custom_type_script = "uid://2pi66vkrsk8k"

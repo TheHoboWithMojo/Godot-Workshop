@@ -14,7 +14,7 @@ signal saving_complete
 
 @onready var reference_data: Dictionary[String, Dictionary] = {
 	"reload_data": reload_data,
-	"characters": Characters.characters,
+	"characters": Characters.characters_dict,
 	"stats": Player.stats,
 	"factions_data": Factions.factions_data,
 	"perks": Player.perks,

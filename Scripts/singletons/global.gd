@@ -1,5 +1,5 @@
 # Stores constant references, global variables, and essential functions
-extends Node2D
+extends Node
 
 # Constants
 const FLOAT_LIMIT: float = 2147483647.0
@@ -15,6 +15,7 @@ const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
 const SAVE_MANAGER_PATH: String = "/root/GameManager/SaveManager"
 const NPC_MANAGER_PATH: String = "/root/GameManager/NPCManager"
 const VECTOR_PLACER_PATH: String = "/root/GameManager/VectorPlacer"
+const OBJECT_MANAGER_PATH: String = "/root/GameManager/ObjectManager"
 
 # Signals
 signal game_reloaded # Receives this signal when game_manager's ready runs
@@ -35,6 +36,7 @@ signal references_updated
 @onready var mob_manager: MobManager = get_node(MOB_MANAGER_PATH)
 @onready var save_manager: SaveManager = get_node(SAVE_MANAGER_PATH)
 @onready var vector_placer: VectorPlacer = get_node(VECTOR_PLACER_PATH)
+@onready var object_manager: ObjectManager = get_node(OBJECT_MANAGER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
 @onready var delta: float = 0.0
@@ -255,6 +257,7 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	mob_manager = get_node(MOB_MANAGER_PATH)
 	npc_manager = get_node(NPC_MANAGER_PATH)
 	vector_placer = get_node(VECTOR_PLACER_PATH)
+	object_manager = get_node(OBJECT_MANAGER_PATH)
 	references_updated.emit()
 	print("[Global] Global references reloaded!")
 

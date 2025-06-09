@@ -1,11 +1,8 @@
-extends Quest
+extends QuestMaker
 
 enum CHOICES {}
 
 #func _ready() -> void:
-	#var main: Plot = back_in_the_saddle.mainplot
-	#var find_sunny: Objective = main.new_objective("Talk to Sunny Smiles in the Prospector Saloon.")
-	#var go_outside: Objective = main.new_objective("Meet Sunny Smiles behind the Prospector Saloon.")
 	#var shoot_bottles: Objective = main.new_objective("Shoot 3 sarsaparilla bottles outside the Prospector Saloon.")
 	#var follow_sunny: Objective = main.new_objective("Follow Sunny.")
 	#var kill_geckos: Objective = main.new_objective("Kill the geckos at the well.")
@@ -20,6 +17,7 @@ var talk_to_sunny: Objective
 var meet_sunny_in_the_back: Objective
 var shoot_the_bottles: Objective
 var saloon: Level
+var goodsprings: Level
 var sunny_smiles: NPC
 
 func _ready() -> void:
@@ -38,11 +36,19 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 		Levels.LEVELS.PROSPECTORS_SALOON:
 			start()
 			saloon = await Levels.get_current_level_node()
+		Levels.LEVELS.GOODSPRINGS:
+			goodsprings = await Levels.get_current_level_node()
+			if mainplot.current_objective == meet_sunny_in_the_back:
+				sunny_smiles.set_target(get_navpoint_position("Tutorial"))
+				await sunny_smiles.navigation_finished
+				Player.give_weapon("res://scenes/projectiles/fireball.tscn")
+
 
 
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.SUNNY_GREETING:
-			await Dialogic.timeline_ended
-			sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
-			mainplot.advance()
+			if not talk_to_sunny.is_complete():
+				await Dialogic.timeline_ended
+				sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
+				mainplot.advance()

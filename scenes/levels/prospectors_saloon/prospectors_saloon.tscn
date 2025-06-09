@@ -1,22 +1,29 @@
-[gd_scene load_steps=9 format=4 uid="uid://ckkwucoj1mfu5"]
+[gd_scene load_steps=11 format=4 uid="uid://ckkwucoj1mfu5"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kryoy"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_2u73p"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_lfjp6"]
+[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="4_hhryp"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_2u73p"]
 [ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="6_hhryp"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
 [ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="8_2fjxs"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="8_hhryp"]
 
-[node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "default_npcs", "waypoint_manager", "navpoint_manager", "portals")]
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_wbjm1"]
+vertices = PackedVector2Array(118, -182, 118, -10, 58, -10, 58, -18, -182, -182, -10, -18, -182, -10, -10, -10)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 0, 3, 5), PackedInt32Array(6, 4, 5, 7)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-192, -192, 128, -192, 128, 0, -192, 0)])
+parsed_geometry_type = 1
+source_geometry_mode = 2
+
+[node name="ProspectorsSaloon" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portal_manager")]
 script = ExtResource("1_kryoy")
-level = 3
+level_enum = 3
 tiles = NodePath("Tiles")
-default_npcs = [NodePath(""), NodePath("")]
 waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
-portals = [NodePath("DoorToGoodsprings")]
+portal_manager = NodePath("Portals")
 metadata/_custom_type_script = "uid://2pi66vkrsk8k"
 
 [node name="Tiles" type="TileMapLayer" parent="."]
@@ -26,16 +33,20 @@ tile_set = ExtResource("2_2u73p")
 script = ExtResource("3_lfjp6")
 metadata/_custom_type_script = "uid://85so8xh35jkw"
 
-[node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]
+[node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("4_hhryp")]
+home_level_node = NodePath("..")
+
+[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("5_2u73p")]
 position = Vector2(48, 0)
 rotation = -1.57079
-send_from_level = NodePath("..")
+send_from_level = NodePath("../..")
 send_to_level = 2
 
 [node name="Navpoints" parent="." instance=ExtResource("6_hhryp")]
 
 [node name="DoorToGoodprings" parent="Navpoints" instance=ExtResource("8_hhryp")]
-related_level = 3
+related_quest_enums = Array[int]([2])
+home_level_enum = 3
 
 [node name="Waypoints" parent="." instance=ExtResource("8_2fjxs")]
 
@@ -43,3 +54,7 @@ related_level = 3
 position = Vector2(24, -32)
 quest = 2
 home_level = 3
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
+visible = false
+navigation_polygon = SubResource("NavigationPolygon_wbjm1")

@@ -7,8 +7,9 @@ enum TRIGGER_MODES {CLICK, ENTRY, CLICK_AND_ENTRY, CLICK_OR_ENTRY}
 enum PLAY_MODES {DIALOG, SCENE}
 
 @export var debugging: bool = false
-@export var parent_level: Levels.LEVELS
-@export var related_quest: Quests.QUESTS
+@export var home_level_enum: Levels.LEVELS
+@export var object_enum: ObjectManager.OBJECTS
+@export var related_quest_enum: Quests.QUESTS
 @export var mode: TEMPLATES = TEMPLATES.CUSTOM
 @export_subgroup("Mode Reqs/Cutscene", "cutscene")
 @export var cutscene_touch_detector: TouchDetector
@@ -39,7 +40,7 @@ enum PLAY_MODES {DIALOG, SCENE}
 @export_group("Tweaks")
 @export var max_trigger_distance: float = 75.0
 @export var repeat_event: bool = false
-@export var emit_interaction_signals: bool = true
+@export var emit_interaction_signals: bool = false
 
 var trigger_mode: TRIGGER_MODES
 var play_mode: PLAY_MODES
@@ -56,12 +57,23 @@ signal player_touched_me(self_node: Node)
 
 
 func _ready() -> void:
+	ready.connect(_on_tree_entered)
+	tree_exited.connect(_on_tree_exited)
 	_assert_mode_requirements()
 	await get_tree().process_frame
 
 
-func get_related_quest() -> Quests.QUESTS:
-	return related_quest
+func _on_tree_entered() -> void:
+	Global.object_manager.object_loaded.emit(self)
+
+
+func _on_tree_exited() -> void:
+	Global.object_manager.object_unloaded.emit(object_enum)
+
+
+func get_related_quest_enum() -> Quests.QUESTS:
+	return related_quest_enum
+
 
 @onready var processing_press: bool = false
 func _on_button_pressed() -> void:
@@ -90,8 +102,12 @@ func is_event_playable() -> bool:
 		and not Player.is_occupied())
 
 
-func get_parent_level() -> Levels.LEVELS:
-	return parent_level
+func get_home_level_enum() -> Levels.LEVELS:
+	return home_level_enum
+
+
+func get_object_enum() -> ObjectManager.OBJECTS:
+	return object_enum
 
 
 func is_event_completed() -> bool:

@@ -66,16 +66,17 @@ func set_current_level(level: Levels.LEVELS) -> void: # bypass level switch
 		Debug.debug("New Level %s loaded" % [current_level.name], self, "set_current_level")
 
 
-func change_level(old_level: Node, new_level_path: String) -> void:
+func change_level(old_level: Level, new_level_path: String) -> void:
 	if _level_loading:
 		return
 	_level_loading = true
+	var old_level_enum: Levels.LEVELS = old_level.get_level_enum()
 	var new_level: Level = load(new_level_path).instantiate()
 	about_to_change_level.emit(new_level.get_level_enum())
 	current_level = new_level
-	add_child(current_level)
+	add_child.call_deferred(current_level)
 	_update_level_data()
-	var spawn_position: Vector2 = current_level.get_portal_to_level(old_level.get_level_enum()).get_spawn_point_position()
+	var spawn_position: Vector2 = current_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
 	Global.player.global_position = spawn_position
 	Global.player_camera.global_position = spawn_position
 	Global.player_camera.reset_smoothing()

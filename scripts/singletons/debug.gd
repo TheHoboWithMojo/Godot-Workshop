@@ -1,12 +1,83 @@
-# Holds advanced printing functions
 extends Node
+
+@export var track_loops: bool = false
+var loop_data: Dictionary = {}
+var instance_lookup: Dictionary = {}
+
+func _process(delta: float) -> void:
+	if not loop_data.is_empty():
+		process_tracking(delta)
+
+func _get_node_key(caller: Node) -> String:
+	return "%s<%s>%d" % [caller.name, Global.get_class_of(caller), caller.get_instance_id()]
+
+func doc_loop_start(caller: Node, function_name: String, instance_id: int) -> void:
+	var key: String = _get_node_key(caller)
+
+	if not loop_data.has(key):
+		loop_data[key] = {}
+
+	if not loop_data[key].has(function_name):
+		loop_data[key][function_name] = { "instances": {} }
+
+	loop_data[key][function_name]["instances"][instance_id] = { "time": 0.0 }
+
+	instance_lookup[instance_id] = {
+		"node_key": key,
+		"function_name": function_name,
+	}
+
+func doc_loop_end(instance_id: int) -> void:
+	if not instance_lookup.has(instance_id):
+		return
+
+	var key: String = instance_lookup[instance_id]["node_key"]
+	var fn: String = instance_lookup[instance_id]["function_name"]
+
+	if loop_data.has(key) and loop_data[key].has(fn):
+		loop_data[key][fn]["instances"].erase(instance_id)
+		if loop_data[key][fn]["instances"].is_empty():
+			loop_data[key].erase(fn)
+		if loop_data[key].is_empty():
+			loop_data.erase(key)
+
+	instance_lookup.erase(instance_id)
+
+func process_tracking(delta: float) -> void:
+	for key: String in loop_data:
+		for fn: String in loop_data[key]:
+			for id: int in loop_data[key][fn]["instances"]:
+				loop_data[key][fn]["instances"][id]["time"] += delta
+
+func print_loops() -> void:
+	for key: String in loop_data:
+		print("Node:", key)
+		for fn: String in loop_data[key]:
+			var instances: Dictionary = loop_data[key][fn]["instances"]
+			print("  Function '%s' has %d instances:" % [fn, instances.size()])
+			var i: int = 1
+			for id: int in instances:
+				var time: float = instances[id]["time"]
+				print("    - Instance %d: time = %.2f s" % [i, time])
+				i += 1
+
+
 func define_error(error: String, caller: Node) -> String:
 	return ("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
 
+
+
 func debug(message: String, caller: Node, function_name: String, callable_argument_dict: Dictionary[Callable, Array] = {}) -> void:
 	if caller.debugging:
+		var class_nomen: String = "" # class override functionality
+		if message.begins_with("["):
+			for i: int in range(1, message.length()):
+				if message[i] == "]":
+					break
+				class_nomen += message[i]
+			message = message.replace("[" + class_nomen + "] ", "")
 		message = " " + message if message else ""
-		var class_nomen: String = Global.get_class_of(caller)
+		class_nomen = Global.get_class_of(caller) if not class_nomen else class_nomen
 		var caller_nomen: String = caller.name
 		caller_nomen = " " + caller_nomen if caller_nomen and not caller_nomen == class_nomen else ""
 		class_nomen = "[" + class_nomen + "]"
@@ -47,7 +118,7 @@ func get_array_as_pretty_string(array: Array) -> String:
 
 func frame_print(input: Variant, frame_print_delay: int) -> void:
 	if not Global.game_manager.track_frames:
-		push_warning(define_error("Cannot be called if track frames isn't on.", self))
+		push_warning("[Debug] Cannot be called if track frames isn't on. (frame_print())")
 		return
 	if Global.frames % frame_print_delay == 0:
 		print(input)

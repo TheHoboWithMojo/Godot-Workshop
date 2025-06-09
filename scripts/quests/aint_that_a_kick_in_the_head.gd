@@ -1,4 +1,4 @@
-extends Quest
+extends QuestMaker
 
 var doc_mitchell: NPC
 
@@ -37,7 +37,6 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 	match(level):
 		Levels.LEVELS.DOC_MITCHELLS_HOUSE:
 			doc_mitchells_house = await Levels.get_current_level_node() if not doc_mitchells_house else doc_mitchells_house
-			vit_machine = doc_mitchells_house.find_child("VitMachine") if not vit_machine else vit_machine
 
 
 var in_tree: bool = false
@@ -50,9 +49,9 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 					await Dialogic.timeline_ended
 					start()
 					doc_mitchell.set_target(get_navpoint_position("VitMachine"))
-					await level_dependent_event(vit_machine, "is_event_started", "VitMachine")
+					await Global.object_manager.object_method_complete(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_started")
 					mainplot.advance()
-					await level_dependent_event(vit_machine, "is_event_completed", "VitMachine")
+					await Global.object_manager.object_method_complete(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_completed")
 					mainplot.advance()
 					await doc_mitchell.navigation_finished
 					doc_mitchell.set_target(get_navpoint_position("Couch"))
@@ -63,8 +62,6 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 				if not use_the_vit.is_complete():
 					await Dialogic.timeline_ended
 					mainplot.advance()
-					doc_mitchell.set_target(Vector2(0,0))
-					await doc_mitchell.navigation_finished
 					doc_mitchell.set_target(get_navpoint_position("Exit"))
 					await doc_mitchell.navigation_finished
 					Global.set_fast_travel_enabled(true)

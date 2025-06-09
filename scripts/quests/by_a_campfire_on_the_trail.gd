@@ -14,11 +14,11 @@ extends Node
 enum CHOICES {}
 
 #func _ready() -> void:
-	#var by_a_campfire_on_the_trail: Quest = Quest.new(self)
+	#var by_a_campfire_on_the_trail: QuestMaker = QuestMaker.new(self)
 	#
-	#var main: Quest.Plot = by_a_campfire_on_the_trail.mainplot
-	#var find_herbs: Quest.Objective = main.new_objective("Find a broc flower and a xander root.")
-	#var make_powder: Quest.Objective = main.new_objective("Use the campfire to make Healing Powder.")
-	#var meet_trudy: Quest.Objective = main.new_objective("Go and meet Trudy at the Prospector Saloon.")
+	#var main: QuestMaker.Plot = by_a_campfire_on_the_trail.mainplot
+	#var find_herbs: QuestMaker.Objective = main.new_objective("Find a broc flower and a xander root.")
+	#var make_powder: QuestMaker.Objective = main.new_objective("Use the campfire to make Healing Powder.")
+	#var meet_trudy: QuestMaker.Objective = main.new_objective("Go and meet Trudy at the Prospector Saloon.")
 	#
 	##by_a_campfire_on_the_trail.overview()

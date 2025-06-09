@@ -21,6 +21,7 @@ enum ENFORCABLE_CLASSES {
 	CAMERA_2D,
 	CHARACTER_BODY_2D,
 	COLLISION_SHAPE_2D,
+	PORTAL,
 }
 
 var class_name_pairs: Dictionary = {
@@ -28,7 +29,7 @@ var class_name_pairs: Dictionary = {
 	ENFORCABLE_CLASSES.NAVPOINT: "Navpoint",
 	ENFORCABLE_CLASSES.WAYPOINT: "Waypoint",
 	ENFORCABLE_CLASSES.BEINGS: "Beings",
-	ENFORCABLE_CLASSES.QUEST: "Quest",
+	ENFORCABLE_CLASSES.QUEST: "QuestMaker",
 	ENFORCABLE_CLASSES.INTERACTABLE: "Interactable",
 	ENFORCABLE_CLASSES.CLICK_DETECTOR: "ClickDetector",
 	ENFORCABLE_CLASSES.TOUCH_DETECTOR: "TouchDetector",
@@ -36,6 +37,7 @@ var class_name_pairs: Dictionary = {
 	ENFORCABLE_CLASSES.NODE: "Node",
 	ENFORCABLE_CLASSES.AREA_2D: "Area2D",
 	ENFORCABLE_CLASSES.STATIC_BODY_2D: "StaticBody2D",
+	ENFORCABLE_CLASSES.PORTAL: "Portal",
 }
 
 func _get_class_name(class_enum: ENFORCABLE_CLASSES) -> String:

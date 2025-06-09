@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=17 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/default/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://cjv6qf28rc7c0" path="res://scripts/quests/run_goodsprings_run.gd" id="13_0leiu"]
 [ext_resource type="Script" uid="uid://ub78h3d0hpbl" path="res://scripts/quests/ghost_town_gunfight.gd" id="14_4g1ug"]
 [ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="15_ccl36"]
+[ext_resource type="Script" uid="uid://duqqrvdeqd0mo" path="res://scripts/node_managers/object_manager.gd" id="16_rbb1r"]
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_wrm1d")
@@ -90,7 +91,6 @@ script = ExtResource("14_4g1ug")
 
 [node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
 script = ExtResource("10_f32yu")
-debugging = true
 linked_quest = 1
 characters = Array[int]([1])
 timelines = Array[int]([1, 2])
@@ -105,3 +105,7 @@ levels = Array[int]([3, 2])
 
 [node name="VectorPlacer" parent="." instance=ExtResource("15_ccl36")]
 enabled = false
+
+[node name="ObjectManager" type="Node" parent="."]
+script = ExtResource("16_rbb1r")
+debugging = true

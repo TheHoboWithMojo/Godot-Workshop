@@ -1,13 +1,15 @@
-res://scenes/npc_builders
+res://scenes/levels/chets_shop/chets_shop
+res://scenes/levels/goodsprings_gas_station/goodsprings_gas_station
 res://scenes/level_builders
+res://scripts/node_managers
 res://
+res://scenes/npc_builders
 res://scenes/levels/doc_mitchells_house
 res://scenes/default
 res://dialogic/characters/SunnySmiles
 res://dialogic/timelines
 res://scenes/levels/prospectors_saloon
 res://scenes/tools
-res://scripts/node_managers
 res://scripts/icon_extenders
 res://scripts/singletons
 res://scenes/levels/goodsprings
@@ -19,4 +21,3 @@ res://scripts/classes
 res://scripts/quests
 res://Scenes
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons
-res://assets

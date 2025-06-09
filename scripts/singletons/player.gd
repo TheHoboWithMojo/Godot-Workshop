@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 signal player_stats_changed
 signal player_name_changed
 
@@ -134,6 +134,16 @@ func _process(_delta: float) -> void:
 		check_for_achievements()
 
 
+func give_weapon(scene_path: String) -> void:
+	var weapon: PackedScene = load(scene_path)
+	if not weapon in Global.player.projectiles: # Check if the player already has the projectile
+		Global.player.projectiles.append(weapon)
+		Data.game_data["reload_data"]["acquired_weapons"].append(weapon.get_path())
+
+		if Global.player.projectiles.size() == 1: # if its the first they pick up, set it as their active
+			Global.player.current_projectile = weapon
+
+
 func set_stat(stat: STATS, value: float) -> bool:
 	var stat_category: STAT_CATEGORIES = _get_stat_category(stat)
 	var original_stat_value: float = float(Data.game_data["stats"][str(stat_category)][str(stat)])
@@ -230,11 +240,11 @@ func is_occupied() -> bool:
 	return Global.is_in_menu() or Dialogue.is_dialogue_playing()
 
 
-func set_objective(objective: Quest.Objective) -> void:
+func set_objective(objective: QuestMaker.Objective) -> void:
 	Global.quest_displayer.get_node("Objective").set_text(objective.nomen)
 
 
-func set_quest(quest: Quest) -> void:
+func set_quest(quest: QuestMaker) -> void:
 	Global.quest_displayer.get_node("Quest").set_text(quest.name + ":")
 
 

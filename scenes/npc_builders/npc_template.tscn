@@ -78,9 +78,8 @@ shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("4_n1ps7")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 
-[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "click_detector", "touch_detector") instance=ExtResource("5_kt180")]
+[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("5_kt180")]
 parent = NodePath("..")
-click_detector = NodePath("../ClickDetector")
 touch_detector = NodePath("../TouchDetector")
 
 [node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death") instance=ExtResource("6_4ul4r")]

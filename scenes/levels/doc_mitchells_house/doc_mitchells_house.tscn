@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://5qmyahukkvx"]
+[gd_scene load_steps=19 format=4 uid="uid://5qmyahukkvx"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
 [ext_resource type="PackedScene" uid="uid://b20ddkj72vfmy" path="res://scenes/level_builders/custom_interactable_object.tscn" id="3_khflj"]
@@ -11,60 +11,34 @@
 [ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="9_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="10_8rqal"]
 [ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="11_nrx6f"]
+[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="12_ou502"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="13_khflj"]
 [ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="14_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="14_ou502"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fl73o"]
-size = Vector2(30, 45)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fl73o"]
+size = Vector2(30, 45)
+
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_nrx6f"]
-vertices = PackedVector2Array(104, -104, 104, -24, 40, -57, 40, -152, 183, -183, 183, -104, 183, -24, 183, 23, -151, 23, -40, -57, -151, -183, -40, -152)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 0, 3), PackedInt32Array(1, 6, 7, 8), PackedInt32Array(2, 1, 8, 9), PackedInt32Array(9, 8, 10, 11), PackedInt32Array(11, 10, 4, 3)])
+vertices = PackedVector2Array(99, -109, 99, -19, 45, -52, 45, -157, 178, -178, 178, -109, 178, -19, 178, 18, -146, 18, -45, -52, -138, -10, -146, -10, -138, -118, -45, -157, -146, -118, -146, -178)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 0, 3), PackedInt32Array(1, 6, 7, 8), PackedInt32Array(9, 2, 1, 8, 10), PackedInt32Array(8, 11, 10), PackedInt32Array(9, 10, 12, 13), PackedInt32Array(12, 14, 15, 13), PackedInt32Array(13, 15, 4, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-176, -208, 208, -208, 208, 48, -176, 48)])
 parsed_geometry_type = 1
 parsed_collision_mask = 4294967041
 source_geometry_mode = 2
-agent_radius = 25.0
+agent_radius = 30.0
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portals")]
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portal_manager", "interactables")]
 script = ExtResource("1_ejuju")
-level = 1
+level_enum = 1
 tiles = NodePath("Tiles")
 waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
-portals = [NodePath("DoorToGoodsprings")]
-
-[node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("3_khflj")]
-position = Vector2(0, -104)
-parent_level = 1
-related_quest = 0
-mode = 0
-cutscene_scene_path = ""
-point_timeline = 0
-custom_trigger_mode = 0
-custom_click_detector = NodePath("ClickDetector")
-custom_play_mode = 1
-custom_timeline = 0
-custom_scene_path = "uid://bxetckwqxatr6"
-max_trigger_distance = 75.0
-repeat_event = false
-emit_interaction_signals = true
-
-[node name="Collider" type="CollisionShape2D" parent="VitMachine"]
-position = Vector2(-4.76837e-07, -0.5)
-shape = SubResource("RectangleShape2D_fl73o")
-script = ExtResource("4_nrx6f")
-
-[node name="Sprite" type="Sprite2D" parent="VitMachine"]
-position = Vector2(3.58559e-08, 0)
-scale = Vector2(0.071111, 0.0817715)
-texture = ExtResource("5_ou502")
-
-[node name="ClickDetector" parent="VitMachine" instance=ExtResource("6_ejuju")]
+portal_manager = NodePath("Portals")
+interactables = [NodePath("VitMachine")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -111,26 +85,41 @@ size_flags_vertical = 4
 
 [node name="Couch" parent="Navpoints" instance=ExtResource("13_khflj")]
 position = Vector2(144, -96)
-related_quests = Array[int]([1])
-related_level = 1
+related_quest_enums = Array[int]([1])
+home_level_enum = 1
 
 [node name="Exit" type="Marker2D" parent="Navpoints"]
 position = Vector2(-144, -100)
 script = ExtResource("14_nrx6f")
-related_quests = Array[int]([1])
-related_level = 1
+related_quest_enums = Array[int]([1])
+home_level_enum = 1
 metadata/_custom_type_script = "uid://v843ummj070b"
 
 [node name="VitMachine" parent="Navpoints" instance=ExtResource("13_khflj")]
 position = Vector2(32, -100)
-related_quests = Array[int]([1])
-related_level = 1
+related_quest_enums = Array[int]([1])
+home_level_enum = 1
 
-[node name="DoorToGoodsprings" parent="." node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
-position = Vector2(-176, -40)
-debugging = true
-send_from_level = NodePath("..")
-send_to_level = 2
+[node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("3_khflj")]
+position = Vector2(0, -104)
+home_level_enum = 1
+object_enum = 1
+related_quest_enum = 1
+custom_click_detector = NodePath("ClickDetector")
+custom_play_mode = 1
+custom_scene_path = "uid://bxetckwqxatr6"
+
+[node name="Collider" type="CollisionShape2D" parent="VitMachine"]
+position = Vector2(-4.76837e-07, -0.5)
+shape = SubResource("RectangleShape2D_fl73o")
+script = ExtResource("4_nrx6f")
+
+[node name="Sprite" type="Sprite2D" parent="VitMachine"]
+position = Vector2(3.58559e-08, 0)
+scale = Vector2(0.071111, 0.0817715)
+texture = ExtResource("5_ou502")
+
+[node name="ClickDetector" parent="VitMachine" instance=ExtResource("6_ejuju")]
 
 [node name="VectorPlacer" parent="." instance=ExtResource("14_ou502")]
 offset_left = -383.6
@@ -140,3 +129,12 @@ offset_bottom = 9930.0
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_nrx6f")
+
+[node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("12_ou502")]
+home_level_node = NodePath("..")
+
+[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("8_pmyaa")]
+position = Vector2(-176, -40)
+debugging = true
+send_from_level = NodePath("../..")
+send_to_level = 2

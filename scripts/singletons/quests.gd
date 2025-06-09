@@ -34,19 +34,23 @@ func get_quest_levels(quest: QUESTS) -> Array[Levels.LEVELS]:
 	return quests[quest]["related_levels"]
 
 
-func get_quest_waypoints(quest: QUESTS) -> Array[Waypoint]:
+func get_quest_waypoints(quest_enum: QUESTS) -> Array[Waypoint]:
 	var waypoint_array: Array[Waypoint]
 	for waypoint: Waypoint in get_tree().get_nodes_in_group("waypoints"):
-		if waypoint.quest == quest:
+		if waypoint.get_quest_enum() == quest_enum:
 			waypoint_array.append(waypoint)
+	if waypoint_array.size() == 0:
+		push_warning("No waypoints found for quest %s, ensure quest enum refs are not broken" % [get_quest_name(quest_enum)], self)
 	return waypoint_array
 
 
-func get_quest_navpoints(quest: QUESTS) -> Array[Navpoint]:
+func get_quest_navpoints(quest_enum: QUESTS) -> Array[Navpoint]:
 	var navpoint_array: Array[Navpoint]
 	for navpoint: Navpoint in get_tree().get_nodes_in_group("navpoints"):
-		if quest in navpoint.related_quests:
+		if quest_enum in navpoint.get_related_quest_enums():
 			navpoint_array.append(navpoint)
+	if navpoint_array.size() == 0:
+		push_warning("No navpoints found for quest %s, ensure quest enum refs are not broken" % [get_quest_name(quest_enum)], self)
 	return navpoint_array
 
 

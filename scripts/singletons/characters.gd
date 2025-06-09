@@ -1,9 +1,9 @@
-extends Node2D
+extends Node
 
 enum CHARACTERS { UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE, JOE_COBB, VICTOR }
 enum PROPERTIES { ALIVE, RESOURCE, STYLE, FACTION, LAST_LEVEL, DEFAULT_LEVEL, LAST_POSITION, SCENE_PATH }
 
-var characters: Dictionary = {
+var characters_dict: Dictionary = {
 	CHARACTERS.DOC_MITCHELL: {
 		PROPERTIES.ALIVE: true,
 		PROPERTIES.RESOURCE: "res://dialogic/characters/DocMitchell/doc_mitchell.dch",
@@ -79,18 +79,26 @@ var characters: Dictionary = {
 	},
 }
 
+func get_character_enum_from_scene_path(path: String) -> CHARACTERS:
+	for character: CHARACTERS in characters_dict:
+		if characters_dict[character][PROPERTIES.SCENE_PATH] == path:
+			return character
+	push_error(Debug.define_error("Path %s does not exist in the global characters_dict" % [path], self))
+	return CHARACTERS.UNASSIGNED
+
+
 func get_character_resource(character: CHARACTERS) -> DialogicCharacter:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to access resource of unassigned character", self))
 		return null
-	return load(characters[character][PROPERTIES.RESOURCE])
+	return load(characters_dict[character][PROPERTIES.RESOURCE])
 
 
 func get_character_instantiated_scene(character: CHARACTERS) -> NPC:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to instantiate unassigned character", self))
 		return null
-	return load(characters[character][PROPERTIES.SCENE_PATH]).instantiate() as NPC
+	return load(characters_dict[character][PROPERTIES.SCENE_PATH]).instantiate() as NPC
 
 
 func get_character_name(character: CHARACTERS) -> String:
@@ -101,14 +109,14 @@ func get_character_faction(character: CHARACTERS) -> Factions.FACTIONS:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to access faction of unassigned character", self))
 		return Factions.FACTIONS.UNASSIGNED
-	return characters[character][PROPERTIES.FACTION]
+	return characters_dict[character][PROPERTIES.FACTION]
 
 
 func is_character_alive(character: CHARACTERS) -> bool:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to check alive status of unassigned character", self))
 		return false
-	return characters[character][PROPERTIES.ALIVE]
+	return characters_dict[character][PROPERTIES.ALIVE]
 
 
 func set_alive(character: CHARACTERS, value: bool) -> bool:
@@ -118,7 +126,7 @@ func set_alive(character: CHARACTERS, value: bool) -> bool:
 	if not is_character_alive(character):
 		push_warning(Debug.define_error("Trying to set alive to the dead character %s" % [get_character_name(character)], self))
 		return false
-	characters[character][PROPERTIES.ALIVE] = value
+	characters_dict[character][PROPERTIES.ALIVE] = value
 	return true
 
 
@@ -129,7 +137,7 @@ func set_character_last_level(character: CHARACTERS, level: Levels.LEVELS) -> bo
 	if level == Levels.LEVELS.UNASSIGNED:
 		push_warning(Debug.define_error("Trying to set character %s's last level to unassigned" % [get_character_name(character)], self))
 		return false
-	characters[character][PROPERTIES.LAST_LEVEL] = level
+	characters_dict[character][PROPERTIES.LAST_LEVEL] = level
 	return true
 
 
@@ -137,7 +145,7 @@ func get_character_last_level(character: CHARACTERS) -> Levels.LEVELS:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to access last level of unassigned character", self))
 		return Levels.LEVELS.UNASSIGNED
-	return characters[character][PROPERTIES.LAST_LEVEL]
+	return characters_dict[character][PROPERTIES.LAST_LEVEL]
 
 
 func set_character_default_level(character: CHARACTERS, level: Levels.LEVELS) -> bool:
@@ -147,7 +155,7 @@ func set_character_default_level(character: CHARACTERS, level: Levels.LEVELS) ->
 	if level == Levels.LEVELS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to set default level of unassigned character", self))
 		return false
-	characters[character][PROPERTIES.DEFAULT_LEVEL] = level
+	characters_dict[character][PROPERTIES.DEFAULT_LEVEL] = level
 	return true
 
 
@@ -155,19 +163,19 @@ func get_character_default_level(character: CHARACTERS) -> Levels.LEVELS:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to get default level of unassigned character", self))
 		return Levels.LEVELS.UNASSIGNED
-	return characters[character][PROPERTIES.DEFAULT_LEVEL]
+	return characters_dict[character][PROPERTIES.DEFAULT_LEVEL]
 
 
 func get_character_last_position(character: CHARACTERS) -> Vector2:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to get last position of unassigned character", self))
 		return Vector2.ZERO
-	return characters[character][PROPERTIES.LAST_POSITION]
+	return characters_dict[character][PROPERTIES.LAST_POSITION]
 
 
 func set_character_last_position(character: CHARACTERS, vector: Vector2) -> bool:
 	if character == CHARACTERS.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to set last position of unassigned character", self))
 		return false
-	characters[character][PROPERTIES.LAST_POSITION] = vector
+	characters_dict[character][PROPERTIES.LAST_POSITION] = vector
 	return true

@@ -1,23 +1,35 @@
 extends Node
 
-enum LEVELS { UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS, PROSPECTORS_SALOON }
-enum PROPERTIES { PATH, NAVPOINTS, WAYPOINTS, LEVEL_CONNECTIONS }
+enum LEVELS { UNASSIGNED, DOC_MITCHELLS_HOUSE, GOODSPRINGS, PROSPECTORS_SALOON, GOODSPRINGS_GAS_STATION, CHETS_SHOP}
+enum PROPERTIES { SCENE_PATH, NAVPOINTS, WAYPOINTS, LEVEL_CONNECTIONS }
 
-var levels: Dictionary = {
+var levels_dict: Dictionary = {
 	LEVELS.DOC_MITCHELLS_HOUSE: {
-		PROPERTIES.PATH: "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
+		PROPERTIES.SCENE_PATH: "res://scenes/levels/doc_mitchells_house/doc_mitchells_house.tscn",
 		PROPERTIES.WAYPOINTS: {},
 		PROPERTIES.NAVPOINTS: {},
 		PROPERTIES.LEVEL_CONNECTIONS: [LEVELS.GOODSPRINGS]
 	},
 	LEVELS.GOODSPRINGS: {
-		PROPERTIES.PATH: "res://scenes/levels/goodsprings/goodsprings.tscn",
+		PROPERTIES.SCENE_PATH: "res://scenes/levels/goodsprings/goodsprings.tscn",
 		PROPERTIES.WAYPOINTS: {},
 		PROPERTIES.NAVPOINTS: {},
 		PROPERTIES.LEVEL_CONNECTIONS: [LEVELS.DOC_MITCHELLS_HOUSE, LEVELS.PROSPECTORS_SALOON]
 	},
 	LEVELS.PROSPECTORS_SALOON: {
-		PROPERTIES.PATH: "res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn",
+		PROPERTIES.SCENE_PATH: "res://scenes/levels/prospectors_saloon/prospectors_saloon.tscn",
+		PROPERTIES.WAYPOINTS: {},
+		PROPERTIES.NAVPOINTS: {},
+		PROPERTIES.LEVEL_CONNECTIONS: [LEVELS.GOODSPRINGS]
+	},
+	LEVELS.GOODSPRINGS_GAS_STATION:{
+		PROPERTIES.SCENE_PATH: "res://scenes/levels/goodsprings_gas_station/goodsprings_gas_station.tscn",
+		PROPERTIES.WAYPOINTS: {},
+		PROPERTIES.NAVPOINTS: {},
+		PROPERTIES.LEVEL_CONNECTIONS: [LEVELS.GOODSPRINGS]
+	},
+		LEVELS.CHETS_SHOP:{
+		PROPERTIES.SCENE_PATH: "res://scenes/levels/chets_shop/chets_shop.tscn",
 		PROPERTIES.WAYPOINTS: {},
 		PROPERTIES.NAVPOINTS: {},
 		PROPERTIES.LEVEL_CONNECTIONS: [LEVELS.GOODSPRINGS]
@@ -28,7 +40,16 @@ func _ready() -> void:
 	_precompute_paths()
 
 func get_level_path(level: LEVELS) -> String:
-	return levels[level][PROPERTIES.PATH]
+	return levels_dict[level][PROPERTIES.SCENE_PATH]
+
+
+func get_level_enum_from_scene_path(path: String) -> Levels.LEVELS:
+	for level: LEVELS in levels_dict:
+		if levels_dict[level][PROPERTIES.SCENE_PATH] == path:
+			return level
+	push_error(Debug.define_error("Path %s does not exist in the global levels_dict" % [path], self))
+	return Levels.LEVELS.UNASSIGNED
+
 
 func get_level_name(level: LEVELS) -> String:
 	return Global.enum_to_camelcase(level, LEVELS)
@@ -55,11 +76,11 @@ func print_vector_tool_level_navpoints(level: LEVELS) -> bool:
 
 func print_onready_level_navpoints(level: LEVELS) -> void:
 	print("\nNavpoint Summary For Level: %s" % [get_level_name(level)])
-	Debug.pretty_print_dict(levels[level][PROPERTIES.NAVPOINTS])
+	Debug.pretty_print_dict(levels_dict[level][PROPERTIES.NAVPOINTS])
 
 func print_onready_level_waypoints(level: LEVELS) -> void:
 	print("\nWaypoint Summary For Level: %s" % [get_level_name(level)])
-	Debug.pretty_print_dict(levels[level][PROPERTIES.WAYPOINTS])
+	Debug.pretty_print_dict(levels_dict[level][PROPERTIES.WAYPOINTS])
 
 # -----------------------------
 # PATHFINDING FUNCTIONS
@@ -69,7 +90,7 @@ var path_cache: Dictionary = {}
 
 func _precompute_paths() -> void:
 	path_cache.clear()
-	var all_levels: Array = levels.keys()
+	var all_levels: Array = levels_dict.keys()
 	for start_level: LEVELS in all_levels:
 		for end_level: LEVELS in all_levels:
 			if start_level != end_level:
@@ -123,6 +144,6 @@ func _find_all_paths(current: LEVELS, target: LEVELS, path: Array[LEVELS], visit
 	if current == target:
 		all_paths.append(path.duplicate())
 	else:
-		for next_level: LEVELS in levels[current][PROPERTIES.LEVEL_CONNECTIONS]:
+		for next_level: LEVELS in levels_dict[current][PROPERTIES.LEVEL_CONNECTIONS]:
 			_find_all_paths(next_level, target, path, visited.duplicate(), all_paths)
 	path.pop_back()

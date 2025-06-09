@@ -54,7 +54,7 @@ func set_target(target: Variant, up_down_left_right: String = "") -> bool:
 	if not navigation_manager:
 		push_error(Debug.define_error("Cannot call the seek function on a npc without a navigation component", self))
 		return false
-	navigation_manager.set_target(target, up_down_left_right)
+	navigation_manager.set_target(target, false, up_down_left_right)
 	return true
 
 

@@ -12,7 +12,7 @@ extends Area2D
 @onready var spawn_position: Vector2 = global_position
 var complete: bool = false
 var duplicates: Array[Waypoint]
-var quest_node: Quest
+var quest_node: QuestMaker
 var duplicated: bool = false
 var active: bool = false # whether or not its active in the current quest
 
@@ -51,7 +51,7 @@ func get_quest_enum() -> Quests.QUESTS:
 	return quest
 
 
-func get_quest_node() -> Quest:
+func get_quest_node() -> QuestMaker:
 	return quest_node
 
 

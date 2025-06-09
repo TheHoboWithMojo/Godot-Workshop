@@ -1,15 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://drv2an0hti84j"]
+[gd_scene load_steps=5 format=3 uid="uid://bqfvmyulbra08"]
 
 [ext_resource type="Script" uid="uid://b1ojke28nhgec" path="res://scripts/node_managers/projectile_pickup.gd" id="1_kpxhg"]
 [ext_resource type="PackedScene" uid="uid://cp8eugxsx1ocq" path="res://scenes/projectiles/fireball.tscn" id="2_uo1hm"]
-[ext_resource type="Texture2D" uid="uid://d13atk41mae64" path="res://assets/books.jpg" id="3_0r8ej"]
-[ext_resource type="AudioStream" uid="uid://ugr5cy3vg55m" path="res://assets/sounds/pickup.mp3" id="4_jpncy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cy74l"]
 size = Vector2(66, 66)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_01wlu"]
-atlas = ExtResource("3_0r8ej")
 region = Rect2(46, 27, 66, 66)
 
 [node name="FireballPickup" type="Area2D" node_paths=PackedStringArray("audio", "sprite", "collision")]
@@ -26,6 +23,5 @@ shape = SubResource("RectangleShape2D_cy74l")
 texture = SubResource("AtlasTexture_01wlu")
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("4_jpncy")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

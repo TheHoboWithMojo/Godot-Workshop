@@ -11,7 +11,7 @@ func _ready() -> void:
 	Debug.debug("Game reloaded, reloading all npcs.", self, "_ready")
 	Global.level_manager.about_to_change_level.connect(_on_about_to_change_level)
 	child_entered_tree.connect(_on_child_entered_tree)
-	for character: Characters.CHARACTERS in Characters.characters:
+	for character: Characters.CHARACTERS in Characters.characters_dict:
 		var npc: NPC = Characters.get_character_instantiated_scene(character)
 		add_child(npc)
 		npc_dict[npc] = {}
@@ -65,7 +65,7 @@ func set_npc_enabled(npc: NPC, value: bool) -> void:
 	npc.set_visible(false)
 	npc.set_physics_process(false)
 	npc.set_process(false)
-	npc.collider.set_disabled(true)
+	npc.collider.set_disabled.call_deferred(true)
 
 	if value:
 		await get_tree().process_frame

@@ -35,14 +35,18 @@ func _on_player_entered_area() -> void:
 	if processing_interaction or Player.is_occupied():
 		Debug.debug("Processing transfer failed", self, "_on_portal_clicked")
 		return
+
+	var id: int = randi()
+	Debug.doc_loop_start(self, "_on_player_entered_area", id)
 	while Global.player_bubble in touch_detector.get_overlapping_areas():
 		if Input.is_action_just_pressed("interact"):
 			processing_interaction = true
 			player_touched_me.emit(self)
 			Debug.debug("Processing click succeeded, changing level!", self, "_on_portal_clicked")
-			Global.level_manager.change_level(send_from_level, send_to_level_path)
+			await Global.level_manager.change_level(send_from_level, send_to_level_path)
 			processing_interaction = false
 		await get_tree().process_frame
+	Debug.doc_loop_end(id)
 
 
 func get_spawn_point_position() -> Vector2:
