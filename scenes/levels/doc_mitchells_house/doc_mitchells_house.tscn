@@ -135,6 +135,5 @@ home_level_node = NodePath("..")
 
 [node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("8_pmyaa")]
 position = Vector2(-176, -40)
-debugging = true
 send_from_level = NodePath("../..")
 send_to_level = 2

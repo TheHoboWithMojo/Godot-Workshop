@@ -26,6 +26,7 @@ Dialogic="*res://addons/dialogic/Core/DialogicGameHandler.gd"
 Levels="*res://scripts/singletons/levels.gd"
 Quests="*res://scripts/singletons/quests.gd"
 Characters="*res://scripts/singletons/characters.gd"
+Console="*res://addons/console/console.gd"
 
 [debug]
 
@@ -39,6 +40,7 @@ directories/dch_directory={
 "sunny_smiles": "res://dialogic/characters/SunnySmiles/sunny_smiles.dch"
 }
 directories/dtl_directory={
+"off_you_go": "res://dialogic/timelines/off_you_go.dtl",
 "picktags": "res://dialogic/timelines/picktags.dtl",
 "sunny_greeting": "res://dialogic/timelines/sunny_greeting.dtl",
 "youre_awake": "res://dialogic/timelines/youre_awake.dtl"
@@ -78,7 +80,7 @@ window/stretch/mode="viewport"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/audio_manager/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/top_down_camera/plugin.cfg")
+enabled=PackedStringArray("res://addons/audio_manager/plugin.cfg", "res://addons/console/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/top_down_camera/plugin.cfg")
 
 [global_group]
 

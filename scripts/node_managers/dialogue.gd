@@ -1,7 +1,7 @@
 extends Node
 signal dialogue_started
 
-enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING}
+enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING, OFF_YOU_GO}
 
 var timelines: Dictionary = {
 	TIMELINES.YOURE_AWAKE: {
@@ -9,6 +9,7 @@ var timelines: Dictionary = {
 		"completed": false,
 		"repeatable": false,
 		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
+		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 		"resource": "res://dialogic/timelines/youre_awake.dtl",
 	},
 	TIMELINES.PICKTAGS: {
@@ -16,6 +17,7 @@ var timelines: Dictionary = {
 		"completed": false,
 		"repeatable": false,
 		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
+		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 		"resource": "res://dialogic/timelines/picktags.dtl",
 	},
 	TIMELINES.SUNNY_GREETING: {
@@ -23,8 +25,17 @@ var timelines: Dictionary = {
 		"completed": false,
 		"repeatable": false,
 		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+		"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
 		"resource": "res://dialogic/timelines/sunny_greeting.dtl",
 	},
+	TIMELINES.OFF_YOU_GO: {
+		"name": "off_you_go",
+		"completed": false,
+		"repeatable": false,
+		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
+		"resource": "res://dialogic/timelines/off_you_go.dtl",
+	}
 }
 
 func _ready() -> void:
@@ -35,7 +46,7 @@ func _ready() -> void:
 
 func start(timeline: TIMELINES) -> bool:
 	if timeline == TIMELINES.UNASSIGNED:
-		push_warning(Debug.define_error("Tried to play an unassigned timeline", self))
+		#push_warning(Debug.define_error("Tried to play an unassigned timeline", self))
 		return false
 	var timeline_path: String = timelines[timeline]["resource"]
 	if is_timeline_running():

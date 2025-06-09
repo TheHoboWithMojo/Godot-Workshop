@@ -58,7 +58,7 @@ func _physics_process(delta: float) -> void:
 	if not dying and movement_enabled:
 		normal = velocity.normalized()
 
-		speed *= speed_mult*Global.speed_mult
+		speed = default_speed*Global.speed_mult*speed_mult
 
 		direction_x = _get_direction("x")
 

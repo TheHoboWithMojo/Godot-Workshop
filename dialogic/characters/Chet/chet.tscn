@@ -18,7 +18,7 @@ size = Vector2(30, 30)
 [node name="Chet" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_3gsvo")
-default_spawn_position = Vector2(-64, 64)
+default_spawn_position = Vector2(0, 64)
 dialog_manager = NodePath("DialogComponent")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")
@@ -79,9 +79,8 @@ shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("3_uuk88")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 
-[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "click_detector", "touch_detector") instance=ExtResource("6_nofvv")]
+[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("6_nofvv")]
 parent = NodePath("..")
-click_detector = NodePath("../ClickDetector")
 touch_detector = NodePath("../TouchDetector")
 
 [node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death", "nametag") instance=ExtResource("7_d8a02")]

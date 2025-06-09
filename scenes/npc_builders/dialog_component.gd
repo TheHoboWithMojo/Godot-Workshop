@@ -41,7 +41,8 @@ func _ready() -> void:
 	touch_detector_region = Global.get_collider_global_rect(touch_detector.get_collider())
 
 	if timeline == Dialogue.TIMELINES.UNASSIGNED:
-		push_warning(Debug.define_error("Dialog Components should be initiated with a boot timeline", parent))
+		pass
+		#push_warning(Debug.define_error("Dialog Components should be initiated with a boot timeline", parent))
 
 	match trigger_mode:
 		TRIGGER_MODES.TOUCH_ONLY:

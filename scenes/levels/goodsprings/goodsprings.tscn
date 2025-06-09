@@ -145,7 +145,7 @@ metadata/_edit_use_anchors_ = true
 position = Vector2(16, 96)
 rotation = -1.57079
 send_from_level = NodePath("../..")
-send_to_level = 3
+send_to_level = 5
 
 [node name="RichTextLabel3" type="RichTextLabel" parent="Portals/ChetsShop"]
 z_index = 1

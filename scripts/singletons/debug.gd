@@ -4,6 +4,10 @@ extends Node
 var loop_data: Dictionary = {}
 var instance_lookup: Dictionary = {}
 
+func _ready() -> void:
+	Console.add_command("loopy", print_loops, [], 0, "get overview of loops")
+	Console.add_command("data", print_game_data, [], 0, "prints game data")
+
 func _process(delta: float) -> void:
 	if not loop_data.is_empty():
 		process_tracking(delta)

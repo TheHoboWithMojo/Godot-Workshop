@@ -27,6 +27,8 @@ func _ready() -> void:
 	related_level_loaded.connect(_on_related_level_loaded)
 	related_timeline_played.connect(_on_related_timeline_played)
 
+	declare_next_quest(Quests.QUESTS.BACK_IN_THE_SADDLE) # set what quest to trigger on completion
+
 	_on_related_level_loaded(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
 	_on_related_timeline_played(Dialogue.TIMELINES.YOURE_AWAKE)
 
@@ -64,4 +66,8 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 					mainplot.advance()
 					doc_mitchell.set_target(get_navpoint_position("Exit"))
 					await doc_mitchell.navigation_finished
-					Global.set_fast_travel_enabled(true)
+					doc_mitchell.set_timeline(Dialogue.TIMELINES.OFF_YOU_GO)
+			Dialogue.TIMELINES.OFF_YOU_GO:
+				if not is_complete():
+					await Dialogic.timeline_ended
+					mainplot.advance()

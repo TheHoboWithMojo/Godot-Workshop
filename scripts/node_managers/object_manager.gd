@@ -72,25 +72,26 @@ func try_retrieve_object(object_enum: OBJECTS, delay_mode: DELAY_MODES = DELAY_M
 	return object_dict[object_enum][PROPERTIES.REFERENCE]
 
 
-func object_method_complete(volatile_object_enum: OBJECTS, boolean_completion_method: String, delay_mode: DELAY_MODES = DELAY_MODES.REFERENCE_ADDED, check_delay: float = 0.1, error_timer_duration: float = 10.0) -> void:
-	var start_time: float = Time.get_ticks_msec()
+func object_method_complete(volatile_object_enum: OBJECTS, boolean_completion_method: String, delay_mode: DELAY_MODES = DELAY_MODES.REFERENCE_ADDED, check_delay: float = 0.1, error_timer_duration: float = 300.0) -> void:
 	var object_name: String = object_dict[volatile_object_enum][PROPERTIES.RETRIEVABLE_NAME]
+	var time_passed_secs: float = 0
+	var times_warned: int = 0
+	var id: int = randi()
+	Debug.doc_loop_start(self, "object_method_complete", id)
 	while true:
 		var volatile_object: Node = await try_retrieve_object(volatile_object_enum, delay_mode)
 		assert(volatile_object.has_method(boolean_completion_method), Debug.define_error("%s does not have the input boolean completion method %s" % [volatile_object.name, boolean_completion_method], self))
-		var time_passed_secs: float = (Time.get_ticks_msec() - start_time)/1000
-		var times_warned: int = 0
 		while volatile_object and not volatile_object.call(boolean_completion_method):
 			await Global.delay(self, check_delay)
 			time_passed_secs += check_delay
 			if time_passed_secs > error_timer_duration * (times_warned + 1):
 				times_warned += 1
-				push_warning("Waiting for object %s's method '%s' to return true for %s minute(s), warning #%s" % [object_name, boolean_completion_method, round(time_passed_secs/60), times_warned], self)
+				push_warning("Time waited for object %s's method '%s' to return true has surpassed %.1f minute(s), warning #%s" % [object_name, boolean_completion_method, (time_passed_secs/60), times_warned], self)
 		if volatile_object and volatile_object.call(boolean_completion_method):
+			Debug.doc_loop_end(id)
 			return
-		else:
-			volatile_object = await try_retrieve_object(volatile_object_enum)
-			continue
+		volatile_object = await try_retrieve_object(volatile_object_enum, delay_mode)
+		continue
 
 
 func is_reference_active(object: OBJECTS) -> bool:

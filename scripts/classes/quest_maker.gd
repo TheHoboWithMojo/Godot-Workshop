@@ -12,6 +12,7 @@ var quest_waypoints: Dictionary[String, Waypoint] = {}
 var quest_navpoints: Dictionary[String, Navpoint] = {}
 var mainplot: Plot = null
 var sideplots: Dictionary[String, Plot] = {}
+var chained_quest: Quests.QUESTS = Quests.QUESTS.UNASSIGNED
 
 signal waypoints_assigned(self_node: QuestMaker)
 signal navpoints_assigned(self_node: QuestMaker)
@@ -33,10 +34,11 @@ func _init() -> void:
 
 
 func _on_timeline_started() -> void:
-	@warning_ignore("int_as_enum_without_cast")
-	var current_timeline: Dialogue.TIMELINES = Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline), Dialogue.TIMELINES)
-	if current_timeline in timelines:
-		related_timeline_played.emit(current_timeline)
+	if not completed:
+		@warning_ignore("int_as_enum_without_cast")
+		var current_timeline: Dialogue.TIMELINES = Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline), Dialogue.TIMELINES)
+		if current_timeline in timelines:
+			related_timeline_played.emit(current_timeline)
 
 
 func _on_new_level_loaded(new_level: Level) -> void:
@@ -105,26 +107,26 @@ func set_active(value: bool) -> void:
 		for objective: Objective in mainplot.objectives:
 			mainplot._set_active_all_waypoints(objective, false)
 
+
 func start() -> bool:
-	Debug.debug("[Quest] Starting quest", self, "start")
-	if not await Levels.get_current_level_node():
-		Debug.debug("[Quest] not level loaded, waiting level loaded", self, "quest.start")
-		await Global.level_manager.new_level_loaded
+	Debug.debug("[Quest] Starting quest...", self, "start")
+	if started:
+		Debug.debug("[Quest] Tried to start quest %s which was already started" % [name], self, "quest.start")
+		return true
+	if not mainplot.objectives:
+		Debug.debug("[Quest] awaiting mainplot objective to be assigned before starting", self, "start")
+		await mainplot.objective_assigned
+	Debug.debug("[Quest] Attempting to start mainplot", self, "quest.start")
+	if not await mainplot._start():
+		Debug.debug("[Quest] Starting mainquest failed, returning false", self, "qiest.start")
+		return false
+	Debug.debug("[Quest] Successfully started mainplot", self, "quest.start")
 	if not quest_waypoints and "waypoint_manager" in await Levels.get_current_level_node():
-		Debug.debug("[Ques t]No quest waypoints, waiting for assignment", self, "quest.start")
+		Debug.debug("[Quest] No quest waypoints, waiting for assignment", self, "quest.start")
 		await waypoints_assigned
 	if not quest_navpoints and "navpoint_manager" in await Levels.get_current_level_node():
 		Debug.debug("[Quest] No quest navpoints, waiting for assignment", self, "quest.start")
 		await navpoints_assigned
-	if not mainplot.objectives:
-		push_warning(Debug.define_error("[Quest] plot %'s objectives have not been declared" % [mainplot.nomen], self))
-		return false
-	Debug.debug("[Quest] Attempting to start mainplot", self, "quest.start")
-	if await mainplot._start():
-		Debug.debug("[Quest] Successfully started mainplot", self, "quest.start")
-	else:
-		Debug.debug("[Quest] Starting mainquest failed, returning false", self, "qiest.start")
-		return false
 	for plot_name: String in sideplots:
 		var plot: Plot = sideplots[plot_name]
 		if not plot.objectives:
@@ -139,17 +141,30 @@ func start() -> bool:
 	started = true
 	return true
 
+
 func get_quest_enum() -> Quests.QUESTS:
 	return linked_quest
 
 
 func complete() -> void:
+	print("[Quest] Quest '%s' was completed!" % [name])
 	completed = true
-	#self.queue_free()
+	set_active(false)
+	Global.quest_displayer.find_child("Quest").set_text("")
+	Global.quest_displayer.find_child("Objective").set_text("")
+	if chained_quest:
+		Global.quest_manager.get_quest_node(chained_quest).start()
+
+
+func declare_next_quest(quest: Quests.QUESTS) -> void:
+	chained_quest = quest
+
+
+func is_complete() -> bool:
+	return completed
 
 
 func is_active() -> bool:
-	Debug.debug("[Quest] '%s': is_active() == %s" % [name, active], self, "is_active")
 	return active
 
 
@@ -180,6 +195,7 @@ func get_active_waypoints() -> Array[Waypoint]:
 
 
 class Plot:
+	signal objective_assigned(objective: Objective)
 	var objectives: Dictionary[Objective, String]
 	var objective_waypoint_dict: Dictionary[Objective, Array] = {}
 	var current_objective: Objective = null
@@ -196,7 +212,7 @@ class Plot:
 
 	func _start() -> bool:
 		if started:
-			Debug.debug("[Plot] already started, skipping _start()" % [nomen], quest, "plot._start")
+			Debug.debug("[Plot] plot '%s' already started, skipping _start()" % [nomen], quest, "plot._start")
 			return true
 		if not objectives:
 			Debug.debug("[Plot] Cannot start a plot without any objectives declared", quest, "_start")
@@ -224,6 +240,8 @@ class Plot:
 		var current_position: int = objectives_array.find(current_objective)
 		if not _has_next_objective(current_position, objectives_array):
 			_complete()
+			if self == quest.mainplot:
+				quest.complete()
 			return true
 		var _new_objective: Objective = objectives_array[current_position + 1]
 		Debug.debug("[Plot] plot '%s' sdeactivating objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
@@ -270,7 +288,7 @@ class Plot:
 		if self == quest.mainplot:
 			quest.complete()
 		completed = true
-		Debug.debug("[Plot] completed!" % [nomen], quest, "plot._complete")
+		Debug.debug("[Plot] plot '%s' completed!" % [nomen], quest, "plot._complete")
 
 	func new_objective(objective_name: String, description: String = "") -> Objective:
 		var _new_objective: Objective = Objective.new(objective_name, self, quest)
@@ -278,6 +296,7 @@ class Plot:
 			current_objective = _new_objective
 		objective_waypoint_dict[_new_objective] = []
 		objectives[_new_objective] = description
+		objective_assigned.emit(_new_objective)
 		return _new_objective
 
 	func is_objective_complete(objective: Objective) -> bool:

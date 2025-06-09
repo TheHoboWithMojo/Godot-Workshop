@@ -1,6 +1,5 @@
 @icon("res://assets/Icons/16x16/crosshair.png")
-class_name GlobalWaypointManager
-extends ChildManager
+class_name GlobalWaypointManager extends ChildManager
 @export var debugging: bool = false
 
 func _ready() -> void:
@@ -17,20 +16,11 @@ func set_active_all_waypoints(value: bool, custom_array: Array[Waypoint] = []) -
 			waypoint.set_active(value)
 
 
-#var current_waypoints: Array[Waypoint]
-#func set_current_waypoints(waypoints: Array[Waypoint]) -> void:
-	#current_waypoints.clear()
-	#current_waypoints = waypoints
-#
-#
-#func get_current_waypoints() -> Array[Waypoint]:
-	#return current_waypoints
-
-
 func _on_new_level_loaded(level: Level) -> void:
 	var pot_new_waypoints: Array[Waypoint] = level.get_waypoints()
 	_process_new_waypoints(pot_new_waypoints)
 	_place_waypoints_at_paths_to_home_level(level)
+
 
 func _process_new_waypoints(waypoints: Array[Waypoint]) -> void:
 	if not get_children():
@@ -55,7 +45,8 @@ func _place_waypoints_at_paths_to_home_level(level: Level) -> void:
 	var new_level_enum: Levels.LEVELS = level.get_level_enum()
 	var current_quest: QuestMaker = await Global.quest_manager.get_current_quest_node()
 	for navpoint: Waypoint in get_children():
-
+		if not Global.quest_manager.get_quest_node(navpoint.get_quest_enum()).is_active():
+			continue
 		var show_navpoint: bool = navpoint in await current_quest.get_active_waypoints()
 		Debug.debug_if(show_navpoint, "%s should be set to visible" % [navpoint.name], self, "_place_waypoints_at_paths_to_home_level")
 		var home_level: Levels.LEVELS = navpoint.get_home_level()
@@ -64,7 +55,8 @@ func _place_waypoints_at_paths_to_home_level(level: Level) -> void:
 			var duplicates: Array[Waypoint] = navpoint.get_duplicates()
 			Debug.debug_if(duplicates != [], "home level reached, deleting duplicates", navpoint, "_place_waypoints_at_paths_to_home_level")
 			for copy: Waypoint in duplicates:
-				copy.queue_free()
+				if copy:
+					copy.queue_free()
 			navpoint.global_position = navpoint.spawn_position
 			await get_tree().process_frame
 		else:

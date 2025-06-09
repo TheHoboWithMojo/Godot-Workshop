@@ -34,7 +34,6 @@ func _ready() -> void:
 func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 	match(level):
 		Levels.LEVELS.PROSPECTORS_SALOON:
-			start()
 			saloon = await Levels.get_current_level_node()
 		Levels.LEVELS.GOODSPRINGS:
 			goodsprings = await Levels.get_current_level_node()

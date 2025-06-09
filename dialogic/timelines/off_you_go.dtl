@@ -1,0 +1,18 @@
+skip?
+- yes
+	[end_timeline]
+- no
+\doc_mitchell: Here, these are yours. Was all you had on you when you was brought in.
+\doc_mitchell: I hope you don't mind but I gave your note a look, thought it might help me find a next of kin. But it was just something about a platinum chip.
+\doc_mitchell: Well if you're heading back out there, you oughta have this.
+\doc_mitchell: They call it a pip boy, I grew up in one of them values they made before the war. We all got one.
+\doc_mitchell: Ain't much use to me now, but you might want such a thing, after what you've been through. I know what it's like, having something taken from you.
+\doc_mitchell: And put this on too so the locals don't pick on ya for lacking modesty. Never was much my style anyways.
+- Thanks for patching me up, Doc.
+- What do I do now?
+- You shouldn't have gone through my stuff.
+	\doc_mitchell: Didn't have much choice, I'm afraid. But I understand the sentiment.
+\doc_mitchell: You should talk to sunny smiles before you leave town. Shes can help you learn to fend for yourself in the desert. She'll likely be in the saloon.
+\doc_mitchell: I reckon some of the other folks at the saloon might be able to help you out too. And the metal fella, Victor, who pulled you outta your grave.
+\doc_mitchell: Anyway, you ever get hurt out there, you come right back. I'll fix you up
+\doc_mitchell: But try not to get killed anymore.
