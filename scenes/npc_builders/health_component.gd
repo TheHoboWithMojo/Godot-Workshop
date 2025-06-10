@@ -25,7 +25,7 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.set_value(max_health)
 		health_bar.set_visible(false)
-	if parent is NPC and parent.get_dialog_component():
+	if parent is NPC and parent.get_character_component():
 		await parent.await_name_changed()
 
 

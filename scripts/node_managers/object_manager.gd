@@ -72,12 +72,12 @@ func try_retrieve_object(object_enum: OBJECTS, delay_mode: DELAY_MODES = DELAY_M
 	return object_dict[object_enum][PROPERTIES.REFERENCE]
 
 
-func object_method_complete(volatile_object_enum: OBJECTS, boolean_completion_method: String, delay_mode: DELAY_MODES = DELAY_MODES.REFERENCE_ADDED, check_delay: float = 0.1, error_timer_duration: float = 300.0) -> void:
+func object_method_true(volatile_object_enum: OBJECTS, boolean_completion_method: String, delay_mode: DELAY_MODES = DELAY_MODES.REFERENCE_ADDED, check_delay: float = 0.1, error_timer_duration: float = 300.0) -> void:
 	var object_name: String = object_dict[volatile_object_enum][PROPERTIES.RETRIEVABLE_NAME]
 	var time_passed_secs: float = 0
 	var times_warned: int = 0
 	var id: int = randi()
-	Debug.doc_loop_start(self, "object_method_complete", id)
+	Debug.doc_loop_start(self, "object_method_true", id)
 	while true:
 		var volatile_object: Node = await try_retrieve_object(volatile_object_enum, delay_mode)
 		assert(volatile_object.has_method(boolean_completion_method), Debug.define_error("%s does not have the input boolean completion method %s" % [volatile_object.name, boolean_completion_method], self))

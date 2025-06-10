@@ -8,7 +8,6 @@ class_name Level extends Node2D
 @export var waypoint_manager: WaypointManager
 @export var navpoint_manager: NavpointManager
 @export var portal_manager: PortalManager
-@export var interactables: Array[Interactable]
 @onready var enemy_spawnpoints: Array[Vector2] = Global.get_tiles_with_property(tiles, "spawnable")
 @onready var checkpoints_dict: Dictionary[String, Vector2] = {}
 
@@ -25,10 +24,6 @@ func _ready() -> void:
 
 func get_level_enum() -> Levels.LEVELS:
 	return level_enum
-
-
-func get_interactables() -> Array[Interactable]:
-	return interactables
 
 
 func get_portal_to_level(_level_enum: Levels.LEVELS) -> Portal:
@@ -72,7 +67,6 @@ func get_waypoints() -> Array[Waypoint]:
 		return []
 	Debug.debug("Returning waypoints %s" % [waypoints], self, "get_navpoints")
 	return waypoints
-
 
 
 func get_navpoints_overview() -> void:

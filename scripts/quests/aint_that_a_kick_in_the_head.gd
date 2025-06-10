@@ -7,7 +7,7 @@ var use_the_vit: Objective
 var sit_down: Objective
 var exit: Objective
 var doc_mitchells_house: Node
-var vit_machine: Interactable
+var vit_machine: Node
 
 func _ready() -> void:
 	name = Quests.get_quest_name(linked_quest)
@@ -51,14 +51,14 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 					await Dialogic.timeline_ended
 					start()
 					doc_mitchell.set_target(get_navpoint_position("VitMachine"))
-					await Global.object_manager.object_method_complete(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_started")
+					await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_playing")
 					mainplot.advance()
-					await Global.object_manager.object_method_complete(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_completed")
+					await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_completed")
 					mainplot.advance()
 					await doc_mitchell.navigation_finished
 					doc_mitchell.set_target(get_navpoint_position("Couch"))
 					await doc_mitchell.navigation_finished
-					doc_mitchell.set_timeline(Dialogue.TIMELINES.PICKTAGS)
+					doc_mitchell.set_timeline_enum(Dialogue.TIMELINES.PICKTAGS)
 					in_tree = false
 			Dialogue.TIMELINES.PICKTAGS:
 				if not use_the_vit.is_complete():
@@ -66,7 +66,7 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 					mainplot.advance()
 					doc_mitchell.set_target(get_navpoint_position("Exit"))
 					await doc_mitchell.navigation_finished
-					doc_mitchell.set_timeline(Dialogue.TIMELINES.OFF_YOU_GO)
+					doc_mitchell.set_timeline_enum(Dialogue.TIMELINES.OFF_YOU_GO)
 			Dialogue.TIMELINES.OFF_YOU_GO:
 				if not is_complete():
 					await Dialogic.timeline_ended

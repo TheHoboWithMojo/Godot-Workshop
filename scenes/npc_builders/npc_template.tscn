@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="3_j4dpj"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="3_vnwdf"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_n1ps7"]
-[ext_resource type="PackedScene" uid="uid://b1miocpocuslf" path="res://scenes/npc_builders/dialog_component.tscn" id="5_kt180"]
 [ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="6_4ul4r"]
+[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scripts/classes/event_player.gd" id="6_bxylu"]
 [ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="7_tlv0r"]
 [ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="8_bxylu"]
 
@@ -15,10 +15,9 @@ size = Vector2(30, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
 
-[node name="NPC" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
+[node name="NPC" type="CharacterBody2D" node_paths=PackedStringArray("health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_vnwdf")
-dialog_manager = NodePath("DialogComponent")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")
 character_manager = NodePath("CharacterComponent")
@@ -68,19 +67,21 @@ metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 offset_top = -16.0
 offset_bottom = 16.0
 
-[node name="TouchDetector" parent="." node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("3_vnwdf")]
+[node name="EventPlayer" type="Node" parent="." node_paths=PackedStringArray("parent", "touch_detector")]
+script = ExtResource("6_bxylu")
+parent = NodePath("..")
+play_mode = 0
+touch_detector = NodePath("TouchDetector")
+
+[node name="TouchDetector" parent="EventPlayer" node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("3_vnwdf")]
 scale = Vector2(2.94539, 2.94539)
-monitored_parent = NodePath("..")
+monitored_parent = NodePath("../..")
 collider = NodePath("Collider")
 
-[node name="Collider" type="CollisionShape2D" parent="TouchDetector"]
+[node name="Collider" type="CollisionShape2D" parent="EventPlayer/TouchDetector"]
 shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("4_n1ps7")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
-
-[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("5_kt180")]
-parent = NodePath("..")
-touch_detector = NodePath("../TouchDetector")
 
 [node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death") instance=ExtResource("6_4ul4r")]
 parent = NodePath("..")

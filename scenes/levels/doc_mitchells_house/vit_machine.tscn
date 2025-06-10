@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bxetckwqxatr6"]
 
-[ext_resource type="Script" uid="uid://cwnm0aj3c61af" path="res://scripts/node_managers/vit_machine.gd" id="1_4v6rv"]
+[ext_resource type="Script" uid="uid://cwnm0aj3c61af" path="res://scenes/levels/doc_mitchells_house/vit_machine_scene.gd" id="1_4v6rv"]
 
 [node name="Control" type="Control"]
 z_index = 2

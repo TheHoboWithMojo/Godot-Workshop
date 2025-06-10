@@ -1,6 +1,5 @@
 @icon("res://assets/Icons/16x16/cursor.png")
-extends StaticBody2D
-class_name Portal
+class_name Portal extends StaticBody2D
 
 @export var debugging: bool = false
 @export_category("REQS")
@@ -12,7 +11,6 @@ class_name Portal
 
 @export_category("TWEAKS")
 @export var emit_interaction_signals: bool = true
-
 
 signal player_touched_me(self_node: Node)
 

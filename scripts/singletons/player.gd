@@ -120,7 +120,8 @@ var perks: Dictionary = {
 	},
 }
 
-@onready var _damagable: bool = true
+var _damagable: bool = true
+var debugging: bool = true
 
 
 func _ready() -> void:
@@ -132,6 +133,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Global.frames % 120 == 0:
 		check_for_achievements()
+
+
+func is_player_moving() -> bool:
+	return Global.player.velocity.length() > 0
 
 
 func give_weapon(scene_path: String) -> void:
@@ -150,7 +155,9 @@ func set_stat(stat: STATS, value: float) -> bool:
 	var new_stat_value: float = _get_updated_stat(stat_category, stat, "=", value)
 	if new_stat_value == original_stat_value:
 		return false
-	Debug.debug("", Global.player, "set_stat", {_print_stat_change:[stat, original_stat_value, new_stat_value]})
+	Debug.debug("", Global.player, "set_stat")
+	if debugging:
+		_print_stat_change(stat, original_stat_value, new_stat_value)
 	player_stats_changed.emit()
 	return true
 

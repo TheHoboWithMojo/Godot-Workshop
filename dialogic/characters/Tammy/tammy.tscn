@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="3_yc8di"]
 [ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="4_u0agm"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="5_mxixi"]
-[ext_resource type="PackedScene" uid="uid://b1miocpocuslf" path="res://scenes/npc_builders/dialog_component.tscn" id="6_m3lo3"]
+[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scripts/classes/event_player.gd" id="6_c3er7"]
 [ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="7_fsm30"]
 [ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="8_ie3rr"]
 [ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="9_cjjt7"]
@@ -15,11 +15,11 @@ size = Vector2(30, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
 
-[node name="Tammy" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
+[node name="Tammy" type="CharacterBody2D" node_paths=PackedStringArray("event_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_m7tn0")
 default_spawn_position = Vector2(-160, -150)
-dialog_manager = NodePath("DialogComponent")
+event_manager = NodePath("EventPlayer")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")
 character_manager = NodePath("CharacterComponent")
@@ -79,10 +79,11 @@ shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("3_yc8di")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 
-[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "click_detector", "touch_detector") instance=ExtResource("6_m3lo3")]
+[node name="EventPlayer" type="Node" parent="." node_paths=PackedStringArray("parent", "touch_detector")]
+script = ExtResource("6_c3er7")
 parent = NodePath("..")
-click_detector = NodePath("../ClickDetector")
 touch_detector = NodePath("../TouchDetector")
+metadata/_custom_type_script = "uid://c1mhxddexlqcy"
 
 [node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death", "nametag") instance=ExtResource("7_fsm30")]
 character = 5

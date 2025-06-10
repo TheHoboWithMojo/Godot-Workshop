@@ -5,21 +5,21 @@
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="3_pqs6g"]
 [ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="4_2uvcr"]
 [ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="5_11iqh"]
-[ext_resource type="PackedScene" uid="uid://b1miocpocuslf" path="res://scenes/npc_builders/dialog_component.tscn" id="6_f6o38"]
 [ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="7_sd6le"]
 [ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="8_nlxnl"]
 [ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="9_v3nl1"]
+[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scripts/classes/event_player.gd" id="9_xt5tq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(30, 30)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j4dpj"]
 
-[node name="DocMitchell" type="CharacterBody2D" node_paths=PackedStringArray("dialog_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
+[node name="DocMitchell" type="CharacterBody2D" node_paths=PackedStringArray("event_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_76qns")
 default_spawn_position = Vector2(-3, -50)
-dialog_manager = NodePath("DialogComponent")
+event_manager = NodePath("EventPlayer")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")
 character_manager = NodePath("CharacterComponent")
@@ -50,12 +50,6 @@ shape = SubResource("CircleShape2D_j4dpj")
 script = ExtResource("3_pqs6g")
 metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 
-[node name="DialogComponent" parent="." node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("6_f6o38")]
-inherit_debugging = true
-parent = NodePath("..")
-timeline = 1
-touch_detector = NodePath("../TouchDetector")
-
 [node name="CharacterComponent" parent="." node_paths=PackedStringArray("parent", "track_death", "nametag") instance=ExtResource("7_sd6le")]
 character = 1
 parent = NodePath("..")
@@ -63,7 +57,6 @@ track_death = NodePath("../HealthComponent")
 nametag = NodePath("../Texture/NameTag")
 
 [node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("8_nlxnl")]
-avoidance_enabled = true
 debugging = false
 inherit_debugging = false
 parent = NodePath("..")
@@ -71,6 +64,13 @@ parent = NodePath("..")
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("parent", "health_bar") instance=ExtResource("9_v3nl1")]
 parent = NodePath("..")
 health_bar = NodePath("../HealthBar")
+
+[node name="EventPlayer" type="Node" parent="." node_paths=PackedStringArray("parent", "touch_detector")]
+script = ExtResource("9_xt5tq")
+parent = NodePath("..")
+touch_detector = NodePath("../TouchDetector")
+timeline = 1
+metadata/_custom_type_script = "uid://c1mhxddexlqcy"
 
 [node name="Texture" type="ColorRect" parent="."]
 anchors_preset = 8

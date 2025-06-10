@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpe3fhlfbbftk"]
+
+[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scripts/classes/event_player.gd" id="1_22o6j"]
+
+[node name="EventPlayer" type="Node"]
+script = ExtResource("1_22o6j")
+metadata/_custom_type_script = "uid://c1mhxddexlqcy"

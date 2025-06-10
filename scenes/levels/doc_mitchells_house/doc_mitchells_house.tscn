@@ -1,26 +1,24 @@
-[gd_scene load_steps=19 format=4 uid="uid://5qmyahukkvx"]
+[gd_scene load_steps=21 format=4 uid="uid://5qmyahukkvx"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
-[ext_resource type="PackedScene" uid="uid://b20ddkj72vfmy" path="res://scenes/level_builders/custom_interactable_object.tscn" id="3_khflj"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_nrx6f"]
 [ext_resource type="Texture2D" uid="uid://dmiv2bmqsjs2k" path="res://assets/vit_machine.png" id="5_ou502"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="6_28y3f"]
-[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="6_ejuju"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="7_58nvt"]
 [ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="8_pmyaa"]
 [ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="9_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="10_8rqal"]
+[ext_resource type="Script" uid="uid://c7sr5h63mc0c7" path="res://scenes/levels/doc_mitchells_house/vit_machine_node.gd" id="11_58nvt"]
 [ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="11_nrx6f"]
+[ext_resource type="Script" uid="uid://de67x4niml467" path="res://scenes/level_builders/touch_detector.gd" id="12_28y3f"]
 [ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="12_ou502"]
+[ext_resource type="PackedScene" uid="uid://cpe3fhlfbbftk" path="res://scenes/level_builders/event_player.tscn" id="13_58nvt"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="13_khflj"]
 [ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="14_nrx6f"]
 [ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="14_ou502"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fl73o"]
-size = Vector2(30, 45)
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_nrx6f"]
 vertices = PackedVector2Array(99, -109, 99, -19, 45, -52, 45, -157, 178, -178, 178, -109, 178, -19, 178, 18, -146, 18, -45, -52, -138, -10, -146, -10, -138, -118, -45, -157, -146, -118, -146, -178)
@@ -31,14 +29,19 @@ parsed_collision_mask = 4294967041
 source_geometry_mode = 2
 agent_radius = 30.0
 
-[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portal_manager", "interactables")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_khflj"]
+size = Vector2(32, 48.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nrx6f"]
+size = Vector2(32, 48)
+
+[node name="DocMitchellsHouse" type="Node2D" node_paths=PackedStringArray("tiles", "waypoint_manager", "navpoint_manager", "portal_manager")]
 script = ExtResource("1_ejuju")
 level_enum = 1
 tiles = NodePath("Tiles")
 waypoint_manager = NodePath("Waypoints")
 navpoint_manager = NodePath("Navpoints")
 portal_manager = NodePath("Portals")
-interactables = [NodePath("VitMachine")]
 
 [node name="Tiles" type="TileMapLayer" parent="."]
 z_index = -1
@@ -100,27 +103,6 @@ position = Vector2(32, -100)
 related_quest_enums = Array[int]([1])
 home_level_enum = 1
 
-[node name="VitMachine" parent="." node_paths=PackedStringArray("custom_click_detector") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("3_khflj")]
-position = Vector2(0, -104)
-home_level_enum = 1
-object_enum = 1
-related_quest_enum = 1
-custom_click_detector = NodePath("ClickDetector")
-custom_play_mode = 1
-custom_scene_path = "uid://bxetckwqxatr6"
-
-[node name="Collider" type="CollisionShape2D" parent="VitMachine"]
-position = Vector2(-4.76837e-07, -0.5)
-shape = SubResource("RectangleShape2D_fl73o")
-script = ExtResource("4_nrx6f")
-
-[node name="Sprite" type="Sprite2D" parent="VitMachine"]
-position = Vector2(3.58559e-08, 0)
-scale = Vector2(0.071111, 0.0817715)
-texture = ExtResource("5_ou502")
-
-[node name="ClickDetector" parent="VitMachine" instance=ExtResource("6_ejuju")]
-
 [node name="VectorPlacer" parent="." instance=ExtResource("14_ou502")]
 offset_left = -383.6
 offset_top = -70.0
@@ -137,3 +119,36 @@ home_level_node = NodePath("..")
 position = Vector2(-176, -40)
 send_from_level = NodePath("../..")
 send_to_level = 2
+
+[node name="VitMachine" type="StaticBody2D" parent="."]
+visible = false
+position = Vector2(0, -104)
+script = ExtResource("11_58nvt")
+
+[node name="Collider" type="CollisionShape2D" parent="VitMachine"]
+position = Vector2(0, 0.25)
+shape = SubResource("RectangleShape2D_khflj")
+script = ExtResource("4_nrx6f")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="TouchDetector" type="Area2D" parent="VitMachine" node_paths=PackedStringArray("monitored_parent", "collider")]
+script = ExtResource("12_28y3f")
+monitored_parent = NodePath("..")
+collider = NodePath("Collider")
+metadata/_custom_type_script = "uid://de67x4niml467"
+
+[node name="Collider" type="CollisionShape2D" parent="VitMachine/TouchDetector"]
+shape = SubResource("RectangleShape2D_nrx6f")
+script = ExtResource("4_nrx6f")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="Sprite2D" type="Sprite2D" parent="VitMachine"]
+position = Vector2(1.22935e-06, 5.36442e-07)
+scale = Vector2(0.0711111, 0.0817717)
+texture = ExtResource("5_ou502")
+
+[node name="EventPlayer" parent="VitMachine" node_paths=PackedStringArray("parent", "touch_detector") instance=ExtResource("13_58nvt")]
+parent = NodePath("..")
+play_mode = 1
+touch_detector = NodePath("../TouchDetector")
+scene = "uid://bxetckwqxatr6"

@@ -1,7 +1,6 @@
 @icon("res://assets/Icons/16x16/world_hand.png")
 extends Area2D
 class_name TouchDetector
-@export_group("Essential")
 @export var monitored_parent: Node2D
 @export var detect_player: bool = true
 @export var detect_mouse: bool = true
@@ -21,11 +20,12 @@ signal mouse_exited_area
 var ignored_zone: Rect2
 
 func _ready() -> void:
+	assert(monitored_parent != null, Debug.define_error("TouchDetector of inferred parent '%s' must explicitly reference a parent" % [get_parent().name], self))
 	if not collider:
-		collider = %Collider
-		assert(collider != null, Debug.define_error("area2ds need hit detection", self))
+		collider = find_child("Collider")
+		assert(collider != null, Debug.define_error("TouchDetector MUST reference a collider", monitored_parent))
+		push_warning(Debug.define_error("TouchDetector collider was inferred", monitored_parent))
 	collider.reparent(self)
-	assert(monitored_parent != null, Debug.define_error("all mouse/player detectors must have a parent to monitor", self))
 	if detect_player:
 		area_entered.connect(_on_area2d_entered)
 		area_exited.connect(_on_area2d_exited)

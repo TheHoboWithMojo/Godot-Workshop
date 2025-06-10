@@ -1,6 +1,6 @@
 class_name NPC extends CharacterBody2D
 @export var default_spawn_position: Vector2
-@export var dialog_manager: DialogComponent
+@export var event_manager: EventPlayer
 @export var health_manager: HealthComponent
 @export var navigation_manager: NavigationComponent
 @export var character_manager: CharacterComponent
@@ -45,7 +45,7 @@ func await_name_changed() -> bool:
 		push_error(Debug.define_error("This npc does not have a character component and as such their name will never change", self))
 		return false
 	if Characters.get_character_name(character_manager.get_character_enum()) != name:
-		Debug.debug("Returning dialog component %s" % [dialog_manager], self, "get_dialog_component")
+		Debug.debug("Returning dialog component %s" % [event_manager], self, "get_dialog_component")
 		await renamed
 	return true
 
@@ -65,11 +65,11 @@ func get_character_enum() -> Characters.CHARACTERS:
 	return character_manager.get_character_enum()
 
 
-func set_timeline(timeline: Dialogue.TIMELINES) -> bool:
-	if not dialog_manager:
-		push_error(Debug.define_error("Cannot set the timeline of a npc without a dialogue component", self))
+func set_timeline_enum(timeline: Dialogue.TIMELINES) -> bool:
+	if not event_manager:
+		push_error(Debug.define_error("Cannot set the timeline of a npc without an EventManager", self))
 		return false
-	dialog_manager.set_timeline(timeline)
+	event_manager.set_timeline_enum(timeline)
 	return true
 
 
@@ -88,9 +88,9 @@ func get_health_component() -> HealthComponent:
 	return health_manager
 
 
-func get_dialog_component() -> DialogComponent:
-	Debug.debug("Returning dialog component %s" % [dialog_manager], self, "get_dialog_component")
-	return dialog_manager
+func get_event_player() -> EventPlayer:
+	Debug.debug("Returning dialog component %s" % [event_manager], self, "get_dialog_component")
+	return event_manager
 
 
 func set_collision_enabled(value: bool) -> bool:
@@ -137,9 +137,9 @@ func _ready() -> void:
 
 
 func _wrap_active_component_signals() -> void:
-	if dialog_manager:
-		dialog_manager.dialog_ended.connect(_on_dialog_started)
-		dialog_manager.dialog_ended.connect(_on_dialog_ended)
+	if event_manager:
+		event_manager.event_started.connect(_on_dialog_started)
+		event_manager.event_ended.connect(_on_dialog_ended)
 
 	if navigation_manager:
 		navigation_manager.target_changed.connect(_on_target_changed)

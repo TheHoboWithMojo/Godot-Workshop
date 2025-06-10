@@ -1,7 +1,7 @@
 @icon("res://assets/Icons/16x16/party.png")
 extends Node
 class_name NPCManager
-enum PROPERTIES {NAVIGATION, DIALOGUE, CHARACTER, CHARACTER_ENUM, DEFAULT_LEVEL, DEFAULT_SPAWN, LAST_POSITION, LAST_LEVEL, NAME}
+enum PROPERTIES {NAVIGATION, EVENT_PLAYER, CHARACTER, CHARACTER_ENUM, DEFAULT_LEVEL, DEFAULT_SPAWN, LAST_POSITION, LAST_LEVEL, NAME}
 var npc_dict: Dictionary[NPC, Dictionary] = {}
 
 @export var debugging: bool = false
@@ -16,7 +16,7 @@ func _ready() -> void:
 		add_child(npc)
 		npc_dict[npc] = {}
 		npc_dict[npc][PROPERTIES.NAVIGATION] = npc.get_navigation_component()
-		npc_dict[npc][PROPERTIES.DIALOGUE] = npc.get_dialog_component()
+		npc_dict[npc][PROPERTIES.EVENT_PLAYER] = npc.get_event_player()
 		npc_dict[npc][PROPERTIES.CHARACTER] = npc.get_character_component()
 		npc_dict[npc][PROPERTIES.CHARACTER_ENUM] = npc.get_character_enum()
 		npc_dict[npc][PROPERTIES.DEFAULT_LEVEL] = npc.get_default_level()

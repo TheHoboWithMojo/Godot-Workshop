@@ -6,13 +6,6 @@ signal new_quest_assigned
 var current_quest: QuestMaker
 
 
-func store_child(node: Node) -> void:
-	node.reparent.call_deferred(self)
-	var current_level: Level = await Levels.get_current_level_node()
-	if node not in current_level.get_interactables():
-		node.set_physics_process(false)
-
-
 func get_quest_node(quest: Quests.QUESTS) -> QuestMaker:
 	return find_child(Quests.get_quest_name(quest))
 
