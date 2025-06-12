@@ -69,6 +69,7 @@ health_bar = NodePath("../HealthBar")
 script = ExtResource("9_xt5tq")
 parent = NodePath("..")
 touch_detector = NodePath("../TouchDetector")
+one_time_event = true
 timeline = 1
 metadata/_custom_type_script = "uid://c1mhxddexlqcy"
 

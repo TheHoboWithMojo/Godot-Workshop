@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://bqwfutcxr17et"]
+[gd_scene load_steps=12 format=4 uid="uid://bqwfutcxr17et"]
 
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="1_n7gug"]
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_y5w72"]
@@ -7,12 +7,14 @@
 [ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="3_lurfu"]
 [ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="4_77bbt"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="5_bwp5q"]
+[ext_resource type="PackedScene" uid="uid://whqm04gmj3qw" path="res://scenes/level_builders/destructable_bottle.tscn" id="7_vc68w"]
+[ext_resource type="Script" uid="uid://c4tg2fkbq3xf3" path="res://quests/back_in_the_saddle/tutorial_bottle.gd" id="8_aosy0"]
 [ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="8_lurfu"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_77bbt"]
-vertices = PackedVector2Array(111, 71, 111, -7, 113, -89, 113, 265, 73, 71, 31, 135, 31, 97, -113, 265, -47, 135, -113, -89, -47, 97, 73, -7)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 0, 3, 5, 6), PackedInt32Array(5, 3, 7, 8), PackedInt32Array(8, 7, 9, 10), PackedInt32Array(10, 9, 2, 11), PackedInt32Array(2, 1, 11), PackedInt32Array(6, 10, 11, 4)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-128, -104, 128, -104, 128, 280, -128, 280)])
+vertices = PackedVector2Array(263, 209, 225, 209, 31, 135, 31, 97, 111, 31, 625, -89, -145, 215, -47, 135, 225, 287, -433, 585, 263, 287, 625, 585, 73, 31, -47, 97, -145, 169, -159, 135, -159, 97, -271, 169, -237, 135, 111, -47, -433, -89, 73, -47, -271, 215, -237, 97)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 7, 2, 1, 8, 9), PackedInt32Array(10, 11, 9, 8), PackedInt32Array(5, 11, 10, 0), PackedInt32Array(12, 4, 3, 13), PackedInt32Array(7, 6, 14), PackedInt32Array(13, 7, 14, 15, 16), PackedInt32Array(15, 14, 17, 18), PackedInt32Array(5, 4, 19), PackedInt32Array(20, 5, 19, 21), PackedInt32Array(22, 6, 9), PackedInt32Array(22, 9, 20, 17), PackedInt32Array(18, 17, 20, 23), PackedInt32Array(16, 23, 20, 21, 12), PackedInt32Array(13, 16, 12)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-448, -104, 640, -104, 640, 600, -448, 600)])
 source_geometry_mode = 2
 agent_radius = 15.0
 
@@ -32,7 +34,6 @@ quest = 2
 home_level = 2
 
 [node name="NavigationRegion2D2" type="NavigationRegion2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
-visible = false
 position = Vector2(0, -24)
 navigation_polygon = SubResource("NavigationPolygon_77bbt")
 
@@ -52,6 +53,28 @@ home_level_enum = 2
 position = Vector2(-184, 256)
 related_quest_enums = Array[int]([2])
 home_level_enum = 2
+
+[node name="QuestObjects" type="Node" parent="."]
+
+[node name="Bottle" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+position = Vector2(-184, 168)
+script = ExtResource("8_aosy0")
+
+[node name="Bottle2" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+position = Vector2(-200, 168)
+script = ExtResource("8_aosy0")
+
+[node name="Bottle3" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+position = Vector2(-216, 168)
+script = ExtResource("8_aosy0")
+
+[node name="Bottle4" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+position = Vector2(-232, 168)
+script = ExtResource("8_aosy0")
+
+[node name="Bottle5" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+position = Vector2(-248, 168)
+script = ExtResource("8_aosy0")
 
 [node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("8_lurfu")]
 home_level_node = NodePath("..")
@@ -83,7 +106,7 @@ scale = Vector2(-7.38303, 5.373)
 color = Color(0.196078, 0.0901961, 1, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="DocsHouse" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("2_y5w72")]
+[node name="DocsHouse" parent="Portals" node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
 position = Vector2(96, -56)
 rotation = -3.14159
 send_from_level = NodePath("../..")
@@ -111,7 +134,7 @@ scale = Vector2(-7.38303, 5.373)
 color = Color(0.196078, 0.0901961, 1, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="Saloon" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("2_y5w72")]
+[node name="Saloon" parent="Portals" node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
 position = Vector2(-174, 96)
 rotation = -1.57079
 send_from_level = NodePath("../..")
@@ -132,16 +155,16 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="ColorRect4" type="ColorRect" parent="Portals/Saloon"]
-offset_left = -61.8495
-offset_top = -81.999
-offset_right = -47.8495
-offset_bottom = -68.999
+offset_left = -64.0005
+offset_top = -81.9996
+offset_right = -50.0005
+offset_bottom = -68.9996
 rotation = -1.57079
 scale = Vector2(-7.38303, 5.373)
 color = Color(0.196078, 0.0901961, 1, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="ChetsShop" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("2_y5w72")]
+[node name="ChetsShop" parent="Portals" node_paths=PackedStringArray("send_from_level") instance=ExtResource("2_y5w72")]
 position = Vector2(16, 96)
 rotation = -1.57079
 send_from_level = NodePath("../..")

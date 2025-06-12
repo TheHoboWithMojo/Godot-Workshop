@@ -83,14 +83,14 @@ metadata/_custom_type_script = "uid://dfo7jylalx1l5"
 character = 2
 parent = NodePath("..")
 track_death = NodePath("../HealthComponent")
+inherit_debugging = true
 nametag = NodePath("../Texture/NameTag")
 
 [node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("8_ie3rr")]
 parent = NodePath("..")
 
-[node name="HealthComponent" parent="." node_paths=PackedStringArray("parent", "health_bar") instance=ExtResource("9_cjjt7")]
+[node name="HealthComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("9_cjjt7")]
 parent = NodePath("..")
-health_bar = NodePath("../HealthBar")
 
 [node name="EventPlayer" type="Node" parent="." node_paths=PackedStringArray("parent", "touch_detector")]
 script = ExtResource("9_ig72h")

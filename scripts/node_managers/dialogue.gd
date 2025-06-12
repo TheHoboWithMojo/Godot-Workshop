@@ -46,11 +46,11 @@ func _ready() -> void:
 
 func start(timeline: TIMELINES) -> bool:
 	if timeline == TIMELINES.UNASSIGNED:
-		#push_warning(Debug.define_error("Tried to play an unassigned timeline", self))
+		push_warning(Debug.define_error("Tried to play an unassigned timeline", self))
 		return false
 	var timeline_path: String = timelines[timeline]["resource"]
 	if is_timeline_running():
-		push_warning(Debug.define_error("A timeline %s is already running! Cannot start a new one" % [Global.get_rawname(str(Dialogic.current_timeline))], self))
+		push_warning(Debug.define_error("A timeline '%s' is already running! Cannot start the new one %s" % [Global.get_rawname(str(Dialogic.current_timeline)), get_timeline_name(timeline)], self))
 		return false
 	if is_timeline_completed(timeline) and not is_timeline_repeatable(timeline):
 		#push_warning(Debug.define_error("The timeline %s has been played and is not repeatable" % [get_timeline_name(timeline)], self))

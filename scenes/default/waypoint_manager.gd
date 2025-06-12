@@ -43,7 +43,7 @@ func _process_new_waypoints(waypoints: Array[Waypoint]) -> void:
 # method to place copies of a waypoint at every door that leads back to its home level
 func _place_waypoints_at_paths_to_home_level(level: Level) -> void:
 	var new_level_enum: Levels.LEVELS = level.get_level_enum()
-	var current_quest: QuestMaker = await Global.quest_manager.get_current_quest_node()
+	var current_quest: Quest = await Global.quest_manager.get_current_quest_node()
 	for navpoint: Waypoint in get_children():
 		if not Global.quest_manager.get_quest_node(navpoint.get_quest_enum()).is_active():
 			continue

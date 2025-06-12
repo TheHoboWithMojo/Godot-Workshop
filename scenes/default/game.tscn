@@ -2,26 +2,28 @@
 
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/default/player.tscn" id="1_ebmjs"]
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scripts/node_managers/game.gd" id="1_wrm1d"]
+[ext_resource type="PackedScene" uid="uid://dm2s4ivsjk3fh" path="res://scenes/tools/mouse_pos_printer.tscn" id="2_c7nhu"]
 [ext_resource type="Script" uid="uid://c4kuc0ccp063r" path="res://scenes/default/save_manager.gd" id="5_0leiu"]
 [ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="5_lw6nl"]
 [ext_resource type="Script" uid="uid://bl7jahbstwbas" path="res://scenes/default/waypoint_manager.gd" id="5_o4eyc"]
-[ext_resource type="Script" uid="uid://bs1bur0v0hwtg" path="res://scripts/quests/back_in_the_saddle.gd" id="5_pi5r2"]
+[ext_resource type="Script" uid="uid://bs1bur0v0hwtg" path="res://quests/back_in_the_saddle/back_in_the_saddle.gd" id="5_pi5r2"]
 [ext_resource type="Script" uid="uid://dhxviff8epo6d" path="res://scenes/default/quest_manager.gd" id="6_0leiu"]
 [ext_resource type="Script" uid="uid://cnhbbcsw8d8b" path="res://scenes/default/npc_manager.gd" id="6_4g1ug"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/default/debug_menu.tscn" id="6_p57ef"]
-[ext_resource type="Script" uid="uid://bx63l2sso8arx" path="res://scripts/quests/aint_that_a_kick_in_the_head.gd" id="10_f32yu"]
+[ext_resource type="Script" uid="uid://bx63l2sso8arx" path="res://quests/aint_that_a_kick_in_the_head.gd" id="10_f32yu"]
 [ext_resource type="Script" uid="uid://b3ri3kgmogrxe" path="res://scenes/default/level_manager.gd" id="11_dogt3"]
 [ext_resource type="Script" uid="uid://dekgjbmxuc1f" path="res://scenes/default/spawn_manager.gd" id="12_0leiu"]
-[ext_resource type="Script" uid="uid://b84n510w2nunx" path="res://scripts/quests/by_a_campfire_on_the_trail.gd" id="12_f32yu"]
-[ext_resource type="Script" uid="uid://cjv6qf28rc7c0" path="res://scripts/quests/run_goodsprings_run.gd" id="13_0leiu"]
-[ext_resource type="Script" uid="uid://ub78h3d0hpbl" path="res://scripts/quests/ghost_town_gunfight.gd" id="14_4g1ug"]
-[ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="15_ccl36"]
+[ext_resource type="Script" uid="uid://b84n510w2nunx" path="res://quests/by_a_campfire_on_the_trail.gd" id="12_f32yu"]
+[ext_resource type="Script" uid="uid://cjv6qf28rc7c0" path="res://quests/run_goodsprings_run.gd" id="13_0leiu"]
+[ext_resource type="Script" uid="uid://ub78h3d0hpbl" path="res://quests/ghost_town_gunfight.gd" id="14_4g1ug"]
 [ext_resource type="Script" uid="uid://duqqrvdeqd0mo" path="res://scripts/node_managers/object_manager.gd" id="16_rbb1r"]
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_wrm1d")
 use_save_data = false
 autosaving_enabled = false
+
+[node name="CoordinatePrinter" parent="." instance=ExtResource("2_c7nhu")]
 
 [node name="Player" parent="." instance=ExtResource("1_ebmjs")]
 process_mode = 3
@@ -69,6 +71,7 @@ script = ExtResource("5_0leiu")
 
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("6_4g1ug")
+speed_override = 2000
 
 [node name="LevelManager" type="Node" parent="."]
 script = ExtResource("11_dogt3")
@@ -80,6 +83,13 @@ spawn_enemies = false
 [node name="QuestManager" type="Node" parent="."]
 script = ExtResource("6_0leiu")
 
+[node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
+script = ExtResource("10_f32yu")
+linked_quest = 1
+characters = Array[int]([1])
+timelines = Array[int]([1, 2, 4])
+levels = Array[int]([1])
+
 [node name="ByACampfireOnTheTrail" type="Node" parent="QuestManager"]
 script = ExtResource("12_f32yu")
 
@@ -89,13 +99,6 @@ script = ExtResource("13_0leiu")
 [node name="GhostTownGunfight" type="Node" parent="QuestManager"]
 script = ExtResource("14_4g1ug")
 
-[node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
-script = ExtResource("10_f32yu")
-linked_quest = 1
-characters = Array[int]([1])
-timelines = Array[int]([1, 2, 4])
-levels = Array[int]([1])
-
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("5_pi5r2")
 linked_quest = 2
@@ -103,9 +106,5 @@ characters = Array[int]([2])
 timelines = Array[int]([3])
 levels = Array[int]([3, 2])
 
-[node name="VectorPlacer" parent="." instance=ExtResource("15_ccl36")]
-enabled = false
-
 [node name="ObjectManager" type="Node" parent="."]
 script = ExtResource("16_rbb1r")
-debugging = true

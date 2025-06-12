@@ -76,29 +76,27 @@ func define_error(error: String, caller: Node) -> String:
 
 
 func debug(message: String, parent_caller: Node, function_name: String, child_caller: Node = null) -> void:
-	var debugging: bool = false
-	if not parent_caller:
-		return
-	if not "debugging" in parent_caller:
-		push_error(define_error("Caller does not have debugging property", parent_caller))
-	debugging = parent_caller.debugging
-	if child_caller and "debugging" in child_caller: # assuming child does debugging = parent.debugging if "debugging" in parent and inherit_debugging else debugging
-		debugging = child_caller.debugging
-	if not debugging:
-		return
-	var class_nomen: String = "" # class override functionality
-	if message.begins_with("["):
-		for i: int in range(1, message.length()):
-			if message[i] == "]":
-				break
-			class_nomen += message[i]
-		message = message.replace("[" + class_nomen + "] ", "")
-	message = " " + message if message else ""
-	class_nomen = Global.get_class_of(parent_caller) if not class_nomen else class_nomen
-	var caller_nomen: String = parent_caller.name
-	caller_nomen = " " + caller_nomen if caller_nomen and not caller_nomen == class_nomen else ""
-	class_nomen = "[" + class_nomen + "]"
-	print("%s%s:%s (%s)" % [class_nomen, caller_nomen, message, function_name])
+	var child_debugging: bool = false
+	var inherit_debugging: bool = false
+	if child_caller:
+		assert("debugging" in child_caller)
+		assert("inherit_debugging" in child_caller)
+		child_debugging = child_caller.debugging
+		inherit_debugging = child_caller.inherit_debugging
+	if get_configed_debugging(parent_caller, child_debugging, inherit_debugging):
+		var class_nomen: String = "" # class override functionality
+		if message.begins_with("["):
+			for i: int in range(1, message.length()):
+				if message[i] == "]":
+					break
+				class_nomen += message[i]
+			message = message.replace("[" + class_nomen + "] ", "")
+		message = " " + message if message else ""
+		class_nomen = Global.get_class_of(parent_caller) if not class_nomen else class_nomen
+		var caller_nomen: String = parent_caller.name
+		caller_nomen = " " + caller_nomen if caller_nomen and not caller_nomen == class_nomen else ""
+		class_nomen = "[" + class_nomen + "]"
+		print("%s%s:%s (%s)" % [class_nomen, caller_nomen, message, function_name])
 
 
 func debug_if(condition: bool, message: String, caller: Node, function_name: String) -> bool:

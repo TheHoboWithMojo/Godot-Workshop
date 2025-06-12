@@ -100,28 +100,32 @@ var perks: Dictionary = {
 	PERKS.HEAVY_HANDED: {
 		"reqs": {"level": 5, "bravery": 10},
 		"buffs": {STATS.MELEE_DAMAGE_MULT: 0.05},
-		"reversible": false
+		"reversible": false,
+		"has": false,
 	},
 	PERKS.EXPERIENCED: {
 		"reqs": {"level": 2, "intelligence": 5},
 		"buffs": {STATS.EXP_MULT: 0.05},
-		"reversible": false
+		"reversible": false,
+		"has": false,
 	},
 	PERKS.ASSHOLE: {
 		"reqs": {"level": 5, "cruelty": 10},
 		"buffs": {},
-		"reversible": false
+		"reversible": false,
+		"has": false,
 	},
 	PERKS.POLITICIAN: {
 		"reqs": {"level": 1, "charisma": 10},
 		"buffs": {STATS.PERSUASION_DAMAGE: 0.05},
 		"abilities": {},
-		"reversible": false
+		"reversible": false,
+		"has": false,
 	},
 }
 
 var _damagable: bool = true
-var debugging: bool = true
+var debugging: bool = false
 
 
 func _ready() -> void:
@@ -178,7 +182,8 @@ func change_stat(stat: STATS, change: float) -> bool:
 	if new_stat_value == original_stat_value:
 		return false
 	player_stats_changed.emit()
-	_print_stat_change(stat, original_stat_value, new_stat_value)
+	if debugging:
+		_print_stat_change(stat, original_stat_value, new_stat_value)
 	return true
 
 
@@ -190,11 +195,11 @@ func set_perk_active(perk: PERKS, value: bool) -> bool:
 
 
 func is_perk_reversible(perk: PERKS) -> bool:
-	return Data.game_data["perks"][str(perk)]["reversible"] == "true"
+	return Data.game_data["perks"][str(perk)]["reversible"] == true
 
 
 func is_perk_active(perk: PERKS) -> bool:
-	return Data.game_data["perks"][str(perk)]["has"] == "true"
+	return Data.game_data["perks"][str(perk)]["has"] == true
 
 
 func get_perk_name(perk: PERKS) -> String:
@@ -247,11 +252,11 @@ func is_occupied() -> bool:
 	return Global.is_in_menu() or Dialogue.is_dialogue_playing()
 
 
-func set_objective(objective: QuestMaker.Objective) -> void:
+func set_objective(objective: Quest.Objective) -> void:
 	Global.quest_displayer.get_node("Objective").set_text(objective.nomen)
 
 
-func set_quest(quest: QuestMaker) -> void:
+func set_quest(quest: Quest) -> void:
 	Global.quest_displayer.get_node("Quest").set_text(quest.name + ":")
 
 

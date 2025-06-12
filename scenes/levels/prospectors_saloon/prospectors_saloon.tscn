@@ -36,7 +36,7 @@ metadata/_custom_type_script = "uid://85so8xh35jkw"
 [node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("4_hhryp")]
 home_level_node = NodePath("..")
 
-[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("5_2u73p")]
+[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") instance=ExtResource("5_2u73p")]
 position = Vector2(48, 0)
 rotation = -1.57079
 send_from_level = NodePath("../..")
@@ -56,5 +56,4 @@ quest = 2
 home_level = 3
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
-visible = false
 navigation_polygon = SubResource("NavigationPolygon_wbjm1")

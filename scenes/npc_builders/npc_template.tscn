@@ -70,7 +70,6 @@ offset_bottom = 16.0
 [node name="EventPlayer" type="Node" parent="." node_paths=PackedStringArray("parent", "touch_detector")]
 script = ExtResource("6_bxylu")
 parent = NodePath("..")
-play_mode = 0
 touch_detector = NodePath("TouchDetector")
 
 [node name="TouchDetector" parent="EventPlayer" node_paths=PackedStringArray("monitored_parent", "collider") instance=ExtResource("3_vnwdf")]

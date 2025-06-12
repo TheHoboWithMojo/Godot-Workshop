@@ -11,19 +11,21 @@ class_name EventPlayer extends Node
 @export var timeline: Dialogue.TIMELINES = Dialogue.TIMELINES.UNASSIGNED
 @export_file("*tscn") var scene: String
 @export var emit_interaction_signals: bool = false
+@export var enabled: bool = true
 var _event_playing: bool = false
 var _event_completed: bool = false
 var _processing_trigger: bool = false
+var _processing_interaction: bool = false
+var _mouse_touching: bool = false
 var _interaction_input_name: String = "interact"
 var _click_input_name: String = "click"
 var _custom_trigger_requirement: Callable
+var player_bubble: Area2D
 
-signal event_started(parent: Node)
-signal event_ended(parent: Node)
-signal player_touched_me(self_node: Node)
+signal event_started()
+signal event_ended()
+signal player_touched_me()
 
-var _processing_interaction: bool = false
-var _mouse_touching: bool = false
 enum TRIGGER_MODES { RANGE_LIMITED_CLICK, AREA_ENTRY, INTERACTION_WHILE_TOUCHING }
 enum PLAY_MODES { DIALOG, SCENE }
 
@@ -38,19 +40,32 @@ func _ready() -> void:
 				push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was assigned only a scene path", parent))
 			elif timeline == Dialogue.TIMELINES.UNASSIGNED and not scene:
 				push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was not initialized with a timeline", parent))
+			Debug.debug("Child EventPlayer play mode initialized as 'dialogue'", parent, "_ready", self)
 		PLAY_MODES.SCENE:
 			if timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
 				push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was assigned only a timeline", parent))
 			elif timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
 				push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was not initialized with a scene path", parent))
+			Debug.debug("Child EventPlayer play mode initialized as 'scene'", parent, "_ready", self)
 	if scene and timeline:
 		push_warning(Debug.define_error("Child EventPlayer was initialized with both a timeline and scene", parent))
 	match trigger_mode:
 		TRIGGER_MODES.RANGE_LIMITED_CLICK:
 			touch_detector.mouse_entered_area.connect(_on_mouse_entered_area)
 			touch_detector.mouse_exited_area.connect(_on_mouse_exited_area)
-		TRIGGER_MODES.AREA_ENTRY, TRIGGER_MODES.INTERACTION_WHILE_TOUCHING:
+			Debug.debug("Child EventPlayer trigger mode set to 'range limited click'", parent, "_ready", self)
+		TRIGGER_MODES.AREA_ENTRY:
 			touch_detector.player_entered_area.connect(_on_player_entered_area)
+			Debug.debug("Child EventPlayer trigger mode set to 'area entry'", parent, "_ready", self)
+		TRIGGER_MODES.INTERACTION_WHILE_TOUCHING:
+			touch_detector.player_entered_area.connect(_on_player_entered_area)
+			Debug.debug("Child EventPlayer trigger mode set to 'interaction while touching", parent, "_ready", self)
+	player_bubble = Global.player_bubble
+	assert(player_bubble)
+
+
+func set_enabled(value: bool) -> void:
+	enabled = value
 
 
 func is_event_complete() -> bool:
@@ -81,7 +96,7 @@ func set_max_trigger_distance(new_distance: float) -> void:
 
 
 func is_repeatable() -> bool:
-	return not (one_time_event and _event_completed)
+	return false if ((one_time_event and _event_completed) or not enabled) else true
 
 
 func get_max_trigger_distance() ->  float:
@@ -100,8 +115,9 @@ func get_touch_detector() -> TouchDetector:
 
 
 func set_timeline_enum(_timeline: Dialogue.TIMELINES) -> void:
-	if not is_processing_trigger():
+	if is_processing_trigger():
 		await event_ended
+	Debug.debug("Timeline set to %s" % [Dialogue.get_timeline_name(_timeline)], parent, "set_timeline_enum", self)
 	timeline = _timeline
 
 
@@ -142,7 +158,8 @@ func is_custom_reqs_met() -> bool:
 
 
 func _on_player_entered_area() -> void:
-	player_touched_me.emit(self)
+	player_touched_me.emit()
+	Debug.debug("Player touched me!", parent, "_on_player_entered_area", self)
 	if _processing_interaction or not is_repeatable():
 		return
 	_processing_interaction = true
@@ -150,6 +167,7 @@ func _on_player_entered_area() -> void:
 		TRIGGER_MODES.AREA_ENTRY:
 			await _try_play_event()
 		TRIGGER_MODES.INTERACTION_WHILE_TOUCHING:
+			Debug.debug("Player is touching and child EventPlayer 'interaction while touching' mode is turned on, running loop for interaction check", parent, "_on_player_entered_area", self)
 			var id: int = randi()
 			Debug.doc_loop_start(self, "_player_entered_area", id)
 			while _is_player_touching_parent():
@@ -158,7 +176,9 @@ func _on_player_entered_area() -> void:
 					break
 				await get_tree().process_frame
 			Debug.doc_loop_end(id)
-	_processing_interaction = false
+			if not _is_player_touching_parent():
+				Debug.debug("Interaction check loop was unsuccesful, breaking loop", parent, "_on_player_entered_area", self)
+			_processing_interaction = false
 
 
 func _on_mouse_entered_area() -> void:
@@ -182,7 +202,7 @@ func _is_parent_within_max_trigger_distance() -> bool:
 
 
 func _is_player_touching_parent() -> bool:
-	return Global.player_bubble in touch_detector.get_overlapping_areas()
+	return player_bubble in touch_detector.get_overlapping_areas() if touch_detector.monitoring else false
 
 
 func _on_mouse_exited_area() -> void:
@@ -192,17 +212,20 @@ func _on_mouse_exited_area() -> void:
 func _try_play_event() -> void:
 	match play_mode:
 		PLAY_MODES.DIALOG:
-			if await Dialogue.start(timeline):
-				event_started.emit(parent)
-				_event_playing = true
-				await Dialogic.timeline_ended
+			if not await Dialogue.start(timeline):
+				return
+			Debug.debug("Dialogue play was successful, breaking loop", parent, "_try_play_event", self)
+			event_started.emit()
+			_event_playing = true
+			await Dialogic.timeline_ended
 		PLAY_MODES.SCENE:
 			var node: Node = load(scene).instantiate()
 			Global.game_manager.add_child(node)
 			node.global_position = Global.player.global_position
-			event_started.emit(parent)
+			event_started.emit()
+			Debug.debug("Scene play was successful, breaking loop", parent, "_try_play_event", self)
 			_event_playing = true
 			await node.tree_exited
 	_event_playing = false
 	_event_completed = true
-	event_ended.emit(self)
+	event_ended.emit()

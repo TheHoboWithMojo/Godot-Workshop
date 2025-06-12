@@ -4,8 +4,8 @@ class_name HealthComponent extends Node
 @export var inherit_debugging: bool = false
 @export var debugging: bool = false
 @export var parent: Node
-@export var self_parented: bool = false
-@export var regen_rate: int = 1
+@export var process_death_internally: bool = true
+@export var regen_rate: int = 0
 @export var vincible: bool = true
 @export var exp_per_kill: int = 10
 @export var health_bar: HealthBar = null
@@ -14,20 +14,21 @@ class_name HealthComponent extends Node
 var alive: bool = true
 var health: int = 100
 # --- Signals ---
-signal died(parent: Node)
+signal died()
 
 func _ready() -> void:
-	if self_parented:
-		parent = self
+	set_name("HealthComponent")
+	if parent == self:
 		Debug.debug("In self_parent mode", parent, "_ready")
-	assert(parent != null, Debug.define_error("A health component must reference a parent", self))
+	assert(parent != null, Debug.define_error("HealthComponent of inferred parent %s does not explicity reference a parent" % [get_parent()], self))
+	if vincible:
+		parent.add_to_group("damagable")
 	debugging = parent.debugging if inherit_debugging else debugging
 	if health_bar:
 		health_bar.set_value(max_health)
 		health_bar.set_visible(false)
 	if parent is NPC and parent.get_character_component():
 		await parent.await_name_changed()
-
 
 # --- Health Interface ---
 func set_health(value: int) -> bool:
@@ -90,9 +91,9 @@ func _set_alive(value: bool) -> bool:
 		return true
 
 	if not value and alive:
-		if not health_bar:
-			push_error(Debug.define_error("%s must have a health bar in order to die" % [parent.name], parent))
-			return false
+		#if not health_bar:
+			#push_error(Debug.define_error("%s must have a health bar in order to die" % [parent.name], parent))
+			#return false
 		alive = false
 		await __process_death()
 		return true
@@ -118,6 +119,9 @@ func __process_revival() -> void:
 
 var __processing_death: bool = false
 func __process_death() -> void:
+	if not process_death_internally:
+		died.emit()
+		return
 	if __processing_death:
 		return
 	__processing_death = true
@@ -126,14 +130,15 @@ func __process_death() -> void:
 	if health_bar:
 		health_bar.set_value(0)
 
-	parent.velocity = Vector2.ZERO
+	if "velocity" in parent:
+		parent.velocity = Vector2.ZERO
 	parent.set_physics_process(false)
 	parent.set_process(false)
 
 	Global.mob_manager.mob_died.emit()
 	Player.log_kill(exp_per_kill)
 
-	await Global.delay(self, 1.0)
+	await Global.delay(self, 0.1)
 	died.emit()
 	parent.queue_free()
 

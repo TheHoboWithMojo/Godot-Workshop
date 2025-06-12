@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://whqm04gmj3qw"]
+
+[ext_resource type="Script" uid="uid://dwjxngp2k8ci7" path="res://scenes/npc_builders/health_component.gd" id="1_f0r02"]
+[ext_resource type="Texture2D" uid="uid://ve301pm5cq74" path="res://assets/nukacola.png" id="3_54sxj"]
+[ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_xrbcm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1scqd"]
+size = Vector2(16, 16)
+
+[node name="Bottle" type="Area2D"]
+
+[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("parent")]
+script = ExtResource("1_f0r02")
+parent = NodePath("..")
+metadata/_custom_type_script = "uid://dwjxngp2k8ci7"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-3.27826e-07, 1.70421e-07)
+scale = Vector2(0.0163265, 0.0163265)
+texture = ExtResource("3_54sxj")
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_1scqd")
+script = ExtResource("4_xrbcm")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"

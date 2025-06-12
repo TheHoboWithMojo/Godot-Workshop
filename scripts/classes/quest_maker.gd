@@ -1,4 +1,4 @@
-class_name QuestMaker extends Node
+class_name Quest extends Node
 @export var debugging: bool
 @export var linked_quest: Quests.QUESTS
 @export var characters: Array[Characters.CHARACTERS]
@@ -14,16 +14,15 @@ var mainplot: Plot = null
 var sideplots: Dictionary[String, Plot] = {}
 var chained_quest: Quests.QUESTS = Quests.QUESTS.UNASSIGNED
 
-signal waypoints_assigned(self_node: QuestMaker)
-signal navpoints_assigned(self_node: QuestMaker)
+signal waypoints_assigned(self_node: Quest)
+signal navpoints_assigned(self_node: Quest)
 signal related_timeline_played(timelines: Dialogue.TIMELINES)
 signal related_level_loaded(level: Levels.LEVELS)
-signal quest_created(self_node: QuestMaker)
-signal quest_started(self_node: QuestMaker)
+signal quest_created(self_node: Quest)
+signal quest_started(self_node: Quest)
 
 func _init() -> void:
 	await Global.ready_to_start()
-	name = Quests.get_quest_name(linked_quest)
 	assert(levels and characters and timelines, Debug.define_error("[Quest] Every quest node should contain related levels, characters, and timelines", self))
 	mainplot = Plot.new()
 	mainplot.quest = self
@@ -95,7 +94,7 @@ func set_active(value: bool) -> void:
 	if active == true:
 		Player.set_quest(self)
 		Player.set_objective(mainplot.current_objective)
-		for quest: QuestMaker in self.get_tree().get_nodes_in_group("quests"):
+		for quest: Quest in self.get_tree().get_nodes_in_group("quests"):
 			if quest != self and quest.is_started():
 				Debug.debug("[Quest] '%s' deactivating quest '%s'" % [name, quest.name], self, "set_active")
 				quest.set_active(false)
@@ -173,7 +172,7 @@ func is_started() -> bool:
 
 
 func overview() -> void:
-	print("\n'%s' (QuestMaker) Overview:" % [name.capitalize()])
+	print("\n'%s' (Quest) Overview:" % [name.capitalize()])
 	mainplot.overview()
 	for plot_name: String in sideplots:
 		sideplots[plot_name].overview()
@@ -200,7 +199,7 @@ class Plot:
 	var objective_waypoint_dict: Dictionary[Objective, Array] = {}
 	var current_objective: Objective = null
 	var activate_on_main: bool = true
-	var quest: QuestMaker = null
+	var quest: Quest = null
 	var nomen: String = ""
 	var rewards: Array[String] = []
 	var completed: bool = false
@@ -246,6 +245,7 @@ class Plot:
 		var _new_objective: Objective = objectives_array[current_position + 1]
 		Debug.debug("[Plot] plot '%s' sdeactivating objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
 		_set_active_all_waypoints(current_objective, false)
+		current_objective._complete()
 		current_objective = _new_objective
 		Debug.debug("[Plot] plot '%s' advanced to new objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
 		if quest.is_active():
@@ -303,7 +303,7 @@ class Plot:
 		return objectives.keys().find(objective) < objectives.keys().find(current_objective)
 
 	func overview() -> void:
-		print("\n'%s' (QuestMaker: '%s'):" % [nomen.capitalize(), quest.name.capitalize()])
+		print("\n'%s' (Quest: '%s'):" % [nomen.capitalize(), quest.name.capitalize()])
 		var new_dict: Dictionary[String, String] = {}
 		for objective: Objective in objectives:
 			new_dict[objective.nomen] = objectives[objective]
@@ -327,19 +327,18 @@ class Plot:
 class Objective:
 	var nomen: String
 	var plot: Plot
-	var quest: QuestMaker
+	var quest: Quest
 	var completed: bool = false
 	var objective_waypoints: Array[Waypoint]
 	signal waypoint_paired
 
-	func _init(_nomen: String, _plot: Plot, _quest: QuestMaker) -> void:
+	func _init(_nomen: String, _plot: Plot, _quest: Quest) -> void:
 		nomen = _nomen
 		plot = _plot
 		quest = _quest
 
-	func complete() -> void:
-		Debug.debug("[Objective] complete() called" % [nomen], quest, "objective.complete")
-		plot.advance()
+	func _complete() -> void:
+		Debug.debug("[Objective] '%s' complete() called" % [nomen], quest, "objective.complete")
 		completed = true
 
 	func is_complete() -> bool:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://5qmyahukkvx"]
+[gd_scene load_steps=20 format=4 uid="uid://5qmyahukkvx"]
 
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_ejuju"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_nrx6f"]
@@ -15,13 +15,12 @@
 [ext_resource type="PackedScene" uid="uid://cpe3fhlfbbftk" path="res://scenes/level_builders/event_player.tscn" id="13_58nvt"]
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="13_khflj"]
 [ext_resource type="Script" uid="uid://v843ummj070b" path="res://scripts/node_managers/navpoint.gd" id="14_nrx6f"]
-[ext_resource type="PackedScene" uid="uid://dassfvqra788a" path="res://scenes/tools/vector_placer.tscn" id="14_ou502"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qcc"]
 size = Vector2(45.1642, 41.4202)
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_nrx6f"]
-vertices = PackedVector2Array(99, -109, 99, -19, 45, -52, 45, -157, 178, -178, 178, -109, 178, -19, 178, 18, -146, 18, -45, -52, -138, -10, -146, -10, -138, -118, -45, -157, -146, -118, -146, -178)
+vertices = PackedVector2Array(99, -109, 99, -19, 46, -49.5, 46, -158, 178, -178, 178, -109, 178, -19, 178, 18, -146, 18, -46, -49.5, -138, -10, -146, -10, -138, -118, -46, -158, -146, -118, -146, -178)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 0, 3), PackedInt32Array(1, 6, 7, 8), PackedInt32Array(9, 2, 1, 8, 10), PackedInt32Array(8, 11, 10), PackedInt32Array(9, 10, 12, 13), PackedInt32Array(12, 14, 15, 13), PackedInt32Array(13, 15, 4, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-176, -208, 208, -208, 208, 48, -176, 48)])
 parsed_geometry_type = 1
@@ -103,25 +102,18 @@ position = Vector2(32, -100)
 related_quest_enums = Array[int]([1])
 home_level_enum = 1
 
-[node name="VectorPlacer" parent="." instance=ExtResource("14_ou502")]
-offset_left = -383.6
-offset_top = -70.0
-offset_right = 9616.4
-offset_bottom = 9930.0
-
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_nrx6f")
 
 [node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("12_ou502")]
 home_level_node = NodePath("..")
 
-[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") groups=["navigation_polygon_source_geometry_group"] instance=ExtResource("8_pmyaa")]
+[node name="DoorToGoodsprings" parent="Portals" node_paths=PackedStringArray("send_from_level") instance=ExtResource("8_pmyaa")]
 position = Vector2(-176, -40)
 send_from_level = NodePath("../..")
 send_to_level = 2
 
-[node name="VitMachine" type="StaticBody2D" parent="."]
-visible = false
+[node name="VitMachine" type="StaticBody2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
 position = Vector2(0, -104)
 script = ExtResource("11_58nvt")
 
@@ -151,4 +143,5 @@ texture = ExtResource("5_ou502")
 parent = NodePath("..")
 play_mode = 1
 touch_detector = NodePath("../TouchDetector")
+one_time_event = true
 scene = "uid://bxetckwqxatr6"

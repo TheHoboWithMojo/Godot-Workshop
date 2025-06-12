@@ -35,7 +35,7 @@ signal references_updated
 @onready var npc_manager: NPCManager = get_node(NPC_MANAGER_PATH)
 @onready var mob_manager: MobManager = get_node(MOB_MANAGER_PATH)
 @onready var save_manager: SaveManager = get_node(SAVE_MANAGER_PATH)
-@onready var vector_placer: VectorPlacer = get_node(VECTOR_PLACER_PATH)
+#@onready var vector_placer: VectorPlacer = get_node(VECTOR_PLACER_PATH)
 @onready var object_manager: ObjectManager = get_node(OBJECT_MANAGER_PATH)
 @onready var player_touching_node: Variant = null
 @onready var mouse_touching_node: Variant = null
@@ -199,13 +199,12 @@ func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
 
 
-func is_vector_placer_enabled() -> bool:
-	return vector_placer.enabled if vector_placer else false
+#func is_vector_placer_enabled() -> bool:
+	#return vector_placer.enabled if vector_placer else false
 
 
 func get_class_of(node: Node) -> String:
-	var class_nomen: String = node.get_script().get_global_name()
-	return class_nomen if class_nomen else node.get_class()
+	return node.get_script().get_global_name() if node.get_script() else node.get_class()
 
 
 
@@ -256,7 +255,7 @@ func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	quest_manager = get_node(QUEST_MANAGER_PATH)
 	mob_manager = get_node(MOB_MANAGER_PATH)
 	npc_manager = get_node(NPC_MANAGER_PATH)
-	vector_placer = get_node(VECTOR_PLACER_PATH)
+	#vector_placer = get_node(VECTOR_PLACER_PATH)
 	object_manager = get_node(OBJECT_MANAGER_PATH)
 	references_updated.emit()
 	print("[Global] Global references reloaded!")

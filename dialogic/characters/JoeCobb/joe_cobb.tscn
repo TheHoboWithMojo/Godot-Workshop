@@ -18,7 +18,7 @@ size = Vector2(30, 30)
 [node name="JoeCobb" type="CharacterBody2D" node_paths=PackedStringArray("event_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_2wuio")
-default_spawn_position = Vector2(-64, 64)
+default_spawn_position = Vector2(-300, 64)
 event_manager = NodePath("EventPlayer")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")

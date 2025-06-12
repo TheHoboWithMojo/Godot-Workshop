@@ -1,5 +1,7 @@
-res://scenes/levels/doc_mitchells_house
+res://quests/back_in_the_saddle
+res://assets
 res://scenes/level_builders
+res://scenes/levels/doc_mitchells_house
 res://scenes/npc_builders
 res://scripts/singletons
 res://dialogic/timelines

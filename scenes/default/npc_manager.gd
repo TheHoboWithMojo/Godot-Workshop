@@ -5,6 +5,7 @@ enum PROPERTIES {NAVIGATION, EVENT_PLAYER, CHARACTER, CHARACTER_ENUM, DEFAULT_LE
 var npc_dict: Dictionary[NPC, Dictionary] = {}
 
 @export var debugging: bool = false
+@export var speed_override: int = 0
 
 
 func _ready() -> void:
@@ -24,6 +25,8 @@ func _ready() -> void:
 		npc_dict[npc][PROPERTIES.LAST_POSITION] = Characters.get_character_last_position(npc.get_character_enum()) if Characters.get_character_last_position(npc.get_character_enum()) else npc.get_default_spawn_position()
 		npc_dict[npc][PROPERTIES.LAST_LEVEL] = Characters.get_character_last_level(npc.get_character_enum())
 		npc_dict[npc][PROPERTIES.NAME] = Characters.get_character_name(npc.get_character_enum())
+		if speed_override:
+			npc.navigation_manager.speed = speed_override
 
 
 func retrieve_property(npc: NPC, property: PROPERTIES) -> Variant:
@@ -58,21 +61,7 @@ func _on_about_to_change_level(level: Levels.LEVELS) -> void:
 			npc_dict[npc][PROPERTIES.LAST_LEVEL] = level
 		else:
 			Debug.debug("%s not a resident or pathfinder to current level %s, disabling" % [nomen, level_name], self, "_on_new_level_loaded")
-			set_npc_enabled(npc, false)
-
-
-func set_npc_enabled(npc: NPC, value: bool) -> void:
-	npc.set_visible(false)
-	npc.set_physics_process(false)
-	npc.set_process(false)
-	npc.collider.set_disabled.call_deferred(true)
-
-	if value:
-		await get_tree().process_frame
-		npc.collider.set_disabled(false)
-		npc.set_physics_process(true)
-		npc.set_process(true)
-		npc.set_visible(true)
+			npc.set_enabled(false)
 
 
 func is_character_stored(character: Characters.CHARACTERS) -> bool:
@@ -116,7 +105,7 @@ func load_npc(npc: NPC, position: Vector2 = Vector2.ZERO) -> void:
 	npc.set_visible(false)
 	npc.set_global_position(position)
 	await get_tree().process_frame
-	await set_npc_enabled(npc, true)
+	await npc.set_enabled(true)
 
 
 func get_hostile_npcs() -> Array[NPC]:

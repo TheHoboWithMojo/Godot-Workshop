@@ -8,6 +8,7 @@ class_name NPC extends CharacterBody2D
 @export var debugging: bool
 var hostile: bool = false # placeholders for future attack manager or something of the sort
 var encountered: bool = false
+@onready var touch_detector: TouchDetector = $TouchDetector
 
 signal target_changed(new_target: Vector2)
 signal moved_level(level: Level)
@@ -109,6 +110,21 @@ func set_alive(value: bool) -> bool:
 	return await health_manager.set_alive(value)
 
 
+func set_enabled(value: bool) -> void:
+	set_visible(false)
+	set_physics_process(false)
+	set_process(false)
+	collider.set_disabled.call_deferred(true)
+	touch_detector.set_monitoring(false)
+	if value:
+		await get_tree().process_frame
+		touch_detector.set_monitoring(true)
+		collider.set_disabled(false)
+		set_physics_process(true)
+		set_process(true)
+		set_visible(true)
+
+
 func get_default_level() -> Levels.LEVELS:
 	if not character_manager:
 		push_error("Only npc with a character component have a default level", self, "get_default_level")
@@ -150,12 +166,12 @@ func _wrap_active_component_signals() -> void:
 		health_manager.died.connect(_on_died)
 
 
-func _on_dialog_started(_component_parent: Node) -> void:
-	dialogue_started.emit(self)
+func _on_dialog_started() -> void:
+	dialogue_started.emit()
 
 
-func _on_dialog_ended(_component_parent: Node) -> void:
-	dialogue_ended.emit(self)
+func _on_dialog_ended() -> void:
+	dialogue_ended.emit()
 
 
 func _on_target_changed(new_target: Vector2) -> void:

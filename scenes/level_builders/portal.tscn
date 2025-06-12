@@ -11,7 +11,7 @@ size = Vector2(8, 48)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l3y07"]
 size = Vector2(8, 48)
 
-[node name="Portal" type="StaticBody2D" node_paths=PackedStringArray("spawn_point", "touch_detector")]
+[node name="Portal" type="StaticBody2D" node_paths=PackedStringArray("spawn_point", "touch_detector") groups=["navigation_polygon_source_geometry_group"]]
 script = ExtResource("1_8p0xl")
 spawn_point = NodePath("SpawnPoint")
 touch_detector = NodePath("TouchDetector")

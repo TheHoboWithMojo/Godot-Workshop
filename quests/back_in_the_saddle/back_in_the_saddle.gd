@@ -1,4 +1,4 @@
-extends QuestMaker
+class_name BackInTheSaddle extends Quest
 
 enum CHOICES {}
 
@@ -19,6 +19,9 @@ var shoot_the_bottles: Objective
 var saloon: Level
 var goodsprings: Level
 var sunny_smiles: NPC
+var bottles_shot: int = 0
+
+signal bottle_shot
 
 func _ready() -> void:
 	related_level_loaded.connect(_on_related_level_loaded)
@@ -41,6 +44,9 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 				sunny_smiles.set_target(get_navpoint_position("Tutorial"))
 				await sunny_smiles.navigation_finished
 				Player.give_weapon("res://scenes/projectiles/fireball.tscn")
+				while bottles_shot < 3:
+					await bottle_shot
+					bottles_shot += 1
 
 
 
@@ -48,6 +54,7 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.SUNNY_GREETING:
 			if not talk_to_sunny.is_complete():
+				start()
 				await Dialogic.timeline_ended
 				sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
 				mainplot.advance()

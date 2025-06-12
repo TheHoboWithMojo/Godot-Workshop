@@ -6,6 +6,6 @@
 target_desired_distance = 4.0
 path_postprocessing = 1
 avoidance_enabled = true
+radius = 100.0
+debug_enabled = true
 script = ExtResource("1_keww6")
-debugging = true
-inherit_debugging = true

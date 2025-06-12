@@ -1,4 +1,4 @@
-extends QuestMaker
+class_name AintThatAKickInTheHead extends Quest
 
 var doc_mitchell: NPC
 
@@ -8,9 +8,10 @@ var sit_down: Objective
 var exit: Objective
 var doc_mitchells_house: Node
 var vit_machine: Node
+signal vit_started
+signal vit_ended
 
 func _ready() -> void:
-	name = Quests.get_quest_name(linked_quest)
 	doc_mitchell = Global.npc_manager.get_npc(Characters.CHARACTERS.DOC_MITCHELL)
 
 	await quest_created
@@ -51,10 +52,14 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 					await Dialogic.timeline_ended
 					start()
 					doc_mitchell.set_target(get_navpoint_position("VitMachine"))
-					await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_playing")
-					mainplot.advance()
-					await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_completed")
-					mainplot.advance()
+					while mainplot.current_objective != use_the_vit:
+						await vit_started
+						mainplot.advance()
+					#await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_playing")
+					while not mainplot.current_objective != sit_down:
+						await vit_ended
+						mainplot.advance()
+					#await Global.object_manager.object_method_true(Global.object_manager.OBJECTS.VIT_MACHINE, "is_event_completed")
 					await doc_mitchell.navigation_finished
 					doc_mitchell.set_target(get_navpoint_position("Couch"))
 					await doc_mitchell.navigation_finished

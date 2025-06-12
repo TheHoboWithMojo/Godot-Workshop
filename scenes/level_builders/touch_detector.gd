@@ -11,6 +11,7 @@ class_name TouchDetector
 @export var send_signal_to_parent: bool = true
 @export var set_touching_to_self: bool = false
 @export var emit_self_as_argument: bool = false
+@onready var player_bubble: Area2D
 
 signal player_entered_area
 signal player_exited_area
@@ -34,6 +35,8 @@ func _ready() -> void:
 		mouse_exited.connect(_on_mouse_exited)
 	if ignored_control:
 		set_ignored_control(ignored_control)
+	player_bubble = Global.player_bubble
+	assert(player_bubble)
 
 
 func _on_mouse_entered() -> void:
@@ -55,6 +58,7 @@ func _on_mouse_exited() -> void:
 			return
 		mouse_exited_area.emit(self)
 
+
 func set_ignored_control(menu: Control) -> void: # prevents the mouse_exited signal from procking when the mouse overlaps the control
 	ignored_control = menu
 	ignored_zone = ignored_control.get_global_rect()
@@ -69,7 +73,7 @@ func get_collider() -> Collider:
 
 
 func _on_area2d_entered(area: Area2D) -> void:
-	if area == Global.player_bubble:
+	if area == player_bubble:
 		Debug.debug("player entered.", self, "_on_area2d_entered",)
 		Global.player_touching_node = self if set_touching_to_self else monitored_parent
 		if send_signal_to_parent:
@@ -80,9 +84,9 @@ func _on_area2d_entered(area: Area2D) -> void:
 
 
 func _on_area2d_exited(area: Area2D) -> void:
-	if area == Global.player_bubble:
+	if area == player_bubble:
 		Debug.debug("player exited", self, "_on_area2d_exited")
-		if not get_overlapping_areas().has(Global.player_bubble):
+		if monitoring and not get_overlapping_areas().has(player_bubble):
 			Global.player_touching_node = null
 			if send_signal_to_parent:
 				if emit_self_as_argument:
