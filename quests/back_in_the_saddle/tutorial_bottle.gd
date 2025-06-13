@@ -1,5 +1,4 @@
 extends Node2D
-
 @onready var health_component: HealthComponent = $HealthComponent
 
 func _ready() -> void:

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0focbd4i7vrq"]
+
+[ext_resource type="Script" uid="uid://bginkrisflnfp" path="res://scenes/level_builders/waypoint/waypoint.gd" id="1_dskn8"]
+[ext_resource type="Texture2D" uid="uid://ctb6iimubuiob" path="res://assets/Icons/16x16/waypoint.png" id="2_qwrh6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qwrh6"]
+
+[node name="Waypoint" type="Area2D" node_paths=PackedStringArray("collider")]
+script = ExtResource("1_dskn8")
+show_icon = true
+collider = NodePath("Collider")
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_qwrh6")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_qwrh6")

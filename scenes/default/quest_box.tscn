@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cio5pn3i1jkkj"]
-
-[ext_resource type="Script" uid="uid://duogv0hicm5fc" path="res://follow_player.gd" id="1_qojl7"]
-
-[node name="QuestBox" type="CanvasLayer"]
-script = ExtResource("1_qojl7")

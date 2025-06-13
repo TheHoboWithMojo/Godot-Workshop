@@ -1,14 +1,14 @@
 [gd_scene load_steps=12 format=3 uid="uid://bi7c218cvvuw5"]
 
-[ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scripts/node_managers/npc.gd" id="1_314bo"]
-[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar.tscn" id="2_ocy8k"]
+[ext_resource type="Script" uid="uid://mxlkyrobqegq" path="res://scenes/npc_builders/npc_template/npc.gd" id="1_314bo"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar/health_bar.tscn" id="2_ocy8k"]
 [ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="3_auhba"]
-[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector.tscn" id="4_qcduk"]
-[ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector.tscn" id="5_st2fe"]
-[ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component.tscn" id="7_y72oj"]
-[ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component.tscn" id="8_1ivvh"]
-[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scripts/classes/event_player.gd" id="9_41o3l"]
-[ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component.tscn" id="9_dsma5"]
+[ext_resource type="PackedScene" uid="uid://dbxnkb3k0gnki" path="res://scenes/level_builders/click_detector/click_detector.tscn" id="4_qcduk"]
+[ext_resource type="PackedScene" uid="uid://ckugwkaibl0ne" path="res://scenes/level_builders/touch_detector/touch_detector.tscn" id="5_st2fe"]
+[ext_resource type="PackedScene" uid="uid://cixpouj7xjefw" path="res://scenes/npc_builders/character_component/character_component.tscn" id="7_y72oj"]
+[ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component/navigation_component.tscn" id="8_1ivvh"]
+[ext_resource type="Script" uid="uid://c1mhxddexlqcy" path="res://scenes/level_builders/event_player/event_player.gd" id="9_41o3l"]
+[ext_resource type="PackedScene" uid="uid://bjwgb2nv6n628" path="res://scenes/npc_builders/health_component/health_component.tscn" id="9_dsma5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i1lge"]
 size = Vector2(30, 30)

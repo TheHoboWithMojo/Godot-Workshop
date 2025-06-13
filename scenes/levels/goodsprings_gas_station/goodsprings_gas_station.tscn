@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=4 uid="uid://ck254y3333sjd"]
 
-[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kk5p5"]
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scenes/levels/level.gd" id="1_kk5p5"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_4cyi1"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_p7bt6"]
-[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="4_fqh7k"]
-[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_3iokx"]
+[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager/portal_manager.tscn" id="4_fqh7k"]
+[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal/portal.tscn" id="5_3iokx"]
 
 [node name="GoodspringsGasStation" type="Node2D" node_paths=PackedStringArray("tiles", "portal_manager")]
 z_index = -1

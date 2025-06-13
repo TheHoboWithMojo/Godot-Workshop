@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://rpenfcmg3cck"]
+
+[ext_resource type="Script" uid="uid://b8644kd3rkacx" path="res://scenes/npc_builders/text_component/text_component.gd" id="1_pm8ki"]
+[ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="2_aofba"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pm8ki"]
+bg_color = Color(0.233925, 0.233925, 0.233925, 0.286275)
+
+[node name="ProximityText" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.4, 0.4)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_pm8ki")
+repeatable = false
+
+[node name="Text" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -30.0
+offset_right = 120.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("2_aofba")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pm8ki")
+fit_content = true
+horizontal_alignment = 1

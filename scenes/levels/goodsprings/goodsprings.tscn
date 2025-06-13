@@ -1,19 +1,18 @@
-[gd_scene load_steps=12 format=4 uid="uid://bqwfutcxr17et"]
+[gd_scene load_steps=11 format=4 uid="uid://bqwfutcxr17et"]
 
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="1_n7gug"]
-[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_y5w72"]
-[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="2_var50"]
-[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="2_y5w72"]
-[ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="3_lurfu"]
-[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="4_77bbt"]
-[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="5_bwp5q"]
-[ext_resource type="PackedScene" uid="uid://whqm04gmj3qw" path="res://scenes/level_builders/destructable_bottle.tscn" id="7_vc68w"]
-[ext_resource type="Script" uid="uid://c4tg2fkbq3xf3" path="res://quests/back_in_the_saddle/tutorial_bottle.gd" id="8_aosy0"]
-[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="8_lurfu"]
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scenes/levels/level.gd" id="1_y5w72"]
+[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager/waypoint_manager.tscn" id="2_var50"]
+[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal/portal.tscn" id="2_y5w72"]
+[ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint/waypoint.tscn" id="3_lurfu"]
+[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager/navpoint_manager.tscn" id="4_77bbt"]
+[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint/navpoint.tscn" id="5_bwp5q"]
+[ext_resource type="PackedScene" uid="uid://whqm04gmj3qw" path="res://scenes/level_builders/destructable_bottle/destructable_bottle.tscn" id="7_vc68w"]
+[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager/portal_manager.tscn" id="8_lurfu"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_77bbt"]
-vertices = PackedVector2Array(263, 209, 225, 209, 31, 135, 31, 97, 111, 31, 625, -89, -145, 215, -47, 135, 225, 287, -433, 585, 263, 287, 625, 585, 73, 31, -47, 97, -145, 169, -159, 135, -159, 97, -271, 169, -237, 135, 111, -47, -433, -89, 73, -47, -271, 215, -237, 97)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 7, 2, 1, 8, 9), PackedInt32Array(10, 11, 9, 8), PackedInt32Array(5, 11, 10, 0), PackedInt32Array(12, 4, 3, 13), PackedInt32Array(7, 6, 14), PackedInt32Array(13, 7, 14, 15, 16), PackedInt32Array(15, 14, 17, 18), PackedInt32Array(5, 4, 19), PackedInt32Array(20, 5, 19, 21), PackedInt32Array(22, 6, 9), PackedInt32Array(22, 9, 20, 17), PackedInt32Array(18, 17, 20, 23), PackedInt32Array(16, 23, 20, 21, 12), PackedInt32Array(13, 16, 12)])
+vertices = PackedVector2Array(263, 209, 225, 209, 31, 135, 31, 97, 111, 31, 625, -89, -161, 215, -47, 135, 225, 287, -433, 585, -159, 135, -47, 97, -161, 169, 263, 287, 625, 585, 73, 31, 111, -47, -433, -89, 73, -47, -237, 135, -271, 169, -271, 215, -237, 97, -159, 97)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 7, 2, 1, 8, 9), PackedInt32Array(10, 11, 7, 6, 12), PackedInt32Array(13, 14, 9, 8), PackedInt32Array(5, 14, 13, 0), PackedInt32Array(15, 4, 3, 11), PackedInt32Array(5, 4, 16), PackedInt32Array(17, 5, 16, 18), PackedInt32Array(19, 10, 12, 20), PackedInt32Array(21, 6, 9), PackedInt32Array(21, 9, 17, 20), PackedInt32Array(19, 20, 17, 22), PackedInt32Array(23, 22, 17, 18, 15), PackedInt32Array(11, 10, 23, 15)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-448, -104, 640, -104, 640, 600, -448, 600)])
 source_geometry_mode = 2
 agent_radius = 15.0
@@ -58,23 +57,18 @@ home_level_enum = 2
 
 [node name="Bottle" parent="QuestObjects" instance=ExtResource("7_vc68w")]
 position = Vector2(-184, 168)
-script = ExtResource("8_aosy0")
 
 [node name="Bottle2" parent="QuestObjects" instance=ExtResource("7_vc68w")]
 position = Vector2(-200, 168)
-script = ExtResource("8_aosy0")
 
 [node name="Bottle3" parent="QuestObjects" instance=ExtResource("7_vc68w")]
 position = Vector2(-216, 168)
-script = ExtResource("8_aosy0")
 
 [node name="Bottle4" parent="QuestObjects" instance=ExtResource("7_vc68w")]
 position = Vector2(-232, 168)
-script = ExtResource("8_aosy0")
 
 [node name="Bottle5" parent="QuestObjects" instance=ExtResource("7_vc68w")]
 position = Vector2(-248, 168)
-script = ExtResource("8_aosy0")
 
 [node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("8_lurfu")]
 home_level_node = NodePath("..")

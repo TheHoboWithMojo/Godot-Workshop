@@ -1,10 +1,10 @@
-Collider
 Area2D
+StaticBody2D
+Collider
 Sprite2D
 HealthComponent
 Node2D
 Node
-StaticBody2D
 AnimatedSprite2D
 DebugBuddy
 EventPlayer

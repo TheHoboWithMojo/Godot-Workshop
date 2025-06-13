@@ -1,14 +1,14 @@
 [gd_scene load_steps=11 format=4 uid="uid://ckkwucoj1mfu5"]
 
-[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scripts/levels/level.gd" id="1_kryoy"]
+[ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scenes/levels/level.gd" id="1_kryoy"]
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="2_2u73p"]
 [ext_resource type="Script" uid="uid://85so8xh35jkw" path="res://scripts/icon_extenders/tiles.gd" id="3_lfjp6"]
-[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager.tscn" id="4_hhryp"]
-[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal.tscn" id="5_2u73p"]
-[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager.tscn" id="6_hhryp"]
-[ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint.tscn" id="7_wbjm1"]
-[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager.tscn" id="8_2fjxs"]
-[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint.tscn" id="8_hhryp"]
+[ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager/portal_manager.tscn" id="4_hhryp"]
+[ext_resource type="PackedScene" uid="uid://u3bnqno540du" path="res://scenes/level_builders/portal/portal.tscn" id="5_2u73p"]
+[ext_resource type="PackedScene" uid="uid://cfhlwtgg45xb5" path="res://scenes/level_builders/navpoint_manager/navpoint_manager.tscn" id="6_hhryp"]
+[ext_resource type="PackedScene" uid="uid://b0focbd4i7vrq" path="res://scenes/level_builders/waypoint/waypoint.tscn" id="7_wbjm1"]
+[ext_resource type="PackedScene" uid="uid://f667j8r5scej" path="res://scenes/level_builders/waypoint_manager/waypoint_manager.tscn" id="8_2fjxs"]
+[ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint/navpoint.tscn" id="8_hhryp"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_wbjm1"]
 vertices = PackedVector2Array(118, -182, 118, -10, 58, -10, 58, -18, -182, -182, -10, -18, -182, -10, -10, -10)

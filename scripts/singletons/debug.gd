@@ -76,8 +76,8 @@ func define_error(error: String, caller: Node) -> String:
 
 
 func debug(message: String, parent_caller: Node, function_name: String, child_caller: Node = null) -> void:
-	var child_debugging: bool = false
-	var inherit_debugging: bool = false
+	var child_debugging: bool = true
+	var inherit_debugging: bool = true
 	if child_caller:
 		assert("debugging" in child_caller)
 		assert("inherit_debugging" in child_caller)
@@ -129,9 +129,6 @@ func get_array_as_pretty_string(array: Array) -> String:
 
 
 func frame_print(input: Variant, frame_print_delay: int) -> void:
-	if not Global.game_manager.track_frames:
-		push_warning("[Debug] Cannot be called if track frames isn't on. (frame_print())")
-		return
 	if Global.frames % frame_print_delay == 0:
 		print(input)
 

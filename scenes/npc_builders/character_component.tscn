@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cixpouj7xjefw"]
-
-[ext_resource type="Script" uid="uid://chduh6r7y8h46" path="res://scenes/npc_builders/character_component.gd" id="1_irsab"]
-
-[node name="CharacterComponent" type="Node"]
-script = ExtResource("1_irsab")

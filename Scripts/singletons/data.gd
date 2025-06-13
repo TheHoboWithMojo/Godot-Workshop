@@ -38,8 +38,8 @@ func load_json_file(path: String) -> Dictionary: # Quick function for loading a 
 
 
 func get_current_path(data_name: String) -> String:
-	return "res://data/%s_current.json" % [data_name]
+	return "res://data/%s/%s_current.json" % [data_name, data_name]
 
 
 func get_backup_path(data_name: String) -> String:
-	return "res://data/%s_backup.json" % [data_name]
+	return "res://data/%s/%s_backup.json" % [data_name, data_name]

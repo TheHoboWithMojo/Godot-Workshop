@@ -1,0 +1,28 @@
+{
+	"1": {
+		"complete": false,
+		"characters": [
+			1.0
+		],
+		"timelines": [
+			1.0,
+			2.0
+		],
+		"related_levels": [
+			1.0
+		]
+	},
+	"2": {
+		"complete": false,
+		"characters": [
+			2.0
+		],
+		"timelines": [
+			3.0
+		],
+		"related_levels": [
+			2.0,
+			3.0
+		]
+	}
+}

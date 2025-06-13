@@ -1,0 +1,151 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtjqgclskvduj"]
+
+[ext_resource type="Script" uid="uid://c0qy1iqa0pyhs" path="res://scenes/main/debug_menu/debug_menu.gd" id="1_1uwqr"]
+
+[node name="DebugMenu" type="Control" node_paths=PackedStringArray("background", "health", "speed", "accomplishments", "experience", "crit", "personality", "damage")]
+process_mode = 3
+z_index = 3
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_1uwqr")
+background = NodePath("ColorRect")
+health = NodePath("ButtonsBox/StatsBox/HBoxContainer/Health")
+speed = NodePath("ButtonsBox/StatsBox/HBoxContainer/Speed")
+accomplishments = NodePath("ButtonsBox/StatsBox/HBoxContainer2/Accomplishments")
+experience = NodePath("ButtonsBox/StatsBox/HBoxContainer/Exp")
+crit = NodePath("ButtonsBox/StatsBox/HBoxContainer/Crit")
+personality = NodePath("ButtonsBox/StatsBox/HBoxContainer2/Personality")
+damage = NodePath("ButtonsBox/StatsBox/HBoxContainer/Damage")
+
+[node name="ButtonsBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -118.0
+offset_top = -139.0
+offset_right = 118.0
+offset_bottom = 139.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="DebugMenuTitle" type="Label" parent="ButtonsBox"]
+layout_mode = 2
+text = "DEBUG MENU"
+horizontal_alignment = 1
+
+[node name="PauseButton" type="CheckButton" parent="ButtonsBox"]
+layout_mode = 2
+text = "Pause Game"
+
+[node name="SpawnEnemiesButton" type="CheckButton" parent="ButtonsBox"]
+layout_mode = 2
+text = "Turn Off Spawns"
+
+[node name="ShowPlayerStatsButton" type="CheckButton" parent="ButtonsBox"]
+layout_mode = 2
+text = "Player Stats"
+
+[node name="ShowFramesButton" type="CheckButton" parent="ButtonsBox"]
+layout_mode = 2
+text = "Frames Data
+"
+
+[node name="SaveGameButton" type="Button" parent="ButtonsBox"]
+layout_mode = 2
+text = "Save Game"
+
+[node name="StatsBox" type="VBoxContainer" parent="ButtonsBox"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ButtonsBox/StatsBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Health" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Health"
+horizontal_alignment = 1
+
+[node name="Speed" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Speed
+"
+horizontal_alignment = 1
+
+[node name="Damage" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Damage
+"
+horizontal_alignment = 1
+
+[node name="Crit" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Crit"
+horizontal_alignment = 1
+
+[node name="Exp" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Exp"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ButtonsBox/StatsBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="Accomplishments" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Accomplishments"
+horizontal_alignment = 1
+
+[node name="Personality" type="Label" parent="ButtonsBox/StatsBox/HBoxContainer2"]
+layout_mode = 2
+text = "Personality"
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_as_relative = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -145.0
+offset_right = 120.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.188235, 0.25098, 0.301961, 0.588235)
+
+[connection signal="toggled" from="ButtonsBox/PauseButton" to="." method="_on_pause_button_toggled"]
+[connection signal="toggled" from="ButtonsBox/SpawnEnemiesButton" to="." method="_on_spawn_enemies_button_toggled"]
+[connection signal="toggled" from="ButtonsBox/ShowPlayerStatsButton" to="." method="_on_show_player_stats_button_toggled"]
+[connection signal="toggled" from="ButtonsBox/ShowFramesButton" to="." method="_on_show_frames_button_toggled"]
+[connection signal="pressed" from="ButtonsBox/SaveGameButton" to="." method="_on_save_game_button_pressed"]
