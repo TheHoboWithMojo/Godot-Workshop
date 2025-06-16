@@ -15,6 +15,7 @@ signal moved_level(level: Level)
 
 
 func _ready() -> void:
+	set_name("NavigationComponent")
 	if self_parented:
 		parent = self
 		Debug.debug("In self_parent mode", parent, "_ready")
@@ -61,7 +62,7 @@ func set_target(target: Variant = navigation_target, move_level_call: bool = fal
 	elif target is Node2D:
 		navigation_target = target.global_position
 	else:
-		push_warning(Debug.define_error("Can only target a vector2 or node2d", parent))
+		push_error(Debug.define_error("Can only target a vector2 or node2d, instead was given '%s' of type '%s'" % [target, typeof(target)], parent))
 	match(up_down_left_right):
 		"left":
 			navigation_target -= (1.2 * Vector2(displacement, 0))

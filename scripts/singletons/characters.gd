@@ -3,6 +3,7 @@ extends Node
 enum CHARACTERS { UNASSIGNED, DOC_MITCHELL, SUNNY_SMILES, CHET, RINGO, TAMMY, OLD_MAN_PETE, JOE_COBB, VICTOR }
 enum PROPERTIES { ALIVE, RESOURCE, STYLE, FACTION, LAST_LEVEL, DEFAULT_LEVEL, LAST_POSITION, SCENE_PATH }
 
+@warning_ignore("unused_signal")
 signal character_died
 
 var characters_dict: Dictionary = {

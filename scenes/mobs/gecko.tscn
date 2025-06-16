@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://di1yafkvfv7bc"]
+
+[ext_resource type="Script" uid="uid://dwjxngp2k8ci7" path="res://scenes/npc_builders/health_component/health_component.gd" id="1_kpuqm"]
+[ext_resource type="PackedScene" uid="uid://c6ewpodeko760" path="res://scenes/npc_builders/health_bar/health_bar.tscn" id="2_iblyl"]
+[ext_resource type="Texture2D" uid="uid://cocsxaf6d5khu" path="res://assets/gecko.png" id="3_7on75"]
+[ext_resource type="Script" uid="uid://dfo7jylalx1l5" path="res://scripts/icon_extenders/collider.gd" id="4_d8bu4"]
+[ext_resource type="PackedScene" uid="uid://ta2h6n8yrvqt" path="res://scenes/npc_builders/navigation_component/navigation_component.tscn" id="5_iblyl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5psxw"]
+size = Vector2(16, 24)
+
+[node name="Gecko" type="CharacterBody2D"]
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_5psxw")
+script = ExtResource("4_d8bu4")
+metadata/_custom_type_script = "uid://dfo7jylalx1l5"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.140351, 0.121673)
+texture = ExtResource("3_7on75")
+
+[node name="NavigationComponent" parent="." node_paths=PackedStringArray("parent") instance=ExtResource("5_iblyl")]
+parent = NodePath("..")
+
+[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("parent", "health_bar")]
+script = ExtResource("1_kpuqm")
+parent = NodePath("..")
+health_bar = NodePath("HealthBar")
+metadata/_custom_type_script = "uid://dwjxngp2k8ci7"
+
+[node name="HealthBar" parent="HealthComponent" instance=ExtResource("2_iblyl")]
+offset_left = -9.0
+offset_top = 14.0
+offset_right = 851.0
+offset_bottom = 232.0
+scale = Vector2(0.0214277, 0.0196014)

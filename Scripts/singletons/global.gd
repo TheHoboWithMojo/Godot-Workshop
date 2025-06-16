@@ -22,6 +22,7 @@ signal game_reloaded # Receives this signal when game_manager's ready runs
 signal references_updated
 
 # Global Variables
+@export var debugging: bool = false
 @onready var frames: int = 0
 @onready var speed_mult: float = 1.0
 @onready var player: PlayerManager = get_node(PLAYER_PATH)
@@ -37,12 +38,11 @@ signal references_updated
 @onready var save_manager: SaveManager = get_node(SAVE_MANAGER_PATH)
 #@onready var vector_placer: VectorPlacer = get_node(VECTOR_PLACER_PATH)
 @onready var object_manager: ObjectManager = get_node(OBJECT_MANAGER_PATH)
-@onready var player_touching_node: Variant = null
-@onready var mouse_touching_node: Variant = null
-@onready var delta: float = 0.0
-@onready var can_fast_travel: bool = true
-@onready var in_menu: bool = false
-
+var player_touching_node: Variant = null
+var mouse_touching_node: Variant = null
+var delta: float = 0.0
+var can_fast_travel: bool = true
+var in_menu: bool = false
 
 func _ready() -> void:
 	game_reloaded.connect(_on_game_reloaded)
@@ -63,13 +63,13 @@ func is_fast_travel_enabled() -> bool:
 
 
 func enter_menu() -> void:
-	print("[Global] menu entered")
+	Debug.debug("Menu entered", self, "exit_menu")
 	set_paused(true)
 	in_menu = true
 
 
 func exit_menu() -> void:
-	print("[Global] menu exited")
+	Debug.debug("Menu exited", self, "exit_menu")
 	set_paused(false)
 	in_menu = false
 
@@ -94,16 +94,16 @@ func set_paused(value: bool) -> void:
 
 
 func if_do(condition: bool, method_argument_dicts: Array[Dictionary]) -> bool:
-	if condition:
-		for method_argument_pair: Dictionary[Callable, Array] in method_argument_dicts:
-			var method: Callable = method_argument_pair.keys()[0]
-			var arguments: Array[Variant] = method_argument_pair[method]
-			if arguments:
-				method.callv(arguments)
-			else:
-				method.call()
-		return true
-	return false
+	if not condition:
+		return false
+	for method_argument_pair: Dictionary[Callable, Array] in method_argument_dicts:
+		var method: Callable = method_argument_pair.keys()[0]
+		var arguments: Array[Variant] = method_argument_pair[method]
+		if arguments:
+			method.callv(arguments)
+		else:
+			method.call()
+	return true
 
 
 func is_in_menu() -> bool:
@@ -197,10 +197,6 @@ func string_to_vector2(input: String) -> Vector2:
 
 func delay(self_node: Node, seconds: float) -> void:
 	await self_node.get_tree().create_timer(seconds).timeout
-
-
-#func is_vector_placer_enabled() -> bool:
-	#return vector_placer.enabled if vector_placer else false
 
 
 func get_class_of(node: Node) -> String:

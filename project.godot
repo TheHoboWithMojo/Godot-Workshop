@@ -40,8 +40,10 @@ directories/dch_directory={
 "sunny_smiles": "res://dialogic/characters/SunnySmiles/sunny_smiles.dch"
 }
 directories/dtl_directory={
+"cleared_first_well_geckos": "res://dialogic/timelines/cleared_first_well_geckos.dtl",
 "off_you_go": "res://dialogic/timelines/off_you_go.dtl",
 "picktags": "res://dialogic/timelines/picktags.dtl",
+"shot_bottles": "res://dialogic/timelines/shot_bottles.dtl",
 "sunny_greeting": "res://dialogic/timelines/sunny_greeting.dtl",
 "youre_awake": "res://dialogic/timelines/youre_awake.dtl"
 }

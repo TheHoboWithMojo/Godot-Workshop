@@ -5,6 +5,7 @@ class_name Quest extends Node
 @export var characters: Array[Characters.CHARACTERS]
 @export var timelines: Array[Dialogue.TIMELINES] = []
 @export var levels: Array[Levels.LEVELS] = []
+#@export var refresh_timelines: Dialogue.TIMELINES forces enum refresh
 
 var completed: bool = false
 var active: bool = false
@@ -13,7 +14,7 @@ var quest_waypoints: Dictionary[String, Waypoint] = {}
 var quest_navpoints: Dictionary[String, Navpoint] = {}
 var mainplot: Plot = null
 var sideplots: Array[Plot] = []
-var chained_quest: Quests.QUESTS = Quests.QUESTS.UNASSIGNED
+var chained_quest: Quest = null
 
 signal waypoints_assigned(self_node: Quest)
 signal navpoints_assigned(self_node: Quest)
@@ -60,6 +61,13 @@ func _on_new_level_loaded(new_level: Level) -> void:
 				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
 			navpoints_assigned.emit(self)
 			related_level_loaded.emit(new_level.get_level_enum())
+
+
+func advance() -> void:
+	if mainplot:
+		mainplot.advance()
+		return
+	Debug.debug("Tried to call advance before mainplot was started", self, "quest.advance")
 
 
 func waypoint_overview() -> void:
@@ -161,11 +169,12 @@ func complete() -> void:
 	Global.quest_displayer.find_child("Quest").set_text("")
 	Global.quest_displayer.find_child("Objective").set_text("")
 	if chained_quest:
-		Global.quest_manager.get_quest_node(chained_quest).start()
+		chained_quest.start()
+		print("[Quest] '%s' triggered quest '%s' to start" % [name, chained_quest.name])
 
 
 func set_subsequent_quest(quest: Quests.QUESTS) -> void:
-	chained_quest = quest
+	chained_quest = Global.quest_manager.get_quest_node(quest)
 
 
 func is_complete() -> bool:
@@ -316,7 +325,7 @@ class Plot:
 		var name_array: Array[String]
 		for objective: Objective in objectives:
 			if objective == current_objective:
-				name_array.append(objective.nomen + " - Current Objective")
+				name_array.append(objective.nomen + " - CURRENT OBJECTIVE")
 				continue
 			name_array.append(objective.nomen)
 		Debug.pretty_print_array(name_array)

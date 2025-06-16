@@ -2,6 +2,7 @@
 class_name QuestManager extends Node
 @onready var back_in_the_saddle: BackInTheSaddle = $BackInTheSaddle
 @onready var aint_that_a_kick_in_the_head: AintThatAKickInTheHead = $AintThatAKickInTheHead
+var current_quest: Quest
 
 
 func _ready() -> void:
@@ -10,9 +11,6 @@ func _ready() -> void:
 			child.set_name(Quests.get_quest_name(child.linked_quest))
 
 signal new_quest_assigned
-
-var current_quest: Quest
-
 
 func get_quest_node(quest: Quests.QUESTS) -> Quest:
 	return find_child(Quests.get_quest_name(quest))
@@ -33,4 +31,5 @@ func set_current_quest(quest: Quest, override: bool = false) -> bool:
 		pass
 	current_quest = quest
 	new_quest_assigned.emit()
+	Console.add_command("obj", current_quest.mainplot.overview)
 	return true

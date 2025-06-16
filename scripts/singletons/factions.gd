@@ -116,6 +116,30 @@ func get_rep_status(faction: FACTIONS) -> STATUSES:
 	return STATUSES.IDOLIZED
 
 
+func set_faction_status(faction: FACTIONS, status: STATUSES) -> void:
+	if faction == FACTIONS.UNASSIGNED:
+		push_error(Debug.define_error("Tried to assign an unassigned factions status to '%s'" % [Global.enum_to_title(status, STATUSES)], self))
+		return
+	match(status):
+		STATUSES.HOSTILE:
+			set_faction_rep(faction, 0)
+		STATUSES.UNFRIENDLY:
+			set_faction_rep(faction, 25)
+		STATUSES.NEUTRAL:
+			set_faction_rep(faction, 50)
+		STATUSES.LIKED:
+			set_faction_rep(faction, 75)
+		STATUSES.IDOLIZED:
+			set_faction_rep(faction, 100)
+
+
+func set_faction_rep(faction: FACTIONS, rep: int) -> void:
+	if rep < 0:
+		push_warning(Debug.define_error("Cannot set rep of '%s' to negative value '%s', defaulting to 0" % [get_faction_name(faction), rep], self))
+	if faction == FACTIONS.UNASSIGNED:
+		push_error(Debug.define_error("Tried to set unassigned faction rep to '%s'" % [rep], self))
+	factions_data[faction][PROPERTIES.REP] = rep
+
 
 func is_faction_hostile(_faction: FACTIONS) -> bool:
 	return get_rep_status(_faction) == STATUSES.HOSTILE

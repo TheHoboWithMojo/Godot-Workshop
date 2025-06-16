@@ -14,6 +14,7 @@ class_name CharacterComponent
 @onready var current_level: Level = null
 
 func _ready() -> void:
+	set_name("CharacterComponent")
 	assert(parent != null, Debug.define_error("Character must reference a parent", self))
 	assert(character != Characters.CHARACTERS.UNASSIGNED, Debug.define_error("Character cannot be unassigned, parent (%s)" % [parent.name], parent))
 	assert(track_death != null, Debug.define_error("All characters must have a be connected to a health component in order to process their death.", parent))

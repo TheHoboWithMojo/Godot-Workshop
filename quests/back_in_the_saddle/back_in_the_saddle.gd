@@ -3,19 +3,22 @@ class_name BackInTheSaddle extends Quest
 var talk_to_sunny: Objective
 var meet_sunny_in_the_back: Objective
 var shoot_the_bottles: Objective
-var shoot_bottles: Objective
 var follow_sunny: Objective
-var kill_geckos: Objective
+var kill_geckos_at_first_well: Objective
 var talk_to_sunny_post_geckos: Objective
 var talk_to_sunny_post_bottles: Objective
-var kill_other_geckos: Objective
+var kill_geckos_at_second_well: Objective
 var get_reward: Objective
 var saloon: Level
 var goodsprings: Level
 var sunny_smiles: NPC
-var bottles_shot: int = 0
 
 signal bottle_shot
+var num_bottles_shot: int = 0
+signal first_well_gecko_killed
+var num_first_well_geckos_killed: int = 0
+signal second_well_gecko_killed
+var num_second_well_geckos_killed: int = 0
 
 func _ready() -> void:
 	related_level_loaded.connect(_on_related_level_loaded)
@@ -29,10 +32,13 @@ func _ready() -> void:
 	shoot_the_bottles = mainplot.new_objective("Shoot the Sarsparilla Bottles")
 	talk_to_sunny_post_bottles = mainplot.new_objective("Talk to Sunny.")
 	follow_sunny = mainplot.new_objective("Follow Sunny.")
-	kill_geckos = mainplot.new_objective("Kill the geckos at the well.")
+	kill_geckos_at_first_well = mainplot.new_objective("Kill the geckos at the well.")
 	talk_to_sunny_post_geckos = mainplot.new_objective("Talk to Sunny Smiles.")
-	kill_other_geckos = mainplot.new_objective("Kill the geckos at the other wells.")
+	kill_geckos_at_second_well = mainplot.new_objective("Kill the geckos at the other wells.")
 	get_reward = mainplot.new_objective("Talk to Sunny about your reward.")
+	bottle_shot.connect(_on_bottle_shot)
+	first_well_gecko_killed.connect(_on_first_well_gecko_killed)
+	second_well_gecko_killed.connect(_on_second_well_gecko_killed)
 
 
 func _on_related_character_died(_character: Characters.CHARACTERS) -> void:
@@ -49,12 +55,12 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 				return
 			sunny_smiles.set_target(get_navpoint_position("Tutorial"))
 			await sunny_smiles.wait_for_nav_finished()
-			mainplot.advance()
+			advance()
 			Player.give_weapon("res://scenes/projectiles/fireball/fireball.tscn")
-			while bottles_shot < 3:
+			while num_bottles_shot < 3:
 				await bottle_shot
-				bottles_shot += 1
-			mainplot.advance()
+			advance()
+			sunny_smiles.set_timeline_enum(Dialogue.TIMELINES.SHOT_BOTTLES)
 
 
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
@@ -64,4 +70,35 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 				start()
 			await Dialogic.timeline_ended
 			sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
-			mainplot.advance()
+			advance()
+		Dialogue.TIMELINES.SHOT_BOTTLES:
+			await Dialogic.timeline_ended
+			advance()
+			sunny_smiles.set_target(get_navpoint_position("Well1"))
+			await sunny_smiles.navigation_finished
+			advance()
+			while num_first_well_geckos_killed < 3:
+				await first_well_gecko_killed
+			advance()
+			sunny_smiles.set_timeline_enum(Dialogue.TIMELINES.CLEARED_FIRST_WELL_GECKOS)
+		Dialogue.TIMELINES.CLEARED_FIRST_WELL_GECKOS:
+			await Dialogic.timeline_ended
+			advance()
+			sunny_smiles.set_target(get_navpoint_position("Well2"))
+			while num_second_well_geckos_killed < 3:
+				await second_well_gecko_killed
+			advance()
+			Factions.set_faction_status(Factions.FACTIONS.GOODSPRINGS, Factions.STATUSES.LIKED)
+
+
+# unfortunately these signals must be outside of the main methods because otherwise increments wouldn't track while another loop is running
+func _on_bottle_shot() -> void:
+	num_bottles_shot += 1
+
+
+func _on_first_well_gecko_killed() -> void:
+	num_first_well_geckos_killed += 1
+
+
+func _on_second_well_gecko_killed() -> void:
+	num_second_well_geckos_killed += 1

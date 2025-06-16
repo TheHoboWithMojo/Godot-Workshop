@@ -1,11 +1,12 @@
-res://quests/aint_that_a_kick_in_the_head
+res://dialogic/timelines
 res://quests/back_in_the_saddle
+res://scenes/mobs
 res://assets
+res://quests/aint_that_a_kick_in_the_head
 res://scenes/level_builders
 res://scenes/levels/doc_mitchells_house
 res://scenes/npc_builders
 res://scripts/singletons
-res://dialogic/timelines
 res://
 res://dialogic/characters/SunnySmiles
 res://scenes/levels/prospectors_saloon

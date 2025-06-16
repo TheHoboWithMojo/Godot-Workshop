@@ -212,13 +212,12 @@ func _on_mouse_exited_area() -> void:
 func _try_play_event() -> void:
 	match play_mode:
 		PLAY_MODES.DIALOG:
-			if not await Dialogue.start(timeline):
-				return
-			Global.enter_menu()
-			Debug.debug("Dialogue play was successful, breaking loop", parent, "_try_play_event", self)
-			event_started.emit()
-			_event_playing = true
-			await Dialogic.timeline_ended
+			if await Dialogue.start(timeline):
+				Global.enter_menu()
+				Debug.debug("Dialogue play was successful, breaking loop", parent, "_try_play_event", self)
+				event_started.emit()
+				_event_playing = true
+				await Dialogic.timeline_ended
 		PLAY_MODES.SCENE:
 			Global.enter_menu()
 			var node: Node = load(scene).instantiate()

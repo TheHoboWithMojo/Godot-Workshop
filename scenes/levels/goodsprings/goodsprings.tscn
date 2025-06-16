@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://bqwfutcxr17et"]
+[gd_scene load_steps=13 format=4 uid="uid://bqwfutcxr17et"]
 
 [ext_resource type="TileSet" uid="uid://bhkqx7ki7durg" path="res://assets/tiles.tres" id="1_n7gug"]
 [ext_resource type="Script" uid="uid://2pi66vkrsk8k" path="res://scenes/levels/level.gd" id="1_y5w72"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://d38va7q5k51ij" path="res://scenes/level_builders/navpoint/navpoint.tscn" id="5_bwp5q"]
 [ext_resource type="PackedScene" uid="uid://whqm04gmj3qw" path="res://scenes/level_builders/destructable_bottle/destructable_bottle.tscn" id="7_vc68w"]
 [ext_resource type="PackedScene" uid="uid://kjspbxsabwjy" path="res://scenes/level_builders/portal_manager/portal_manager.tscn" id="8_lurfu"]
+[ext_resource type="PackedScene" uid="uid://di1yafkvfv7bc" path="res://scenes/mobs/gecko.tscn" id="10_aosy0"]
+[ext_resource type="Script" uid="uid://bviuxdge50mls" path="res://quests/back_in_the_saddle/tutorial_geckos.gd" id="11_oi6wn"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_77bbt"]
 vertices = PackedVector2Array(263, 209, 225, 209, 31, 135, 31, 97, 111, 31, 625, -89, -161, 215, -47, 135, 225, 287, -433, 585, -159, 135, -47, 97, -161, 169, 263, 287, 625, 585, 73, 31, 111, -47, -433, -89, 73, -47, -237, 135, -271, 169, -271, 215, -237, 97, -159, 97)
@@ -53,22 +55,63 @@ position = Vector2(-184, 256)
 related_quest_enums = Array[int]([2])
 home_level_enum = 2
 
+[node name="Well1" parent="Navpoints" instance=ExtResource("5_bwp5q")]
+position = Vector2(-320, 0)
+related_quest_enums = Array[int]([2])
+home_level_enum = 2
+
+[node name="Well2" parent="Navpoints" instance=ExtResource("5_bwp5q")]
+position = Vector2(-320, -152)
+related_quest_enums = Array[int]([2])
+home_level_enum = 2
+
 [node name="QuestObjects" type="Node" parent="."]
 
-[node name="Bottle" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+[node name="Bottles" type="Node" parent="QuestObjects"]
+
+[node name="Bottle" parent="QuestObjects/Bottles" instance=ExtResource("7_vc68w")]
 position = Vector2(-184, 168)
 
-[node name="Bottle2" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+[node name="Bottle2" parent="QuestObjects/Bottles" instance=ExtResource("7_vc68w")]
 position = Vector2(-200, 168)
 
-[node name="Bottle3" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+[node name="Bottle3" parent="QuestObjects/Bottles" instance=ExtResource("7_vc68w")]
 position = Vector2(-216, 168)
 
-[node name="Bottle4" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+[node name="Bottle4" parent="QuestObjects/Bottles" instance=ExtResource("7_vc68w")]
 position = Vector2(-232, 168)
 
-[node name="Bottle5" parent="QuestObjects" instance=ExtResource("7_vc68w")]
+[node name="Bottle5" parent="QuestObjects/Bottles" instance=ExtResource("7_vc68w")]
 position = Vector2(-248, 168)
+
+[node name="Geckos" type="Node" parent="QuestObjects"]
+
+[node name="Gecko" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-328, -64)
+script = ExtResource("11_oi6wn")
+
+[node name="Gecko2" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-288, -64)
+script = ExtResource("11_oi6wn")
+
+[node name="Gecko3" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-368, -64)
+script = ExtResource("11_oi6wn")
+
+[node name="Gecko4" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-264, -204)
+script = ExtResource("11_oi6wn")
+quest_stage = 1
+
+[node name="Gecko5" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-320, -204)
+script = ExtResource("11_oi6wn")
+quest_stage = 1
+
+[node name="Gecko6" parent="QuestObjects/Geckos" instance=ExtResource("10_aosy0")]
+position = Vector2(-376, -200)
+script = ExtResource("11_oi6wn")
+quest_stage = 1
 
 [node name="Portals" parent="." node_paths=PackedStringArray("home_level_node") instance=ExtResource("8_lurfu")]
 home_level_node = NodePath("..")

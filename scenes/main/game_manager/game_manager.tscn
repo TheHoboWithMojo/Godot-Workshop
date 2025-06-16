@@ -25,6 +25,7 @@ autosaving_enabled = false
 [node name="Player" parent="." instance=ExtResource("3_1jqlk")]
 process_mode = 3
 motion_mode = 1
+attack_speed = 5.0
 
 [node name="Camera" type="Camera2D" parent="Player"]
 zoom = Vector2(3, 3)
@@ -89,9 +90,10 @@ levels = Array[int]([1])
 
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("13_cy1sf")
+print_overview_on_advance = true
 linked_quest = 2
 characters = Array[int]([2])
-timelines = Array[int]([3])
+timelines = Array[int]([3, 5, 6])
 levels = Array[int]([3, 2])
 
 [node name="ObjectManager" type="Node" parent="."]

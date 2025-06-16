@@ -1,7 +1,7 @@
 extends Node
 signal dialogue_started
 
-enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING, OFF_YOU_GO}
+enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING, OFF_YOU_GO, SHOT_BOTTLES, CLEARED_FIRST_WELL_GECKOS}
 
 var timelines: Dictionary = {
 	TIMELINES.YOURE_AWAKE: {
@@ -35,7 +35,23 @@ var timelines: Dictionary = {
 		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
 		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 		"resource": "res://dialogic/timelines/off_you_go.dtl",
-	}
+	},
+	TIMELINES.SHOT_BOTTLES: {
+	"name": "shot_bottles",
+	"completed": false,
+	"repeatable": false,
+	"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+	"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
+	"resource": "res://dialogic/timelines/shot_bottles.dtl",
+	},
+	TIMELINES.CLEARED_FIRST_WELL_GECKOS: {
+		"name": "cleared_first_well_geckos",
+		"completed": false,
+		"repeatable": false,
+		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
+		"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
+		"resource": "res://dialogic/timelines/cleared_first_well_geckos.dtl",
+	},
 }
 
 func _ready() -> void:
