@@ -199,7 +199,7 @@ func _get_dict_as_string(dictionary: Dictionary, indent: int = 0) -> String:
 	var result: String = ""
 	var indent_str: String = "    ".repeat(indent)
 
-	for key: String in dictionary.keys():
+	for key: Variant in dictionary.keys():
 		var value: Variant = dictionary[key]
 		var key_str: String = str(key)
 

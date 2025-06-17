@@ -10,8 +10,8 @@ class_name Quest extends Node
 var completed: bool = false
 var active: bool = false
 var started: bool = false
-var quest_waypoints: Dictionary[String, Waypoint] = {}
-var quest_navpoints: Dictionary[String, Navpoint] = {}
+var quest_waypoints: Dictionary[String, Vector3] = {}
+var quest_navpoints: Dictionary[String, Vector3] = {}
 var mainplot: Plot = null
 var sideplots: Array[Plot] = []
 var chained_quest: Quest = null
@@ -26,7 +26,12 @@ signal quest_started(self_node: Quest)
 
 func _init() -> void:
 	await Global.ready_to_start()
+	if Quests.is_quest_completed(linked_quest):
+		queue_free()
+		return
 	assert(levels and characters and timelines, Debug.define_error("[Quest] Every quest node should contain related levels, characters, and timelines", self))
+	quest_navpoints = Markers.get_quest_navpoints(linked_quest)
+	quest_waypoints = Markers.get_quest_waypoints(linked_quest)
 	mainplot = Plot.new()
 	mainplot.quest = self
 	Characters.character_died.connect(_on_character_died)
@@ -42,25 +47,19 @@ func _on_character_died(character: Characters.CHARACTERS) -> void:
 
 
 func _on_timeline_started() -> void:
-	if not completed:
-		@warning_ignore("int_as_enum_without_cast")
-		var current_timeline: Dialogue.TIMELINES = Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline), Dialogue.TIMELINES)
-		if current_timeline in timelines:
-			related_timeline_played.emit(current_timeline)
+	@warning_ignore("int_as_enum_without_cast")
+	var current_timeline: Dialogue.TIMELINES = Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline), Dialogue.TIMELINES)
+	if current_timeline in timelines:
+		related_timeline_played.emit(current_timeline)
 
 
 func _on_new_level_loaded(new_level: Level) -> void:
-	if not completed:
-		if new_level.get_level_enum() in levels:
-			var new_waypoints: Array = Quests.get_quest_waypoints(linked_quest)
-			var new_navpoints: Array = Quests.get_quest_navpoints(linked_quest)
-			for waypoint: Waypoint in new_waypoints:
-				quest_waypoints[Global.get_rawname(waypoint)] = waypoint
-			waypoints_assigned.emit(self)
-			for navpoint: Navpoint in new_navpoints:
-				quest_navpoints[Global.get_rawname(navpoint)] = navpoint
-			navpoints_assigned.emit(self)
-			related_level_loaded.emit(new_level.get_level_enum())
+	quest_waypoints = Markers.get_quest_waypoints(linked_quest)
+	quest_navpoints = Markers.get_quest_navpoints(linked_quest)
+	waypoints_assigned.emit()
+	navpoints_assigned.emit()
+	if new_level.get_level_enum() in levels:
+		related_level_loaded.emit(new_level.get_level_enum())
 
 
 func advance() -> void:
@@ -73,20 +72,20 @@ func advance() -> void:
 func waypoint_overview() -> void:
 	print("\n%s's Waypoints Overview (name, position):" % [name])
 	for waypoint_name: String in quest_waypoints:
-		print(waypoint_name + " " + str(quest_waypoints[waypoint_name].global_position))
+		print(waypoint_name + " " + str(Vector2(quest_waypoints[waypoint_name].x, quest_waypoints[waypoint_name].y)))
 
 
 func navpoint_overview() -> void:
 	print("\n%s's Navpoints Overview (name, position):" % [name])
 	for navpoint_name: String in quest_navpoints:
-		Debug.debug(navpoint_name + " " + str(quest_navpoints[navpoint_name].global_position), self, "navpoint_overview")
+		Debug.debug(navpoint_name + " " + str(get_waypoint_position(navpoint_name)), self, "navpoint_overview")
 
 
 func get_navpoint_position(navpoint_name: String) -> Vector2:
-	if navpoint_name not in quest_navpoints.keys():
+	if navpoint_name not in quest_navpoints:
 		push_warning(Debug.define_error("The navpoint provided %s does not exist, check to see if the related quest enum reference broke." % [navpoint_name], self))
 		return Vector2.ZERO
-	var navpoint_pos: Vector2 = quest_navpoints[navpoint_name].global_position
+	var navpoint_pos: Vector2 = Vector2(quest_navpoints[navpoint_name].x, quest_navpoints[navpoint_name].y)
 	Debug.debug("[Quest] Navpoint %s position %s succsessfully retrieved" % [navpoint_name, navpoint_pos], self, "get_navpoint_position")
 	return navpoint_pos
 
@@ -94,8 +93,8 @@ func get_navpoint_position(navpoint_name: String) -> Vector2:
 func get_waypoint_position(waypoint_name: String) -> Vector2:
 	if not waypoint_name in quest_waypoints.keys():
 		return Vector2.ZERO
-	var waypoint: Waypoint = quest_waypoints[waypoint_name]
-	return waypoint.global_position
+	var waypoint_pos: Vector2 = Vector2(quest_waypoints[waypoint_name].x, quest_waypoints[waypoint_name].y)
+	return waypoint_pos
 
 
 func new_sideplot(_nomen: String) -> Plot:
@@ -115,13 +114,6 @@ func set_active(value: bool) -> void:
 			if quest != self and quest.is_started():
 				Debug.debug("[Quest] '%s' deactivating quest '%s'" % [name, quest.name], self, "set_active")
 				quest.set_active(false)
-	if active == false:
-		Debug.debug("[Quest] '%s': turning off all waypoints" % [name], self, "set_active")
-		for plot: Plot in sideplots:
-			for objective: Objective in plot.objectives:
-				plot._set_active_all_waypoints(objective, false)
-		for objective: Objective in mainplot.objectives:
-			mainplot._set_active_all_waypoints(objective, false)
 
 
 func start() -> bool:
@@ -163,11 +155,17 @@ func get_quest_enum() -> Quests.QUESTS:
 
 
 func complete() -> void:
-	print("[Quest] Quest '%s' was completed!" % [name])
+	if completed:
+		return
 	completed = true
 	set_active(false)
 	Global.quest_displayer.find_child("Quest").set_text("")
 	Global.quest_displayer.find_child("Objective").set_text("")
+	Quests.set_quest_complete(linked_quest, true)
+	Characters.character_died.disconnect(_on_character_died)
+	Dialogic.timeline_started.disconnect(_on_timeline_started)
+	Global.level_manager.new_level_loaded.disconnect(_on_new_level_loaded)
+	print("[Quest] Quest '%s' was completed!" % [name])
 	if chained_quest:
 		chained_quest.start()
 		print("[Quest] '%s' triggered quest '%s' to start" % [name, chained_quest.name])
@@ -196,25 +194,22 @@ func overview() -> void:
 		plot.overview()
 
 
-func get_active_waypoints() -> Array[Waypoint]:
+func get_active_waypoints() -> Dictionary[String, Vector3]:
 	if not started:
 		Debug.debug("[Quest] Tried to get waypoints before the quest has started, waiting for start", self, "get_active_waypoints")
 		await quest_started
-	var waypoints: Array[Waypoint] = []
-	var mainplot_waypoints: Array[Waypoint] = mainplot.current_objective.get_waypoints()
-	if mainplot_waypoints:
-		waypoints += mainplot_waypoints
+	var waypoints: Dictionary[String, Vector3]
+	var mainplot_waypoints: Dictionary[String, Vector3] = mainplot.current_objective.get_waypoints()
+	waypoints.merge(mainplot_waypoints)
 	for plot: Plot in sideplots:
-		var plot_waypoints: Array[Waypoint] = plot.current_objective.get_waypoints()
-		if plot_waypoints:
-			waypoints += plot_waypoints
+		var plot_waypoints: Dictionary[String, Vector3] = plot.current_objective.get_waypoints()
+		waypoints.merge(plot_waypoints)
 	return waypoints
 
 
 class Plot:
 	signal objective_assigned(objective: Objective)
 	var objectives: Array[Objective]
-	var objective_waypoint_dict: Dictionary[Objective, Array] = {}
 	var current_objective: Objective = null
 	var activate_on_main: bool = true
 	var quest: Quest = null
@@ -240,8 +235,7 @@ class Plot:
 			Debug.debug("[Plot] Waiting for plot %s's first objective '%s' to be assigned a waypoint" % [nomen, current_objective.nomen], quest, "plot._start")
 			await current_objective.waypoint_paired
 			Debug.debug("[Plot] plot '%s's first objective %s's waypoint succesfully assigned, starting plot." % [nomen, current_objective.nomen], quest, "_start")
-		Debug.debug("[Plot] '%s' starting, activating waypoint '%s'" % [nomen, current_objective.objective_waypoints[0].name], quest, "plot._start")
-		current_objective.objective_waypoints[0].set_active(true)
+		Global.active_waypoint.set_active_waypoint(current_objective.objective_waypoints.keys()[0])
 		started = true
 		return true
 
@@ -261,25 +255,21 @@ class Plot:
 			return true
 		var _new_objective: Objective = objectives[current_position + 1]
 		Debug.debug("[Plot] plot '%s' deactivating objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
-		_set_active_all_waypoints(current_objective, false)
 		current_objective._complete()
 		current_objective = _new_objective
 		Debug.debug("[Plot] plot '%s' advanced to new objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
 		if quest.is_active():
 			Debug.debug("[Plot] plot '%s's quest is active, activating its new objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
-			_set_active_all_waypoints(current_objective, true)
 			Player.set_objective(current_objective)
+			if not current_objective.get_waypoints():
+				await current_objective.waypoint_paired
+			Global.active_waypoint.set_active_waypoint(current_objective.get_waypoints().keys()[0])
 		if quest.print_overview_on_advance:
 			quest.overview()
 		return true
 
 	func _has_next_objective(index: int, array: Array) -> bool:
 		return index + 1 < array.size()
-
-	func _set_active_all_waypoints(objective: Objective, value: bool) -> void:
-		for waypoint: Waypoint in objective.objective_waypoints:
-			Debug.debug("[Plot] setting waypoint '%s' of objective '%s' active = %s" % [waypoint.name, objective.nomen, value], quest, "plot._set_active_all_waypoints")
-			waypoint.set_active(value)
 
 	func skip_to_objective(objective: Objective) -> bool:
 		if not objective in objectives:
@@ -313,8 +303,6 @@ class Plot:
 		if not objectives:
 			current_objective = _new_objective
 		objectives.append(_new_objective)
-		objective_waypoint_dict[_new_objective] = []
-		objective_assigned.emit(_new_objective)
 		return _new_objective
 
 	func is_objective_complete(objective: Objective) -> bool:
@@ -342,15 +330,15 @@ class Plot:
 	func get_current_objective() -> Objective:
 		return current_objective
 
-	func get_current_waypoint() -> Waypoint:
-		return current_objective.objective_waypoints[0]
+	func get_current_waypoint() -> Vector3:
+		return current_objective.objective_waypoints.values()[0]
 
 class Objective:
 	var nomen: String
 	var plot: Plot
 	var quest: Quest
 	var completed: bool = false
-	var objective_waypoints: Array[Waypoint]
+	var objective_waypoints: Dictionary[String, Vector3]
 	signal waypoint_paired
 
 	func _init(_nomen: String, _plot: Plot, _quest: Quest) -> void:
@@ -365,17 +353,16 @@ class Objective:
 	func is_complete() -> bool:
 		return completed
 
-	func get_waypoints() -> Array[Waypoint]:
+	func get_waypoints() -> Dictionary[String, Vector3]:
 		return objective_waypoints
 
-	func pair_waypoints(waypoint_names: Array[String]) -> bool:
+	func pair_waypoints(waypoint_names: Array[String]) -> void:
 		for waypoint_name: String in waypoint_names:
 			Debug.debug("[Objective] Attempting to pair waypoint '%s' to objective '%s' of plot '%s', entering await loop" % [waypoint_name, nomen, plot.nomen], quest, "objective.pair_waypoints")
-			while not waypoint_name in quest.quest_waypoints.keys():
+			while not waypoint_name in quest.quest_waypoints:
+				Debug.debug("[Objective] Waiting for waypoints to update to add '%s' waypoints to objective '%s'" % [str(waypoint_names), nomen], quest, "objective.pair_waypoints")
 				await quest.waypoints_assigned
-			var waypoint: Waypoint = quest.quest_waypoints[waypoint_name]
-			objective_waypoints.append(waypoint)
-			plot.objective_waypoint_dict[self].append(waypoint.global_position)
+			var waypoint: Vector3 = quest.quest_waypoints[waypoint_name]
+			objective_waypoints[waypoint_name] = waypoint
 			Debug.debug("[Objective] Successfully Added waypoint %s to objective %s of plot %s" % [waypoint_name, nomen, plot.nomen], quest, "objective.pair_waypoints")
 		waypoint_paired.emit()
-		return true

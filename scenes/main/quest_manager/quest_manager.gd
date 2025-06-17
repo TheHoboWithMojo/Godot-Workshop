@@ -23,7 +23,9 @@ func get_current_quest_node() -> Quest:
 
 
 func get_current_quest_enum() -> Quests.QUESTS:
-	return current_quest.get_quest_enum() if current_quest else Quests.QUESTS.UNASSIGNED
+	if not current_quest:
+		await new_quest_assigned
+	return current_quest.get_quest_enum()
 
 
 func set_current_quest(quest: Quest, override: bool = false) -> bool:

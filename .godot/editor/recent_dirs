@@ -1,3 +1,6 @@
+res://scenes/level_builders/waypoint
+res://scripts/singletons
+C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/data/navpoints
 res://dialogic/timelines
 res://quests/back_in_the_saddle
 res://scenes/mobs
@@ -6,7 +9,6 @@ res://quests/aint_that_a_kick_in_the_head
 res://scenes/level_builders
 res://scenes/levels/doc_mitchells_house
 res://scenes/npc_builders
-res://scripts/singletons
 res://
 res://dialogic/characters/SunnySmiles
 res://scenes/levels/prospectors_saloon
@@ -18,5 +20,3 @@ res://dialogic/characters/DocMitchell
 res://dialogic/characters
 res://scenes/levels
 res://scripts/classes
-res://Scenes
-C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/scripts/singletons

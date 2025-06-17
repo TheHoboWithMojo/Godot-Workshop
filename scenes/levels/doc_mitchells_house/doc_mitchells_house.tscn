@@ -52,18 +52,18 @@ script = ExtResource("7_58nvt")
 
 [node name="VitMachine" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(0, -64)
-quest = 1
-home_level = 1
+home_level_enum = 1
+quest_enum_ref = 1
 
 [node name="Couch" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(144, -144)
-quest = 1
-home_level = 1
+home_level_enum = 1
+quest_enum_ref = 1
 
 [node name="Exit" parent="Waypoints" instance=ExtResource("10_8rqal")]
 position = Vector2(-88, -64)
-quest = 1
-home_level = 1
+home_level_enum = 1
+quest_enum_ref = 1
 
 [node name="DocMitchellsCouch" type="StaticBody2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
 position = Vector2(144, -64)

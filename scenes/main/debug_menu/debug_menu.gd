@@ -10,18 +10,20 @@ extends Control
 @export var accomplishments: Label
 @export var experience: Label
 @export var crit: Label
-@export var personality: Label
+#@export var personality: Label
 @export var damage: Label
 
 @onready var buttons_box: VBoxContainer = $ButtonsBox
-@onready var is_menu_open: bool = false
-@onready var show_player_stats: bool = false
-@onready var show_frames: bool = false
+var is_menu_open: bool = false
+var show_player_stats: bool = false
+var show_frames: bool = false
+
 
 func _ready() -> void:
 	await Global.ready_to_start()
 	self.visible = false # If active, make sure menu starts invisible
 	clear_data()
+
 
 func _process(delta: float) -> void:
 	# Get the target position
@@ -51,14 +53,16 @@ func _process(delta: float) -> void:
 	if show_player_stats or show_frames:
 		update_stat_labels()
 
+
 func update_stat_labels() -> void:
-	health.text = "Health:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["health"])
-	speed.text = "Speed:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["speed"])
-	accomplishments.text = "Accomplishments:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["accomplishments"])
-	experience.text = "Exp:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["exp"])
-	crit.text = "Crit:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["crit"])
-	personality.text = "Personality:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["personality"])
-	damage.text = "Damage:\n " + Debug.get_dict_as_pretty_string(Data.game_data["stats"]["damage"])
+	health.text = "Health:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.HEALTH])
+	speed.text = "Speed:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.SPEED])
+	accomplishments.text = "Accomplishments:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.ACCOMPLISHMENTS])
+	experience.text = "Exp:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.EXP])
+	crit.text = "Crit:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.CRIT])
+	#personality.text = "Personality:\n " + Debug.get_dict_as_pretty_string(Data.game_dataData.PROPERTIES.PLAYER_STATS[Stats.CATEGORIES.])
+	damage.text = "Damage:\n " + Debug.get_dict_as_pretty_string(Data.game_data[Data.PROPERTIES.PLAYER_STATS][Stats.CATEGORIES.DAMAGE])
+
 
 func clear_data() -> void:
 	health.text = ""
@@ -66,16 +70,19 @@ func clear_data() -> void:
 	accomplishments.text = ""
 	experience.text = ""
 	crit.text = ""
-	personality.text = ""
+	#personality.text = ""
 	damage.text = ""
+
 
 func _on_pause_button_toggled(toggled_on: bool) -> void:
 	get_tree().paused = toggled_on
+
 
 func _on_show_frames_button_toggled(toggled_on: bool) -> void:
 	show_frames = toggled_on
 	if not show_frames:
 		clear_data()
+
 
 func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 	show_player_stats = toggled_on
@@ -86,8 +93,9 @@ func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_save_game_button_pressed() -> void:
-	Data.save_data_changes()
-	await Data.data_saved
+	Global.save_manager.save()
+	await Global.save_manager.saving_complete
+
 
 func _on_spawn_enemies_button_toggled(toggled_on: bool) -> void:
 	Global.mob_manager.set_spawn_enemies(!toggled_on)

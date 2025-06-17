@@ -52,8 +52,8 @@ home_level_enum = 3
 
 [node name="PortalToGoodsprings" parent="Waypoints" instance=ExtResource("7_wbjm1")]
 position = Vector2(24, -32)
-quest = 2
-home_level = 3
+home_level_enum = 3
+quest_enum_ref = 2
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
 navigation_polygon = SubResource("NavigationPolygon_wbjm1")

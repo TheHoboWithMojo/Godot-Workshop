@@ -10,6 +10,7 @@ func _ready() -> void:
 		assert(related_quest_enums.all(func(quest: Quests.QUESTS) -> bool: return quest != Quests.QUESTS.UNASSIGNED), Debug.define_error("Each quest related to a navpoint must not be unassigned", self))
 	else:
 		push_warning(Debug.define_error("Does not have an related quest assigned", self))
+	Markers.add_navpoint(self)
 	add_to_group("navpoints")
 
 

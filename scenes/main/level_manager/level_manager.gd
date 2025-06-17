@@ -104,4 +104,4 @@ func _update_level_data() -> void:
 		enemy_spawnpoints = current_level.enemy_spawnpoints
 	if "checkpoints" in current_level:
 		checkpoints = current_level.checkpoints_dict
-	Data.game_data.reload_data.last_level = current_level.scene_file_path
+	Data.game_data[Data.PROPERTIES.RELOAD_DATA]["last_level"] = current_level.get_level_enum()

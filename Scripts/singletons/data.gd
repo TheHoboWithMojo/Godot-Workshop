@@ -1,5 +1,16 @@
 extends Node
 
+	#"reload_data": reload_data,
+	#"characters": Characters.characters_dict,
+	#"stats": Player.stats,
+	#"factions": Factions.factions_data,
+	#"perks": Player.perks,
+	#"timelines": Dialogue.timelines,
+	#"quests": Quests.quests_dict
+
+
+enum PROPERTIES {RELOAD_DATA, CHARACTERS, PLAYER_STATS, FACTIONS, PLAYER_PERKS, TIMELINES, QUESTS, ITEMS, NAVPOINTS_DATA, WAYPOINTS_DATA}
+
 var game_data: Dictionary = {}
 
 func save_json(data: Dictionary, file_path: String) -> bool: # Quick function that stores a dict as a json at a specific file path
@@ -37,9 +48,9 @@ func load_json_file(path: String) -> Dictionary: # Quick function for loading a 
 	return json_as_dict
 
 
-func get_current_path(data_name: String) -> String:
-	return "res://data/%s/%s_current.json" % [data_name, data_name]
+func get_current_path(data_enum: PROPERTIES) -> String:
+	return "res://data/%s/%s_current.json" % [Global.enum_to_snakecase(data_enum, PROPERTIES), Global.enum_to_snakecase(data_enum, PROPERTIES)]
 
 
-func get_backup_path(data_name: String) -> String:
-	return "res://data/%s/%s_backup.json" % [data_name, data_name]
+func get_backup_path(data_enum: PROPERTIES) -> String:
+	return "res://data/%s/%s_backup.json" % [Global.enum_to_snakecase(data_enum, PROPERTIES), Global.enum_to_snakecase(data_enum, PROPERTIES)]

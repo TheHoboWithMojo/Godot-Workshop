@@ -212,8 +212,7 @@ func _on_mouse_exited_area() -> void:
 func _try_play_event() -> void:
 	match play_mode:
 		PLAY_MODES.DIALOG:
-			if await Dialogue.start(timeline):
-				Global.enter_menu()
+			if Dialogue.start(timeline):
 				Debug.debug("Dialogue play was successful, breaking loop", parent, "_try_play_event", self)
 				event_started.emit()
 				_event_playing = true
@@ -227,7 +226,7 @@ func _try_play_event() -> void:
 			Debug.debug("Scene play was successful, breaking loop", parent, "_try_play_event", self)
 			_event_playing = true
 			await node.tree_exited
-	Global.exit_menu()
+			Global.exit_menu()
 	_event_playing = false
 	_event_completed = true
 	event_ended.emit()

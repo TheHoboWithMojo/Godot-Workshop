@@ -66,7 +66,7 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.SUNNY_GREETING:
-			if not Global.quest_manager.aint_that_a_kick_in_the_head.is_complete():
+			if not Quests.is_quest_completed(Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD):
 				start()
 			await Dialogic.timeline_ended
 			sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)

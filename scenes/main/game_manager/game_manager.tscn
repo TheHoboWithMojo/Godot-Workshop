@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://dm2s4ivsjk3fh" path="res://scenes/tools/mouse_pos_printer/mouse_pos_printer.tscn" id="2_ka1ps"]
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/main/player_manager/player_manager.tscn" id="3_1jqlk"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/main/debug_menu/debug_menu.tscn" id="4_b5ef8"]
-[ext_resource type="Script" uid="uid://bl7jahbstwbas" path="res://scenes/level_builders/waypoint_manager/waypoint_manager.gd" id="5_tfhor"]
 [ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="6_1703o"]
 [ext_resource type="Script" uid="uid://c4kuc0ccp063r" path="res://scenes/main/save_manager/save_manager.gd" id="7_tl6x0"]
 [ext_resource type="Script" uid="uid://cnhbbcsw8d8b" path="res://scenes/main/npc_manager/npc_manager.gd" id="8_u1jbh"]
@@ -14,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bx63l2sso8arx" path="res://quests/aint_that_a_kick_in_the_head/aint_that_a_kick_in_the_head.gd" id="12_cixl3"]
 [ext_resource type="Script" uid="uid://bs1bur0v0hwtg" path="res://quests/back_in_the_saddle/back_in_the_saddle.gd" id="13_cy1sf"]
 [ext_resource type="Script" uid="uid://duqqrvdeqd0mo" path="res://scenes/main/object_manager/object_manager.gd" id="14_lcbpy"]
+[ext_resource type="Script" uid="uid://b2gc61gpxobhd" path="res://scenes/main/active_waypoint.gd" id="15_ka1ps"]
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_6rv6m")
@@ -34,10 +34,6 @@ position_smoothing_enabled = true
 [node name="DebugMenu" parent="." instance=ExtResource("4_b5ef8")]
 visible = false
 scale = Vector2(0.25, 0.25)
-
-[node name="WaypointManager" type="Node" parent="."]
-script = ExtResource("5_tfhor")
-enforced_class = 8
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -66,6 +62,7 @@ fit_content = true
 
 [node name="SaveManager" type="Node" parent="."]
 script = ExtResource("7_tl6x0")
+debugging = true
 
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("8_u1jbh")
@@ -90,7 +87,6 @@ levels = Array[int]([1])
 
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("13_cy1sf")
-print_overview_on_advance = true
 linked_quest = 2
 characters = Array[int]([2])
 timelines = Array[int]([3, 5, 6])
@@ -98,3 +94,6 @@ levels = Array[int]([3, 2])
 
 [node name="ObjectManager" type="Node" parent="."]
 script = ExtResource("14_lcbpy")
+
+[node name="ActiveWaypoint" type="Marker2D" parent="."]
+script = ExtResource("15_ka1ps")

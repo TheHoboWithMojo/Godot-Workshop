@@ -13,7 +13,6 @@ extends Node2D
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
-@onready var waypoint_manager: Node = $WaypointManager
 @onready var quest_manager: QuestManager = $QuestManager
 @onready var level_manager: LevelManager = $LevelManager
 @onready var mob_manager: MobManager = $MobManager
@@ -60,8 +59,8 @@ func load_data() -> void:
 
 func ready_up() -> void:
 	ready_finished.emit()
-	level_manager.set_current_level(int(Data.game_data["reload_data"]["last_level"]))
-	await Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
+	level_manager.set_current_level(int(Data.game_data[Data.PROPERTIES.RELOAD_DATA]["last_level"]))
+	Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
 
 # =========================================================================
 # PROCESS FUNCTIONS
@@ -79,6 +78,6 @@ func autosave() -> void:
 	_currently_autosaving = true
 	await Global.delay(self, 10)
 	Global.speed_mult = 0.0
-	save_manager.data()
+	save_manager.save()
 	Global.speed_mult = 1.0
 	_currently_autosaving = false

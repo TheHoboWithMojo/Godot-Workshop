@@ -31,8 +31,8 @@ portal_manager = NodePath("Portals")
 
 [node name="ShootBottles" parent="Waypoints" instance=ExtResource("3_lurfu")]
 position = Vector2(-216, 256)
-quest = 2
-home_level = 2
+home_level_enum = 2
+quest_enum_ref = 2
 
 [node name="NavigationRegion2D2" type="NavigationRegion2D" parent="." groups=["navigation_polygon_source_geometry_group"]]
 position = Vector2(0, -24)

@@ -9,7 +9,7 @@ const PLAYER_BUBBLE_PATH: String = "/root/GameManager/Player/Bubble"
 const GAME_MANAGER_PATH: String = "/root/GameManager"
 const QUEST_DISPLAYER_PATH: String = "/root/GameManager/UI/QuestDisplayer"
 const QUEST_MANAGER_PATH: String = "/root/GameManager/QuestManager"
-const WAYPOINT_MANAGER_PATH: String = "/root/GameManager/WaypointManager"
+const ACTIVE_WAYPOINT_PATH: String = "/root/GameManager/ActiveWaypoint"
 const LEVEL_MANAGER_PATH: String = "/root/GameManager/LevelManager"
 const MOB_MANAGER_PATH: String = "/root/GameManager/MobManager"
 const SAVE_MANAGER_PATH: String = "/root/GameManager/SaveManager"
@@ -30,7 +30,7 @@ signal references_updated
 @onready var player_bubble: Area2D = get_node(PLAYER_BUBBLE_PATH)
 @onready var game_manager: Node2D = get_node(GAME_MANAGER_PATH)
 @onready var quest_displayer: Control = get_node(QUEST_DISPLAYER_PATH)
-@onready var waypoint_manager: GlobalWaypointManager = get_node(WAYPOINT_MANAGER_PATH)
+@onready var active_waypoint: ActiveWaypoint = get_node(ACTIVE_WAYPOINT_PATH)
 @onready var level_manager: LevelManager = get_node(LEVEL_MANAGER_PATH)
 @onready var quest_manager: QuestManager = get_node(QUEST_MANAGER_PATH)
 @onready var npc_manager: NPCManager = get_node(NPC_MANAGER_PATH)
@@ -185,14 +185,30 @@ func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Ar
 	return positions
 
 
-func string_to_vector2(input: String) -> Vector2:
-	var trimmed: String = input.strip_edges(true, true).trim_prefix("(").trim_suffix(")")
-	var parts: PackedStringArray = trimmed.split(",")
-	if parts.size() == 2:
-		var x: float = parts[0].to_float()
-		var y: float = parts[1].to_float()
-		return Vector2(x, y)
-	return Vector2.ZERO  # fallback if string is malformed
+func is_valid_vector(input: String, dimensions: int) -> bool:
+	if not (input.begins_with("(") and input.ends_with(")")):
+		return false
+	var parts: Array = input.trim_prefix("(").trim_suffix(")").split(",")
+	if parts.size() != dimensions:
+		return false
+	for part: Variant in parts:
+		if not part.strip_edges().is_valid_float():
+			return false
+	return true
+
+
+func string_to_vector(input: String) -> Variant:
+	var parts: PackedStringArray = input.trim_prefix("(").trim_suffix(")").split(",")
+	match parts.size():
+		2:
+			return Vector2(parts[0].to_float(), parts[1].to_float())
+		3:
+			return Vector3(parts[0].to_float(), parts[1].to_float(), parts[2].to_float())
+		4:
+			return Vector4(parts[0].to_float(), parts[1].to_float(), parts[2].to_float(), parts[3].to_float())
+		_:
+			push_error("Unsupported vector size in string: %s" % input)
+			return input  # fallback, do not crash
 
 
 func delay(self_node: Node, seconds: float) -> void:
@@ -240,13 +256,55 @@ func get_collider(node: Node2D) -> CollisionShape2D:
 			return node.get_node("Collider")
 	return null
 
+
+func type_cast_dict(data: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	for key: Variant in data.keys():
+		var cast_key: Variant = _type_cast_value(key)
+		var value: Variant = data[key]
+		var cast_value: Variant = _type_cast_value(value)
+		result[cast_key] = cast_value
+	return result
+
+
+func _type_cast_array(arr: Array) -> Array:
+	var new_arr: Array = []
+	for item: Variant in arr:
+		new_arr.append(_type_cast_value(item))
+	return new_arr
+
+
+func _type_cast_value(value: Variant) -> Variant:
+	match typeof(value):
+		TYPE_STRING:
+			value = value.strip_edges()
+			if is_valid_vector(value, 2) or is_valid_vector(value, 3) or is_valid_vector(value, 4):
+				return string_to_vector(value)
+			match value.to_lower():
+				"true":
+					return true
+				"false":
+					return false
+				_:
+					if value.is_valid_int():
+						return value.to_int()
+					if value.is_valid_float():
+						return value.to_float()
+			return value
+		TYPE_DICTIONARY:
+			return type_cast_dict(value)
+		TYPE_ARRAY:
+			return _type_cast_array(value)
+		_:
+			return value
+
 # SIGNALS
 func _on_game_reloaded() -> void: # SIGNAL, Reset assignments if scene is reset
 	player = get_node(PLAYER_PATH)
 	player_camera = get_node(PLAYER_CAMERA_PATH)
 	game_manager = get_node(GAME_MANAGER_PATH)
 	quest_displayer = get_node(QUEST_DISPLAYER_PATH)
-	waypoint_manager = get_node(WAYPOINT_MANAGER_PATH)
+	active_waypoint = get_node(ACTIVE_WAYPOINT_PATH)
 	level_manager = get_node(LEVEL_MANAGER_PATH)
 	quest_manager = get_node(QUEST_MANAGER_PATH)
 	mob_manager = get_node(MOB_MANAGER_PATH)
@@ -262,3 +320,5 @@ func ready_to_start() -> void:
 		await references_updated
 	if not game_manager.is_node_ready():
 		await game_manager.ready_finished
+	if Data.game_data.is_empty():
+		await save_manager.loading_complete

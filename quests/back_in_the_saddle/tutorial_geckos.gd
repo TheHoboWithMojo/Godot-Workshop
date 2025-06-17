@@ -9,9 +9,9 @@ enum STAGE {WELL1, WELL2}
 
 
 func _ready() -> void:
+	if Quests.is_quest_completed(Quests.QUESTS.BACK_IN_THE_SADDLE):
+		return
 	quest_ref = Global.quest_manager.get_quest_node(Quests.QUESTS.BACK_IN_THE_SADDLE)
-	if quest_ref.is_complete():
-		queue_free()
 	health_component.died.connect(_on_death)
 	match(quest_stage):
 		STAGE.WELL1:
@@ -20,6 +20,7 @@ func _ready() -> void:
 		STAGE.WELL2:
 			if quest_ref.kill_geckos_at_second_well.is_complete():
 				queue_free()
+
 
 func _on_death() -> void:
 	match(quest_stage):

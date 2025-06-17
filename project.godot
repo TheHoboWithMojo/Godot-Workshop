@@ -27,6 +27,9 @@ Levels="*res://scripts/singletons/levels.gd"
 Quests="*res://scripts/singletons/quests.gd"
 Characters="*res://scripts/singletons/characters.gd"
 Console="*res://addons/console/console.gd"
+Stats="*res://scripts/singletons/stats.gd"
+Perks="*res://scripts/singletons/perks.gd"
+Markers="*res://scripts/singletons/markers.gd"
 
 [debug]
 

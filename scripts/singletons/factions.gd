@@ -31,7 +31,7 @@ enum FACTIONS {
 
 enum PROPERTIES {REP, DECISIONS}
 
-var factions_data: Dictionary = {
+var factions_dict: Dictionary = {
 	FACTIONS.NEW_CALIFORNIA_REPUBLIC: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
 	FACTIONS.GOODSPRINGS: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
 	FACTIONS.CAESERS_LEGION: { PROPERTIES.REP: 50, PROPERTIES.DECISIONS: [] },
@@ -75,7 +75,7 @@ func _process_member_killed(_character: Characters.CHARACTERS, rep_loss: int = d
 
 
 func update_faction_data(faction: FACTIONS, property: PROPERTIES, value: Variant) -> void:
-	Data.game_data["factions_data"][faction][property] = value
+	Data.game_data["factions_dict"][faction][property] = value
 
 
 func _change_rep(faction: FACTIONS, rep_change: int) -> void:
@@ -88,7 +88,7 @@ func _change_rep(faction: FACTIONS, rep_change: int) -> void:
 
 func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 	_change_rep(faction, rep_change)
-	var decisions: Array = Data.game_data["factions_data"][faction][PROPERTIES.DECISIONS]
+	var decisions: Array = Data.game_data["factions_dict"][faction][PROPERTIES.DECISIONS]
 	var found: bool = false
 	for entry: Array in decisions:
 		if entry[0] == decision:
@@ -104,7 +104,7 @@ func log_decision(faction: FACTIONS, decision: String, rep_change: int) -> void:
 
 
 func get_rep_status(faction: FACTIONS) -> STATUSES:
-	var rep: int = Data.game_data["factions_data"][faction][PROPERTIES.REP]
+	var rep: int = Data.game_data["factions_dict"][faction][PROPERTIES.REP]
 	if rep < 0:
 		return STATUSES.HOSTILE
 	if rep < 25:
@@ -138,7 +138,7 @@ func set_faction_rep(faction: FACTIONS, rep: int) -> void:
 		push_warning(Debug.define_error("Cannot set rep of '%s' to negative value '%s', defaulting to 0" % [get_faction_name(faction), rep], self))
 	if faction == FACTIONS.UNASSIGNED:
 		push_error(Debug.define_error("Tried to set unassigned faction rep to '%s'" % [rep], self))
-	factions_data[faction][PROPERTIES.REP] = rep
+	factions_dict[faction][PROPERTIES.REP] = rep
 
 
 func is_faction_hostile(_faction: FACTIONS) -> bool:
@@ -154,7 +154,7 @@ func get_loaded_members(faction: FACTIONS) -> Array[Node]:
 
 
 func get_rep_num(faction: FACTIONS) -> int:
-	return Data.game_data["factions_data"][faction][PROPERTIES.REP]
+	return Data.game_data["factions_dict"][faction][PROPERTIES.REP]
 
 
 func reset_faction(faction: FACTIONS) -> void:
@@ -189,7 +189,7 @@ func print_overview() -> void:
 
 	for faction_enum: int in FACTIONS.values():
 		var faction_name: String = get_faction_name(faction_enum)
-		var decisions: Array = Data.game_data["factions_data"][faction_enum][PROPERTIES.DECISIONS]
+		var decisions: Array = Data.game_data["factions_dict"][faction_enum][PROPERTIES.DECISIONS]
 		if decisions.size() > 0:
 			output += faction_name + ":\n"
 			var sorted_decisions: Array = decisions.duplicate()

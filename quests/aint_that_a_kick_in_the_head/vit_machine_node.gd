@@ -1,19 +1,21 @@
 extends StaticBody2D
 @onready var event_player: EventPlayer = $EventPlayer
-@onready var quest: AintThatAKickInTheHead = Global.quest_manager.aint_that_a_kick_in_the_head
+@onready var aint_that_a_kick_in_the_head: AintThatAKickInTheHead = Global.quest_manager.aint_that_a_kick_in_the_head
 
 func _ready() -> void:
-	if not quest.use_the_vit.is_complete():
-		event_player.event_started.connect(_on_event_started)
-		event_player.event_ended.connect(_on_event_ended)
+	if Quests.is_quest_completed(Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD):
+		event_player.set_enabled(false)
 		return
-	event_player.set_enabled(false)
+	event_player.event_started.connect(_on_event_started)
+	event_player.event_ended.connect(_on_event_ended)
+
 
 func _on_event_started() -> void:
-	quest.vit_started.emit()
+	aint_that_a_kick_in_the_head.vit_started.emit()
+
 
 func _on_event_ended() -> void:
-	quest.vit_ended.emit()
+	aint_that_a_kick_in_the_head.vit_ended.emit()
 
 	#ready.connect(_on_tree_entered)
 	#tree_exited.connect(_on_tree_exited)

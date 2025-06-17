@@ -3,14 +3,14 @@ extends Control
 @onready var special: VBoxContainer = $SPECIAL
 @onready var confirm: VBoxContainer = $Confirm
 @onready var confirm_button: Button = $SPECIAL/Confirm/Button
-@onready var points: int = 20
-@onready var strength: int = 5
-@onready var perception: int = 5
-@onready var endurance: int = 5
-@onready var charisma: int = 5
-@onready var intelligence: int = 5
-@onready var agility: int = 5
-@onready var luck: int = 5
+var points: int = 20
+var strength: int = 5
+var perception: int = 5
+var endurance: int = 5
+var charisma: int = 5
+var intelligence: int = 5
+var agility: int = 5
+var luck: int = 5
 
 func _ready() -> void:
 	Global.enter_menu()
@@ -65,13 +65,13 @@ func _set_stat(stat: String, change: int) -> void:
 		count.set_text(str(points))
 
 func _update_stats() -> void:
-	Player.set_stat(Player.STATS.STRENGTH, strength)
-	Player.set_stat(Player.STATS.PERCEPTION, perception)
-	Player.set_stat(Player.STATS.ENDURANCE, endurance)
-	Player.set_stat(Player.STATS.CHARISMA, charisma)
-	Player.set_stat(Player.STATS.INTELLIGENCE, intelligence)
-	Player.set_stat(Player.STATS.AGILITY, agility)
-	Player.set_stat(Player.STATS.LUCK, luck)
+	Player.set_stat(Stats.STATS.STRENGTH, strength)
+	Player.set_stat(Stats.STATS.PERCEPTION, perception)
+	Player.set_stat(Stats.STATS.ENDURANCE, endurance)
+	Player.set_stat(Stats.STATS.CHARISMA, charisma)
+	Player.set_stat(Stats.STATS.INTELLIGENCE, intelligence)
+	Player.set_stat(Stats.STATS.AGILITY, agility)
+	Player.set_stat(Stats.STATS.LUCK, luck)
 
 
 # Signal Handlers

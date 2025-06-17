@@ -151,14 +151,12 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 		set_target(parent.global_position, true)
 
+	seeking_enabled = false
 
 	# Get the spawn position from the portal of the new level
 	var spawn_position: Vector2 = new_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
 
 	Debug.debug("New level spawnpoint location calculated, targeting it now", parent, "move_to_new_level", self)
-
-	set_target(spawn_position, true)
-
 
 	# Update the reload data before spawning
 	if parent is NPC:
@@ -167,7 +165,6 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_POSITION] = spawn_position
 		Characters.set_character_last_level(parent.get_character_enum(), new_level_enum)
 		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_LEVEL] = new_level_enum
-
 
 
 	# Wait for the player to leave the spawn area
@@ -185,6 +182,7 @@ func move_to_new_level(level: Levels.LEVELS) -> void:
 
 	Global.npc_manager.load_npc(parent, spawn_position)
 
+	seeking_enabled = true
 
 	# Reset moving state and emit the moved_level signal
 

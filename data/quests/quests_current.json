@@ -1,1 +1,28 @@
-{"1":{"complete":false,"characters":[1],"timelines":[1,2],"related_levels":[1]},"2":{"complete":false,"characters":[2],"timelines":[3],"related_levels":[2,3]}}
+{
+	"1": {
+		"0": true,
+		"1": [
+			1.0
+		],
+		"2": [
+			1.0,
+			2.0
+		],
+		"3": [
+			1.0
+		]
+	},
+	"2": {
+		"0": false,
+		"1": [
+			2.0
+		],
+		"2": [
+			3.0
+		],
+		"3": [
+			2.0,
+			3.0
+		]
+	}
+}

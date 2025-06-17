@@ -2,8 +2,8 @@
 class_name Waypoint
 extends Area2D
 @export var radius: float = 10.0
-@export var quest: Quests.QUESTS
-@export var home_level: Levels.LEVELS
+@export var home_level_enum: Levels.LEVELS
+@export var quest_enum_ref: Quests.QUESTS
 @export var complete_on_touch: bool = false
 @export var show_icon: bool = false
 @export var collider: CollisionShape2D
@@ -20,9 +20,10 @@ var active: bool = false # whether or not its active in the current quest
 signal player_touched_me
 
 func _ready() -> void:
-	assert(quest != Quests.QUESTS.UNASSIGNED, Debug.define_error("All waypoints must link to a quest.", self))
-	assert(home_level != Levels.LEVELS.UNASSIGNED, Debug.define_error("Each waypoint must be reference a level enum", self))
-	quest_node = Global.quest_manager.get_quest_node(quest)
+	assert(quest_enum_ref != Quests.QUESTS.UNASSIGNED, Debug.define_error("All waypoints must link to a quest.", self))
+	assert(home_level_enum != Levels.LEVELS.UNASSIGNED, Debug.define_error("Each waypoint must be reference a level enum", self))
+	Markers.add_waypoint(self)
+	quest_node = Global.quest_manager.get_quest_node(quest_enum_ref)
 	sprite.set_visible(false)
 	add_to_group("waypoints")
 	area_entered.connect(_on_area_entered)
@@ -44,12 +45,12 @@ func is_complete() -> bool:
 	return complete
 
 
-func get_home_level() -> Levels.LEVELS:
-	return home_level
+func get_home_level_enum() -> Levels.LEVELS:
+	return home_level_enum
 
 
 func get_quest_enum() -> Quests.QUESTS:
-	return quest
+	return quest_enum_ref
 
 
 func get_quest_node() -> Quest:

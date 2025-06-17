@@ -1,19 +1,20 @@
 extends Node
 
 enum QUESTS {UNASSIGNED, AINT_THAT_A_KICK_IN_THE_HEAD, BACK_IN_THE_SADDLE}
+enum PROPERTIES {COMPLETED, CHARACTERS, TIMELINES, RELATED_LEVELS}
 
-var quests: Dictionary = {
+var quests_dict: Dictionary = {
 	QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD: {
-		"complete": false,
-		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
-		"timelines": [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS],
-		"related_levels": [Levels.LEVELS.DOC_MITCHELLS_HOUSE]
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.DOC_MITCHELL],
+		PROPERTIES.TIMELINES: [Dialogue.TIMELINES.YOURE_AWAKE, Dialogue.TIMELINES.PICKTAGS],
+		PROPERTIES.RELATED_LEVELS: [Levels.LEVELS.DOC_MITCHELLS_HOUSE]
 		},
 	QUESTS.BACK_IN_THE_SADDLE: {
-		"complete": false,
-		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
-		"timelines": [Dialogue.TIMELINES.SUNNY_GREETING],
-		"related_levels": [Levels.LEVELS.GOODSPRINGS, Levels.LEVELS.PROSPECTORS_SALOON],
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.SUNNY_SMILES],
+		PROPERTIES.TIMELINES: [Dialogue.TIMELINES.SUNNY_GREETING],
+		PROPERTIES.RELATED_LEVELS: [Levels.LEVELS.GOODSPRINGS, Levels.LEVELS.PROSPECTORS_SALOON],
 	},
 }
 
@@ -23,15 +24,15 @@ func get_quest_name(quest: QUESTS) -> String:
 
 
 func get_quest_characters(quest: QUESTS) -> Array[Characters.CHARACTERS]:
-	return quests[quest]["characters"]
+	return quests_dict[quest][PROPERTIES.CHARACTERS]
 
 
 func get_quest_timelines(quest: QUESTS) -> Array[Dialogue.TIMELINES]:
-	return quests[quest]["timelines"]
+	return quests_dict[quest][PROPERTIES.TIMELINES]
 
 
 func get_quest_levels(quest: QUESTS) -> Array[Levels.LEVELS]:
-	return quests[quest]["related_levels"]
+	return quests_dict[quest][PROPERTIES.RELATED_LEVELS]
 
 
 func get_quest_waypoints(quest_enum: QUESTS) -> Array[Waypoint]:
@@ -54,5 +55,12 @@ func get_quest_navpoints(quest_enum: QUESTS) -> Array[Navpoint]:
 	return navpoint_array
 
 
-func is_quest_complete(quest: QUESTS) -> bool:
-	return quests[quest]["completed"]
+func set_quest_complete(quest: QUESTS, value: bool) -> void:
+	if quest == QUESTS.UNASSIGNED:
+		push_error(Debug.define_error("Tried to set an unassigned quest's completions to %s" % [value], self))
+		return
+	Data.game_data[Data.PROPERTIES.QUESTS][quest][PROPERTIES.COMPLETED] = value
+
+
+func is_quest_completed(quest: QUESTS) -> bool:
+	return Data.game_data[Data.PROPERTIES.QUESTS][quest][PROPERTIES.COMPLETED]

@@ -2,55 +2,46 @@ extends Node
 signal dialogue_started
 
 enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING, OFF_YOU_GO, SHOT_BOTTLES, CLEARED_FIRST_WELL_GECKOS}
+enum PROPERTIES {COMPLETED, REPEATABLE, CHARACTERS, QUESTS}
 
-var timelines: Dictionary = {
+const resource_path: String = "res://dialogic/timelines/"
+
+var timelines_dict: Dictionary = {
 	TIMELINES.YOURE_AWAKE: {
-		"name": "youre_awake",
-		"completed": false,
-		"repeatable": false,
-		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
-		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
-		"resource": "res://dialogic/timelines/youre_awake.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.DOC_MITCHELL],
+		PROPERTIES.QUESTS: [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 	},
 	TIMELINES.PICKTAGS: {
-		"name": "pick_tags",
-		"completed": false,
-		"repeatable": false,
-		"characters": [Characters.CHARACTERS.DOC_MITCHELL],
-		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
-		"resource": "res://dialogic/timelines/picktags.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.DOC_MITCHELL],
+		PROPERTIES.QUESTS: [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 	},
 	TIMELINES.SUNNY_GREETING: {
-		"name": "sunny_greeting",
-		"completed": false,
-		"repeatable": false,
-		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
-		"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
-		"resource": "res://dialogic/timelines/sunny_greeting.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.SUNNY_SMILES],
+		PROPERTIES.QUESTS: [Quests.QUESTS.BACK_IN_THE_SADDLE],
 	},
 	TIMELINES.OFF_YOU_GO: {
-		"name": "off_you_go",
-		"completed": false,
-		"repeatable": false,
-		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
-		"quests": [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
-		"resource": "res://dialogic/timelines/off_you_go.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.SUNNY_SMILES],
+		PROPERTIES.QUESTS: [Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD],
 	},
 	TIMELINES.SHOT_BOTTLES: {
-	"name": "shot_bottles",
-	"completed": false,
-	"repeatable": false,
-	"characters": [Characters.CHARACTERS.SUNNY_SMILES],
-	"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
-	"resource": "res://dialogic/timelines/shot_bottles.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.SUNNY_SMILES],
+		PROPERTIES.QUESTS: [Quests.QUESTS.BACK_IN_THE_SADDLE],
 	},
 	TIMELINES.CLEARED_FIRST_WELL_GECKOS: {
-		"name": "cleared_first_well_geckos",
-		"completed": false,
-		"repeatable": false,
-		"characters": [Characters.CHARACTERS.SUNNY_SMILES],
-		"quests": [Quests.QUESTS.BACK_IN_THE_SADDLE],
-		"resource": "res://dialogic/timelines/cleared_first_well_geckos.dtl",
+		PROPERTIES.COMPLETED: false,
+		PROPERTIES.REPEATABLE: false,
+		PROPERTIES.CHARACTERS: [Characters.CHARACTERS.SUNNY_SMILES],
+		PROPERTIES.QUESTS: [Quests.QUESTS.BACK_IN_THE_SADDLE],
 	},
 }
 
@@ -64,32 +55,45 @@ func start(timeline: TIMELINES) -> bool:
 	if timeline == TIMELINES.UNASSIGNED:
 		push_warning(Debug.define_error("Tried to play an unassigned timeline", self))
 		return false
-	var timeline_path: String = timelines[timeline]["resource"]
 	if is_timeline_running():
 		push_warning(Debug.define_error("A timeline '%s' is already running! Cannot start the new one %s" % [Global.get_rawname(str(Dialogic.current_timeline)), get_timeline_name(timeline)], self))
 		return false
 	if is_timeline_completed(timeline) and not is_timeline_repeatable(timeline):
 		#push_warning(Debug.define_error("The timeline %s has been played and is not repeatable" % [get_timeline_name(timeline)], self))
 		return false
-	Data.game_data["timelines"][str(timeline)]["completed"] = true
-	Dialogic.start(timeline_path)
-	if not Dialogic.current_timeline:
-		await Dialogic.timeline_started
-		dialogue_started.emit()
+	Data.game_data[Data.PROPERTIES.TIMELINES][timeline][PROPERTIES.COMPLETED] = true
+	Dialogic.start(get_timeline_resource(timeline))
+	dialogue_started.emit()
 	return true
 
 
 func preload_timeline(timeline: TIMELINES) -> Resource:
-	return Dialogic.preload_timeline(Dialogue.timelines[timeline]["resource"])
+	return Dialogic.preload_timeline(get_timeline_resource(timeline))
 
 
 func aggro_conversers() -> void:
-	if is_timeline_running():
-		var timeline_name: String = Global.get_rawname(Dialogic.current_timeline.resource_path)
-		for character: Characters.CHARACTERS in timelines[timeline_name]["characters"]:
-			for npc: Node2D in get_tree().get_nodes_in_group("npc"):
-				if npc.name.to_lower() == Characters.get_character_name(character):
-					npc.set_hostile(true)
+	for npc: NPC in get_npcs_in_current_timeline():
+		npc.set_hostile(true)
+
+
+func get_characters_enums_in_current_timeline() -> Array[Characters.CHARACTERS]:
+	if Dialogic.current_timeline:
+		return get_characters_enums_in_timeline(Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline.resource_path), TIMELINES))
+	return []
+
+
+func get_npcs_in_current_timeline() -> Array[NPC]:
+	if Dialogic.current_timeline:
+		return get_npcs_in_timeline(Global.string_to_enum_value(Global.get_rawname(Dialogic.current_timeline.resource_path), TIMELINES))
+	return []
+
+
+func get_characters_enums_in_timeline(timeline: TIMELINES) -> Array[Characters.CHARACTERS]:
+	return timelines_dict[timeline][PROPERTIES.CHARACTERS]
+
+
+func get_npcs_in_timeline(timeline: TIMELINES) -> Array[NPC]:
+	return get_characters_enums_in_timeline(timeline).map(func(character: Characters.CHARACTERS) -> NPC: return Global.npc_manager.get_npc(character))
 
 
 func is_dialogue_playing() -> bool:
@@ -97,11 +101,11 @@ func is_dialogue_playing() -> bool:
 
 
 func is_timeline_completed(timeline: TIMELINES) -> bool:
-	return Data.game_data["timelines"][str(timeline)]["completed"] == true
+	return Data.game_data[Data.PROPERTIES.TIMELINES][timeline][PROPERTIES.COMPLETED] == true
 
 
 func is_timeline_repeatable(timeline: TIMELINES) -> bool:
-	return timelines[timeline]["repeatable"] == true
+	return timelines_dict[timeline][PROPERTIES.REPEATABLE] == true
 
 
 func is_timeline_running() -> bool:
@@ -109,21 +113,22 @@ func is_timeline_running() -> bool:
 
 
 func get_timeline_resource(timeline: TIMELINES) -> DialogicTimeline:
-	return load(timelines[timeline]["resource"])
+	return load(resource_path + Global.enum_to_snakecase(timeline, TIMELINES) + ".dtl")
 
 
 func get_timeline_name(timeline: TIMELINES) -> String:
-	return Global.enum_to_snakecase(timeline, TIMELINES)
+	return Global.enum_to_title(timeline, TIMELINES)
 
 
 func _on_dialogic_signal(command: String) -> void:
-	if command == "aggro":
-		aggro_conversers()
+	match(command):
+		"aggro":
+			aggro_conversers()
 
-@onready var total_mobs: int = 0
+
 func _on_dialogue_start() -> void:
-	Global.set_paused(true)
+	Global.enter_menu()
 
 
 func _on_dialogue_end() -> void:
-	Global.set_paused(false)
+	Global.exit_menu()
