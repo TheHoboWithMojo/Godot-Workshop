@@ -8,7 +8,7 @@ func add_navpoint(navpoint: Navpoint) -> void:
 	var nomen: String = navpoint.name
 	if not nomen in Data.game_data[Data.PROPERTIES.NAVPOINTS_DATA]:
 		Data.game_data[Data.PROPERTIES.NAVPOINTS_DATA][nomen] = Vector4(navpoint.global_position.x, navpoint.global_position.y, float(navpoint.get_related_quest_enums()[0]), float(navpoint.get_home_level_enum()))
-		print("added new navpoint %s" % [navpoint.name])
+		#prints("added new navpoint %s" % [navpoint.name], navpoint.global_position)
 
 
 func get_quest_navpoints(quest: Quests.QUESTS) -> Dictionary[String, Vector3]:
@@ -24,7 +24,7 @@ func add_waypoint(waypoint: Waypoint) -> void:
 	var nomen: String = waypoint.name
 	if not nomen in Data.game_data[Data.PROPERTIES.WAYPOINTS_DATA]:
 		Data.game_data[Data.PROPERTIES.WAYPOINTS_DATA][nomen] = Vector4(waypoint.global_position.x, waypoint.global_position.y, float(waypoint.get_quest_enum()), float(waypoint.get_home_level_enum()))
-		print("added new waypoint %s" % [waypoint.name])
+		#prints("added new waypoint %s" % [waypoint.name], waypoint.global_position)
 
 
 func get_quest_waypoints(quest: Quests.QUESTS) -> Dictionary[String, Vector3]:

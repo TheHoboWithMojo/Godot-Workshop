@@ -25,7 +25,7 @@ func _ready() -> void:
 	if not collision_enabled:
 		collider.queue_free()
 
-	if Global.game_manager.use_save_data:
+	if Global.save_manager.use_save_data:
 		load_saved_stats()
 
 	health_bar.set_visible(false)

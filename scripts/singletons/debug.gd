@@ -5,8 +5,10 @@ var loop_data: Dictionary = {}
 var instance_lookup: Dictionary = {}
 
 func _ready() -> void:
+	await Global.ready_to_start()
 	Console.add_command("loopy", print_loops, [], 0, "get overview of loops")
 	Console.add_command("data", print_game_data, [], 0, "prints game data")
+	Console.add_command("quests", Quests.print_quests_data)
 
 func _process(delta: float) -> void:
 	if not loop_data.is_empty():
@@ -104,6 +106,14 @@ func debug_if(condition: bool, message: String, caller: Node, function_name: Str
 		return false
 	debug(message, caller, function_name)
 	return true
+
+
+func pretty_print(variant: Variant) -> void:
+	match(typeof(variant)):
+		TYPE_ARRAY:
+			pretty_print_array(variant)
+		TYPE_DICTIONARY:
+			pretty_print_dict(variant)
 
 
 func pretty_print_dict(dictionary: Dictionary) -> void:

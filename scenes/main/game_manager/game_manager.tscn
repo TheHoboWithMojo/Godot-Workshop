@@ -17,8 +17,6 @@
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_6rv6m")
-use_save_data = false
-autosaving_enabled = false
 
 [node name="CoordinatePrinter" parent="." instance=ExtResource("2_ka1ps")]
 
@@ -63,6 +61,7 @@ fit_content = true
 [node name="SaveManager" type="Node" parent="."]
 script = ExtResource("7_tl6x0")
 debugging = true
+use_save_data = false
 
 [node name="NPCManager" type="Node" parent="."]
 script = ExtResource("8_u1jbh")
@@ -87,6 +86,8 @@ levels = Array[int]([1])
 
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("13_cy1sf")
+debugging = true
+print_overview_on_advance = true
 linked_quest = 2
 characters = Array[int]([2])
 timelines = Array[int]([3, 5, 6])

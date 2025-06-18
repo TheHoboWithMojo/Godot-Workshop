@@ -321,4 +321,4 @@ func ready_to_start() -> void:
 	if not game_manager.is_node_ready():
 		await game_manager.ready_finished
 	if Data.game_data.is_empty():
-		await save_manager.loading_complete
+		await save_manager.loading_finished

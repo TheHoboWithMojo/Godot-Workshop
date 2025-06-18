@@ -24,14 +24,36 @@ func _ready() -> void:
 	exit = mainplot.new_objective("Follow Doc Mitchell to the exit.")
 	exit.pair_waypoints(["Exit"])
 
+	mainplot.declare_all_objectives_assigned()
+
+	while await Levels.get_current_level_enum() != Levels.LEVELS.DOC_MITCHELLS_HOUSE:
+		await Global.level_manager.new_level_loaded
+
+	var timeline_to_set: Dialogue.TIMELINES
+	var position_to_set: Vector2
+
+	match(mainplot.get_latest_unfinished_objective()):
+		walk_to_vit:
+			Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
+		use_the_vit:
+			position_to_set = get_navpoint_position("VitMachine")
+		sit_down:
+			position_to_set = get_navpoint_position("Couch")
+			timeline_to_set = Dialogue.TIMELINES.PICKTAGS
+		exit:
+			position_to_set = get_navpoint_position("Exit")
+			timeline_to_set = Dialogue.TIMELINES.OFF_YOU_GO
+	if position_to_set:
+		doc_mitchell.place_at(position_to_set)
+	if timeline_to_set:
+		doc_mitchell.set_timeline_enum(timeline_to_set)
+
 	related_level_loaded.connect(_on_related_level_loaded)
 	related_timeline_played.connect(_on_related_timeline_played)
 	related_character_died.connect(_on_related_character_died)
 
-	set_subsequent_quest(Quests.QUESTS.BACK_IN_THE_SADDLE) # set what quest to trigger on completion
-
-	_on_related_level_loaded(Levels.LEVELS.DOC_MITCHELLS_HOUSE)
-	_on_related_timeline_played(Dialogue.TIMELINES.YOURE_AWAKE)
+	# set what quest to trigger on completion
+	set_subsequent_quest(Quests.QUESTS.BACK_IN_THE_SADDLE)
 
 
 func _on_related_level_loaded(level: Levels.LEVELS) -> void:
@@ -47,8 +69,6 @@ func _on_related_character_died(_character: Characters.CHARACTERS) -> void:
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.YOURE_AWAKE:
-			if is_started():
-				return
 			start()
 			await Dialogic.timeline_ended
 			doc_mitchell.set_target(get_navpoint_position("VitMachine"))
@@ -61,6 +81,7 @@ func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 			await doc_mitchell.wait_for_nav_finished()
 			doc_mitchell.set_timeline_enum(Dialogue.TIMELINES.PICKTAGS)
 		Dialogue.TIMELINES.PICKTAGS:
+			print("picktags was played")
 			await Dialogic.timeline_ended
 			mainplot.advance()
 			doc_mitchell.set_target(get_navpoint_position("Exit"))

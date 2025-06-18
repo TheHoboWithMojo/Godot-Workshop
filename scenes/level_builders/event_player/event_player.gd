@@ -13,8 +13,7 @@ class_name EventPlayer extends Node
 @export var emit_interaction_signals: bool = false
 @export var enabled: bool = true
 var _event_playing: bool = false
-var _event_completed: bool = false
-var _processing_interaction: bool = false
+var _event_finished: bool = false
 var _mouse_touching: bool = false
 var _interaction_input_name: String = "interact"
 var _click_input_name: String = "click"
@@ -67,22 +66,18 @@ func set_enabled(value: bool) -> void:
 	enabled = value
 
 
-func is_event_complete() -> bool:
-	return _event_completed
+func is_event_finished() -> bool:
+	return _event_finished
 
 
 func is_event_playing() -> bool:
 	return _event_playing
 
 
-func is_processing_interaction() -> bool:
-	return _processing_interaction
-
-
 func set_one_time_event_enabled(value: bool) -> void:
 	if one_time_event == value:
 		return
-	if is_processing_interaction():
+	if is_event_playing():
 		await event_ended
 	one_time_event = value
 
@@ -95,7 +90,7 @@ func set_max_trigger_distance(new_distance: float) -> void:
 
 
 func is_repeatable() -> bool:
-	return false if ((one_time_event and _event_completed) or not enabled) else true
+	return false if ((one_time_event and _event_finished) or not enabled) else true
 
 
 func get_max_trigger_distance() ->  float:
@@ -114,9 +109,9 @@ func get_touch_detector() -> TouchDetector:
 
 
 func set_timeline_enum(_timeline: Dialogue.TIMELINES) -> void:
-	if is_processing_interaction():
+	if is_event_playing():
 		await event_ended
-	_event_completed = false
+	_event_finished = false
 	Debug.debug("Timeline set to %s" % [Dialogue.get_timeline_name(_timeline)], parent, "set_timeline_enum", self)
 	timeline = _timeline
 
@@ -125,7 +120,7 @@ func set_play_scene_path(path: String) -> void:
 	if not FileAccess.file_exists(path) or not path.ends_with(".tscn") or path == "":
 		push_error(Debug.define_error("Tried to set Child EventPlayer's play scene path to invalid path %s" % [parent.name], self))
 		return
-	if is_processing_interaction():
+	if is_event_playing():
 		await event_ended
 	scene = path
 
@@ -160,9 +155,8 @@ func is_custom_reqs_met() -> bool:
 func _on_player_entered_area() -> void:
 	player_touched_me.emit()
 	Debug.debug("Player touched me!", parent, "_on_player_entered_area", self)
-	if _processing_interaction or not is_repeatable():
+	if is_event_playing() or not is_repeatable():
 		return
-	_processing_interaction = true
 	match trigger_mode:
 		TRIGGER_MODES.AREA_ENTRY:
 			await _try_play_event()
@@ -178,14 +172,12 @@ func _on_player_entered_area() -> void:
 			Debug.doc_loop_end(id)
 			if not _is_player_touching_parent():
 				Debug.debug("Interaction check loop was unsuccesful, breaking loop", parent, "_on_player_entered_area", self)
-			_processing_interaction = false
 
 
 func _on_mouse_entered_area() -> void:
 	_mouse_touching = true
-	if _processing_interaction or not is_repeatable():
+	if is_event_playing() or not is_repeatable():
 		return
-	_processing_interaction = true
 	var id: int = randi()
 	Debug.doc_loop_start(parent, "_on_mouse_entered_area", id)
 	while _mouse_touching:
@@ -194,7 +186,6 @@ func _on_mouse_entered_area() -> void:
 			break
 		await get_tree().process_frame
 	Debug.doc_loop_end(id)
-	_processing_interaction = false
 
 
 func _is_parent_within_max_trigger_distance() -> bool:
@@ -228,5 +219,5 @@ func _try_play_event() -> void:
 			await node.tree_exited
 			Global.exit_menu()
 	_event_playing = false
-	_event_completed = true
+	_event_finished = true
 	event_ended.emit()

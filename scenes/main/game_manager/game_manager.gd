@@ -8,8 +8,6 @@ extends Node2D
 # =========================================================================
 @export_group("Config")
 @export var active: bool = true
-@export var use_save_data: bool = true
-@export var autosaving_enabled: bool = true
 # =========================================================================
 # RUNTIME VARIABLES
 # =========================================================================
@@ -37,8 +35,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	count_frames()
-	if use_save_data and autosaving_enabled:
-		autosave()
 # =========================================================================
 # READY FUNCTIONS
 # =========================================================================
@@ -48,19 +44,18 @@ func update_global_references() -> void:
 
 
 func load_data() -> void:
-	if not use_save_data:
+	if not save_manager.use_save_data:
 		save_manager.clear_data()
 		if save_manager.is_data_cleared != true:
 			await save_manager.data_cleared
 	save_manager.load_game_data()
-	if not save_manager.is_loading_complete:
-		await save_manager.loading_complete
+	if not save_manager.is_loading_finished:
+		await save_manager.loading_finished
 
 
 func ready_up() -> void:
 	ready_finished.emit()
 	level_manager.set_current_level(int(Data.game_data[Data.PROPERTIES.RELOAD_DATA]["last_level"]))
-	Dialogue.start(Dialogue.TIMELINES.YOURE_AWAKE)
 
 # =========================================================================
 # PROCESS FUNCTIONS
@@ -69,15 +64,3 @@ func count_frames() -> void:
 	Global.frames += 1
 	if Global.frames >= 100:
 		Global.frames = 0
-
-
-var _currently_autosaving: bool = false
-func autosave() -> void:
-	if not autosaving_enabled or _currently_autosaving:
-		return
-	_currently_autosaving = true
-	await Global.delay(self, 10)
-	Global.speed_mult = 0.0
-	save_manager.save()
-	Global.speed_mult = 1.0
-	_currently_autosaving = false

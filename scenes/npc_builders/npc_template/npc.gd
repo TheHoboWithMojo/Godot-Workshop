@@ -18,6 +18,12 @@ signal dialogue_started(self_node: Node)
 signal dialogue_ended(self_node: Node)
 
 
+func place_at(vector: Vector2) -> void:
+	set_target(vector)
+	set_global_position.call_deferred(vector)
+
+
+
 func set_hostile(value: bool) -> void:
 	Debug.debug("Setting hostile to %s" % [value], self, "set_hostile")
 	hostile = value

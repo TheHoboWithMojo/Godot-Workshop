@@ -94,7 +94,7 @@ func _on_show_player_stats_button_toggled(toggled_on: bool) -> void:
 
 func _on_save_game_button_pressed() -> void:
 	Global.save_manager.save()
-	await Global.save_manager.saving_complete
+	await Global.save_manager.saving_finished
 
 
 func _on_spawn_enemies_button_toggled(toggled_on: bool) -> void:

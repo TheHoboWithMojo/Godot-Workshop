@@ -1,16 +1,18 @@
 @icon("res://assets/Icons/16x16/disk.png")
 class_name SaveManager extends Node
 @export var debugging: bool = false
+@export var use_save_data: bool = true
+@export var autosaving_enabled: bool = false
 
 # ----- Variables -----
-var is_loading_complete: bool = false
+var is_loading_finished: bool = false
 var is_data_cleared: bool = false
 
 # ----- Signals -----
 signal data_cleared
-signal loading_complete
+signal loading_finished
 signal saving_started
-signal saving_complete
+signal saving_finished
 
 # holds default values if saving is disabled
 @onready var reference_data: Dictionary[Data.PROPERTIES, Dictionary] = {
@@ -45,8 +47,8 @@ func load_game_data() -> void:
 	_process_reload_data()
 	_ensure_player_health()
 	Debug.debug("Game data loaded...", self, "load_game_data")
-	is_loading_complete = true
-	loading_complete.emit()
+	is_loading_finished = true
+	loading_finished.emit()
 
 
 func _load_and_typecast_data() -> void:
@@ -135,7 +137,7 @@ func save() -> void:
 	else:
 		push_warning(Debug.define_error("Some data may not have been saved correctly!", self))
 
-	saving_complete.emit()
+	saving_finished.emit()
 
 func _save_data_with_backup(data_enum: Data.PROPERTIES) -> void:
 	var current_data_path: String = Data.get_current_path(data_enum)
@@ -171,6 +173,9 @@ func _save_data_with_backup(data_enum: Data.PROPERTIES) -> void:
 		cleanup_dir.remove(temp_data_path)
 
 func clear_data() -> void:
+	# navpoints and waypoints are in quests but are not hardcoded in a backup so we have to clear them manually
+	Data.save_json({}, Data.get_current_path(Data.PROPERTIES.WAYPOINTS_DATA))
+	Data.save_json({}, Data.get_current_path(Data.PROPERTIES.NAVPOINTS_DATA))
 	for data_enum: Data.PROPERTIES in reference_data.keys():
 		var current_path: String = Data.get_current_path(data_enum)
 		var backup_path: String = current_path.replace("_current", "_backup")
@@ -183,3 +188,14 @@ func clear_data() -> void:
 
 	is_data_cleared = true
 	data_cleared.emit()
+
+var _currently_autosaving: bool = false
+func autosave() -> void:
+	if not autosaving_enabled or _currently_autosaving:
+		return
+	_currently_autosaving = true
+	await Global.delay(self, 10)
+	Global.speed_mult = 0.0
+	save()
+	Global.speed_mult = 1.0
+	_currently_autosaving = false

@@ -28,8 +28,8 @@ func _on_new_level_loaded(new_level: Level) -> void:
 
 
 func _try_navigate_home(level: Level) -> void:
-	if quest_enum_ref and Quests.is_quest_completed(quest_enum_ref):
-		Debug.debug("Current waypoints's quest has been completed, hiding waypoint", self, "_try_navigate_home")
+	if quest_enum_ref and Quests.is_quest_finished(quest_enum_ref):
+		Debug.debug("Current waypoints's quest has been finished, hiding waypoint", self, "_try_navigate_home")
 		set_visible(false)
 		return
 	if await Global.quest_manager.get_current_quest_enum() != quest_enum_ref:

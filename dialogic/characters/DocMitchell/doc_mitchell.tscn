@@ -18,7 +18,7 @@ size = Vector2(30, 30)
 [node name="DocMitchell" type="CharacterBody2D" node_paths=PackedStringArray("event_manager", "health_manager", "navigation_manager", "character_manager", "collider")]
 motion_mode = 1
 script = ExtResource("1_76qns")
-default_spawn_position = Vector2(-3, -50)
+default_spawn_position = Vector2(0, -40)
 event_manager = NodePath("EventPlayer")
 health_manager = NodePath("HealthComponent")
 navigation_manager = NodePath("NavigationComponent")

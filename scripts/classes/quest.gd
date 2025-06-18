@@ -7,7 +7,7 @@ class_name Quest extends Node
 @export var levels: Array[Levels.LEVELS] = []
 #@export var refresh_timelines: Dialogue.TIMELINES forces enum refresh
 
-var completed: bool = false
+var finished: bool = false
 var active: bool = false
 var started: bool = false
 var quest_waypoints: Dictionary[String, Vector3] = {}
@@ -26,13 +26,14 @@ signal quest_started(self_node: Quest)
 
 func _init() -> void:
 	await Global.ready_to_start()
-	if Quests.is_quest_completed(linked_quest):
-		queue_free()
-		return
+	if Quests.is_quest_finished(linked_quest):
+		started = true
+		finished = true
+		Debug.debug("is finished", self, "_init")
 	assert(levels and characters and timelines, Debug.define_error("[Quest] Every quest node should contain related levels, characters, and timelines", self))
 	quest_navpoints = Markers.get_quest_navpoints(linked_quest)
 	quest_waypoints = Markers.get_quest_waypoints(linked_quest)
-	mainplot = Plot.new()
+	mainplot = Plot.new("main", true, self)
 	mainplot.quest = self
 	Characters.character_died.connect(_on_character_died)
 	Dialogic.timeline_started.connect(_on_timeline_started)
@@ -105,7 +106,6 @@ func new_sideplot(_nomen: String) -> Plot:
 
 
 func set_active(value: bool) -> void:
-	Debug.debug("[Quest] '%s': set_active(%s)" % [name, value], self, "set_active")
 	active = value
 	if active == true:
 		Player.set_quest(self)
@@ -154,18 +154,18 @@ func get_quest_enum() -> Quests.QUESTS:
 	return linked_quest
 
 
-func complete() -> void:
-	if completed:
+func finish() -> void:
+	if finished:
 		return
-	completed = true
+	finished = true
 	set_active(false)
 	Global.quest_displayer.find_child("Quest").set_text("")
 	Global.quest_displayer.find_child("Objective").set_text("")
-	Quests.set_quest_complete(linked_quest, true)
+	Quests.set_quest_finished(linked_quest, true)
 	Characters.character_died.disconnect(_on_character_died)
 	Dialogic.timeline_started.disconnect(_on_timeline_started)
 	Global.level_manager.new_level_loaded.disconnect(_on_new_level_loaded)
-	print("[Quest] Quest '%s' was completed!" % [name])
+	print("[Quest] Quest '%s' was finished!" % [name])
 	if chained_quest:
 		chained_quest.start()
 		print("[Quest] '%s' triggered quest '%s' to start" % [name, chained_quest.name])
@@ -175,8 +175,8 @@ func set_subsequent_quest(quest: Quests.QUESTS) -> void:
 	chained_quest = Global.quest_manager.get_quest_node(quest)
 
 
-func is_complete() -> bool:
-	return completed
+func is_finished() -> bool:
+	return finished
 
 
 func is_active() -> bool:
@@ -215,12 +215,18 @@ class Plot:
 	var quest: Quest = null
 	var nomen: String = ""
 	var rewards: Array[String] = []
-	var completed: bool = false
+	var finished: bool = false
 	var started: bool = false
 
-	func _init(_nomen: String = "main", _activate_on_main: bool = true) -> void:
+
+	func _init(_nomen: String = "main", _activate_on_main: bool = true, _quest: Quest = null) -> void:
+		quest = _quest
+		if _quest and quest.finished:
+			finished = true
+			return
 		nomen = _nomen
 		activate_on_main = _activate_on_main
+
 
 	func _start() -> bool:
 		if started:
@@ -230,18 +236,61 @@ class Plot:
 			Debug.debug("[Plot] Cannot start a plot without any objectives declared", quest, "_start")
 			return false
 		if not current_objective:
-			current_objective = objectives[0]
-		if not current_objective.objective_waypoints:
+			_set_current_objective(objectives[0])
+		if not current_objective.get_waypoints():
 			Debug.debug("[Plot] Waiting for plot %s's first objective '%s' to be assigned a waypoint" % [nomen, current_objective.nomen], quest, "plot._start")
 			await current_objective.waypoint_paired
 			Debug.debug("[Plot] plot '%s's first objective %s's waypoint succesfully assigned, starting plot." % [nomen, current_objective.nomen], quest, "_start")
-		Global.active_waypoint.set_active_waypoint(current_objective.objective_waypoints.keys()[0])
 		started = true
 		return true
 
+
+	func _set_current_objective(_new_objective: Objective) -> void:
+		if not current_objective:
+			current_objective = _new_objective
+			current_objective._try_activate()
+			return
+		current_objective.finished = true
+		current_objective = _new_objective
+		current_objective._try_activate()
+
+
+	func get_latest_unfinished_objective() -> Objective:
+		for objective: Objective in objectives:
+			if not objective.is_finished():
+				return objective
+		return null
+
+
+	func declare_all_objectives_assigned() -> void:
+		var objective_to_skip_to: Objective
+		# if the first objective isn't stored, the quest data has been cleared and needs to be reset
+		if not Quests.is_objective_stored(quest.linked_quest, objectives[0].nomen):
+			Debug.debug("[Plot] The first objective is not stored in quest data, updating the data now", quest, "declare_all_objectives_assigned")
+			var updated_objective_dict: Dictionary[String, bool]
+			for objective: Objective in objectives:
+				updated_objective_dict[objective.nomen] = false
+			Data.game_data[Data.PROPERTIES.QUESTS][quest.linked_quest][Quests.PROPERTIES.OBJECTIVES] = updated_objective_dict
+			Debug.debug("[Plot] Quest objectives data updated to:", quest, "declare_all_objectives_assigned")
+			if quest.debugging:
+				Debug.pretty_print_dict(updated_objective_dict)
+		else:
+			Debug.debug("[Plot] The first objective was stored in quest data, updating all objective completion bools", quest, "declare_all_objectives_assigned")
+			for objective: Objective in objectives:
+				if Quests.is_objective_finished(quest.linked_quest, objective.nomen):
+					quest.start()
+					Debug.debug("[Plot] objective '%s' was finished, moving to next objective" % objective.nomen, quest, "declare_all_objective_assigned")
+					objective._set_finished(true)
+					continue
+				objective_to_skip_to = objective
+				break
+			if objective_to_skip_to:
+				skip_to_objective(objective_to_skip_to)
+
+
 	func advance() -> bool:
-		if is_complete():
-			Debug.debug("[Plot] Redundant call, quest is already completed", quest, "plot.advance")
+		if is_finished():
+			Debug.debug("[Plot] Redundant call, quest is already finished", quest, "plot.advance")
 			return false
 		if not is_started():
 			Debug.debug("[Plot] Trying to advance the plot '%s' before its quest has started, waiting quest started" % [nomen], quest, "plot.advance")
@@ -249,54 +298,52 @@ class Plot:
 			Debug.debug("[Plot] the plot '%s's respective quest has started, continuing" % [nomen], quest, "plot.advance")
 		var current_position: int = objectives.find(current_objective)
 		if not _has_next_objective(current_position, objectives):
-			_complete()
-			if self == quest.mainplot:
-				quest.complete()
+			Debug.debug("[Plot] No remaning objectives to advance to found, completing plot", quest, "advance")
+			_finish()
 			return true
+		current_objective._set_finished(true)
 		var _new_objective: Objective = objectives[current_position + 1]
 		Debug.debug("[Plot] plot '%s' deactivating objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
-		current_objective._complete()
-		current_objective = _new_objective
+		_set_current_objective(_new_objective)
 		Debug.debug("[Plot] plot '%s' advanced to new objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
-		if quest.is_active():
-			Debug.debug("[Plot] plot '%s's quest is active, activating its new objective '%s'" % [nomen, current_objective.nomen], quest, "plot.advance")
-			Player.set_objective(current_objective)
-			if not current_objective.get_waypoints():
-				await current_objective.waypoint_paired
-			Global.active_waypoint.set_active_waypoint(current_objective.get_waypoints().keys()[0])
 		if quest.print_overview_on_advance:
 			quest.overview()
 		return true
 
+
 	func _has_next_objective(index: int, array: Array) -> bool:
 		return index + 1 < array.size()
 
+
 	func skip_to_objective(objective: Objective) -> bool:
+		Debug.debug("[Plot] attempting to skip to objective %s" % [objective.nomen], quest, "plot.skip_to_objective")
 		if not objective in objectives:
 			push_warning(Debug.define_error("event '%s' has not been declared" % [objective.nomen], quest))
 			return false
 		var target_index: int = objectives.find(objective)
 		var current_index: int = objectives.find(current_objective)
-		if target_index == current_index:
-			push_warning(Debug.define_error("cannot skip to the same event", quest))
-			return false
 		if target_index < current_index:
 			push_warning(Debug.define_error("cannot skip to a past event", quest))
 			return false
-		if target_index == objectives.size() - 1:
-			current_objective = objective
-			_complete()
+		if target_index == objectives.size() - 1 and objective.is_finished():
+			Debug.debug("[Objectives] Skipped to the last objective of plot '%s', ending plot.", quest, "objective.skip_to_objective")
+			_finish()
 			return true
 		current_objective = objective
+		Debug.debug("[Plot] Successfully skipped to objective %s" % [current_objective.nomen], quest, "plot.skip_to_objective")
 		return true
 
-	func _complete() -> void:
+
+	func _finish() -> void:
 		for reward: String in rewards:
 			pass
 		if self == quest.mainplot:
-			quest.complete()
-		completed = true
-		Debug.debug("[Plot] plot '%s' completed!" % [nomen], quest, "plot._complete")
+			quest.finish()
+		for objective: Objective in objectives:
+			objective.finished = true
+		finished = true
+		Debug.debug("[Plot] plot '%s' finished!" % [nomen], quest, "plot._finish")
+
 
 	func new_objective(objective_description: String) -> Objective:
 		var _new_objective: Objective = Objective.new(objective_description, self, quest)
@@ -305,8 +352,10 @@ class Plot:
 		objectives.append(_new_objective)
 		return _new_objective
 
-	func is_objective_complete(objective: Objective) -> bool:
+
+	func is_objective_finished(objective: Objective) -> bool:
 		return objectives.find(objective) < objectives.find(current_objective)
+
 
 	func overview() -> void:
 		print("\n'%s' (Quest: '%s'):" % [nomen.capitalize(), quest.name.capitalize()])
@@ -318,43 +367,65 @@ class Plot:
 			name_array.append(objective.nomen)
 		Debug.pretty_print_array(name_array)
 
+
 	func get_current_objective_name() -> String:
 		return current_objective.nomen
 
-	func is_complete() -> bool:
-		return completed
+
+	func is_finished() -> bool:
+		return finished
+
 
 	func is_started() -> bool:
 		return started
 
+
 	func get_current_objective() -> Objective:
 		return current_objective
 
+
 	func get_current_waypoint() -> Vector3:
 		return current_objective.objective_waypoints.values()[0]
+
 
 class Objective:
 	var nomen: String
 	var plot: Plot
 	var quest: Quest
-	var completed: bool = false
+	var finished: bool = false
 	var objective_waypoints: Dictionary[String, Vector3]
 	signal waypoint_paired
 
+
 	func _init(_nomen: String, _plot: Plot, _quest: Quest) -> void:
-		nomen = _nomen
 		plot = _plot
 		quest = _quest
+		if plot and plot.finished or quest and quest.finished:
+			finished = true
+			return
+		nomen = _nomen
 
-	func _complete() -> void:
-		Debug.debug("[Objective] '%s' complete() called" % [nomen], quest, "objective.complete")
-		completed = true
 
-	func is_complete() -> bool:
-		return completed
+	func _set_finished(value: bool) -> void:
+		Debug.debug("[Objective] '%s' setting finished to '%s'" % [nomen, value], quest, "objective._set_finished")
+		Data.game_data[Data.PROPERTIES.QUESTS][quest.linked_quest][Quests.PROPERTIES.OBJECTIVES][nomen] = value
+		finished = value
+
+
+	func is_finished() -> bool:
+		return finished
+
+
+	func _try_activate() -> void:
+		if quest.is_active():
+			Player.set_objective(self)
+			if objective_waypoints:
+				Global.active_waypoint.set_active_waypoint(objective_waypoints.keys()[0])
+
 
 	func get_waypoints() -> Dictionary[String, Vector3]:
 		return objective_waypoints
+
 
 	func pair_waypoints(waypoint_names: Array[String]) -> void:
 		for waypoint_name: String in waypoint_names:

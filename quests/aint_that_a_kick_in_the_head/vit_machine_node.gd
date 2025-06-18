@@ -3,7 +3,8 @@ extends StaticBody2D
 @onready var aint_that_a_kick_in_the_head: AintThatAKickInTheHead = Global.quest_manager.aint_that_a_kick_in_the_head
 
 func _ready() -> void:
-	if Quests.is_quest_completed(Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD):
+	await Global.ready_to_start()
+	if aint_that_a_kick_in_the_head.use_the_vit.is_finished():
 		event_player.set_enabled(false)
 		return
 	event_player.event_started.connect(_on_event_started)
@@ -34,5 +35,5 @@ func _on_event_ended() -> void:
 	#return event_player.is_event_playing()
 #
 #
-#func is_event_completed() -> bool:
-	#return event_player.is_event_complete()
+#func is_event_finished() -> bool:
+	#return event_player.is_event_finishe()

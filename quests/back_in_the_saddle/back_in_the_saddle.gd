@@ -36,6 +36,8 @@ func _ready() -> void:
 	talk_to_sunny_post_geckos = mainplot.new_objective("Talk to Sunny Smiles.")
 	kill_geckos_at_second_well = mainplot.new_objective("Kill the geckos at the other wells.")
 	get_reward = mainplot.new_objective("Talk to Sunny about your reward.")
+	mainplot.declare_all_objectives_assigned()
+
 	bottle_shot.connect(_on_bottle_shot)
 	first_well_gecko_killed.connect(_on_first_well_gecko_killed)
 	second_well_gecko_killed.connect(_on_second_well_gecko_killed)
@@ -66,7 +68,7 @@ func _on_related_level_loaded(level: Levels.LEVELS) -> void:
 func _on_related_timeline_played(timeline: Dialogue.TIMELINES) -> void:
 	match(timeline):
 		Dialogue.TIMELINES.SUNNY_GREETING:
-			if not Quests.is_quest_completed(Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD):
+			if not Quests.is_quest_finished(Quests.QUESTS.AINT_THAT_A_KICK_IN_THE_HEAD):
 				start()
 			await Dialogic.timeline_ended
 			sunny_smiles.move_to_new_level(Levels.LEVELS.GOODSPRINGS)
