@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2ml06vlkilrc"]
+
+[ext_resource type="Texture2D" uid="uid://bopvitb7idsqj" path="res://scenes/level_builders/waypoint/waypoint.tres" id="1_bq4sw"]
+
+[node name="WaypointSprite" type="Sprite2D"]
+texture = ExtResource("1_bq4sw")

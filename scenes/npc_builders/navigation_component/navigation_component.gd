@@ -11,7 +11,7 @@ var navigation_target: Vector2 = Vector2.ZERO
 var seeking_enabled: bool = true
 
 signal target_changed(target: Vector2)
-signal moved_level(level: Level)
+signal moved_level(level: Levels.LEVELS)
 
 
 func _ready() -> void:
@@ -100,92 +100,58 @@ func _on_target_reached() -> void:
 
 var moving_to_level: Levels.LEVELS = Levels.LEVELS.UNASSIGNED
 
-func move_to_new_level(level: Levels.LEVELS) -> void:
-	assert(level != Levels.LEVELS.UNASSIGNED, Debug.define_error("Cannot move to an unassigned level", parent))
-	Debug.debug("[NPC] '%s' preparing to move to level '%s'" % [name, Levels.get_level_name(level)], parent, "move_to_new_level", self)
-	moving_to_level = level
+func move_to_new_level(level_to_move_to: Levels.LEVELS) -> void:
+	assert(level_to_move_to != Levels.LEVELS.UNASSIGNED, Debug.define_error("Cannot move to an unassigned level", parent))
+	Debug.debug("[NPC] '%s' preparing to move to level '%s'" % [name, Levels.get_level_name(level_to_move_to)], parent, "move_to_new_level", self)
+	moving_to_level = level_to_move_to
+
+	for level: Levels.LEVELS in Levels.get_shortest_path(await Levels.get_current_level_enum(), level_to_move_to):
+		level_to_move_to = level
+
+		var old_level: Level = await Levels.get_current_level_node()
+
+		var old_level_enum: Levels.LEVELS = old_level.get_level_enum()
+
+		var target: Vector2 = old_level.get_portal_to_level(level_to_move_to).get_spawn_point_position()
+
+		set_target(target, true)
+
+		# Wait for either the navigation to finish or the level to change
+		while await Levels.get_current_level_enum() == old_level_enum and not is_navigation_finished():
+			await get_tree().process_frame
+
+		# Disable the NPC until the new_level is loaded
+		if parent.has_method("set_enabled"):
+			await parent.set_enabled(false)
+
+		if is_navigation_finished() and (await Levels.get_current_level_enum() == old_level_enum):
+			await Global.level_manager.new_level_loaded
+
+		var new_level: Level = await Levels.get_current_level_node()
+		var new_level_name: String = new_level.name
+		var spawn_position: Vector2 = new_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
+		Debug.debug("New level spawnpoint location calculated", parent, "move_to_new_level", self)
+
+		if not is_navigation_finished():
+			Debug.debug("[NPC] '%s' navigation to level '%s' was unfinished, simulating navigation." % [name, new_level_name], parent, "move_to_new_level", self)
+			await Global.delay(self, 2.0)
+			set_target(parent.global_position, true)
+
+		if parent is NPC:
+			var npc: NPC = parent
+			Characters.set_character_last_position(parent.get_character_enum(), spawn_position)
+			Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_POSITION] = spawn_position
+			Characters.set_character_last_level(parent.get_character_enum(), moving_to_level)
+			Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_LEVEL] = moving_to_level
 
 
-	var old_level: Level = await Levels.get_current_level_node()
-
-	var old_level_enum: Levels.LEVELS = old_level.get_level_enum()
-
-	var target: Vector2 = old_level.get_portal_to_level(level).get_spawn_point_position()
-
-	set_target(target, true)
+		Debug.debug_if(Global.get_collider_global_rect(player_collider).has_point(spawn_position), "waiting for the player to move before spawning in level '%s'" % [new_level_name], self, "move_to_new_level")
 
 
-	# Wait for either the navigation to finish or the level to change
+		while Global.get_collider_global_rect(player_collider).has_point(spawn_position):
+			await get_tree().process_frame
 
-	while (await Levels.get_current_level_enum() == old_level_enum) and (not is_navigation_finished()):
-		await get_tree().process_frame
+		await Global.npc_manager.load_npc(parent, spawn_position)
 
-	# Disable the NPC until the new_level is loaded
-
-	if parent.has_method("set_enabled"):
-		await parent.set_enabled(false)
-
-
-	if is_navigation_finished() and (await Levels.get_current_level_enum() == old_level_enum):
-		await Global.level_manager.new_level_loaded
-
-
-	var new_level: Level = await Levels.get_current_level_node()
-	var new_level_enum: Levels.LEVELS = new_level.get_level_enum()
-
-
-	# If the new level is not the one we're moving to, abort
-
-	if Debug.debug_if(new_level_enum != level, "[NPC] '%s' new level '%s' is not the target level '%s'" % [name, new_level.name, Levels.get_level_name(level)], parent, "move_to_new_level"):
-		# recursive function with a timer that goes until the correct level loads OR moves the npc to the level in the background idk how yet
-		return
-
-
-	# If navigation isn't finished, wait and force navigation completion
-
-	if not is_navigation_finished():
-
-		Debug.debug("[NPC] '%s' navigation to level '%s' was unfinished, simulating navigation." % [name, new_level.name], parent, "move_to_new_level", self)
-
-		await Global.delay(self, 2.0)
-
-		set_target(parent.global_position, true)
-
-	seeking_enabled = false
-
-	# Get the spawn position from the portal of the new level
-	var spawn_position: Vector2 = new_level.get_portal_to_level(old_level_enum).get_spawn_point_position()
-
-	Debug.debug("New level spawnpoint location calculated, targeting it now", parent, "move_to_new_level", self)
-
-	# Update the reload data before spawning
-	if parent is NPC:
-		var npc: NPC = parent
-		Characters.set_character_last_position(parent.get_character_enum(), spawn_position)
-		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_POSITION] = spawn_position
-		Characters.set_character_last_level(parent.get_character_enum(), new_level_enum)
-		Global.npc_manager.npc_dict[npc][Global.npc_manager.PROPERTIES.LAST_LEVEL] = new_level_enum
-
-
-	# Wait for the player to leave the spawn area
-
-	Debug.debug_if(Global.get_collider_global_rect(player_collider).has_point(spawn_position), "waiting for the player to move before spawning in level '%s'" % [new_level.name], self, "move_to_new_level")
-
-
-
-	while Global.get_collider_global_rect(player_collider).has_point(spawn_position):
-
-		await get_tree().process_frame
-
-
-	# Spawn the npc there and restore its functionality
-
-	Global.npc_manager.load_npc(parent, spawn_position)
-
-	seeking_enabled = true
-
-	# Reset moving state and emit the moved_level signal
-
+	moved_level.emit(moving_to_level)
 	moving_to_level = Levels.LEVELS.UNASSIGNED
-
-	moved_level.emit(new_level)

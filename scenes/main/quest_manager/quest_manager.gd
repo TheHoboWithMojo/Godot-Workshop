@@ -33,5 +33,5 @@ func set_current_quest(quest: Quest, override: bool = false) -> bool:
 		pass
 	current_quest = quest
 	new_quest_assigned.emit()
-	Console.add_command("obj", current_quest.mainplot.overview)
+	Console.add_command("obj", current_quest.mainplot.plot_overview)
 	return true

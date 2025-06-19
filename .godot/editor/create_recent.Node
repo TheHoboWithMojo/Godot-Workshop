@@ -1,5 +1,6 @@
-Sprite2D
 Marker2D
+Node2D
+Sprite2D
 Node
 Collider
 HealthBar
@@ -7,7 +8,6 @@ HealthComponent
 CharacterBody2D
 Area2D
 StaticBody2D
-Node2D
 AnimatedSprite2D
 DebugBuddy
 EventPlayer

@@ -34,16 +34,16 @@ func _ready() -> void:
 	assert(touch_detector, Debug.define_error("Child EventPlayer must reference a touch detector", parent))
 	match play_mode:
 		PLAY_MODES.DIALOG:
-			if timeline == Dialogue.TIMELINES.UNASSIGNED and scene:
-				push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was assigned only a scene path", parent))
-			elif timeline == Dialogue.TIMELINES.UNASSIGNED and not scene:
-				push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was not initialized with a timeline", parent))
+			#if timeline == Dialogue.TIMELINES.UNASSIGNED and scene:
+				#push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was assigned only a scene path", parent))
+			#elif timeline == Dialogue.TIMELINES.UNASSIGNED and not scene:
+				#push_warning(Debug.define_error("Child EventPlayer was set to play Dialogue but was not initialized with a timeline", parent))
 			Debug.debug("Child EventPlayer play mode initialized as 'dialogue'", parent, "_ready", self)
 		PLAY_MODES.SCENE:
-			if timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
-				push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was assigned only a timeline", parent))
-			elif timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
-				push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was not initialized with a scene path", parent))
+			#if timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
+				#push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was assigned only a timeline", parent))
+			#elif timeline != Dialogue.TIMELINES.UNASSIGNED and scene == "":
+				#push_warning(Debug.define_error("Child EventPlayer was set to play Scene but was not initialized with a scene path", parent))
 			Debug.debug("Child EventPlayer play mode initialized as 'scene'", parent, "_ready", self)
 	if scene and timeline:
 		push_warning(Debug.define_error("Child EventPlayer was initialized with both a timeline and scene", parent))

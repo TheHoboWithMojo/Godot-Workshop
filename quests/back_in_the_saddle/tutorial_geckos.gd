@@ -15,10 +15,10 @@ func _ready() -> void:
 	health_component.died.connect(_on_death)
 	match(quest_stage):
 		STAGE.WELL1:
-			if quest_ref.kill_geckos_at_first_well.is_finished():
+			if quest_ref.kill_geckos_at_first_well.is_objective_finished():
 				queue_free()
 		STAGE.WELL2:
-			if quest_ref.kill_geckos_at_second_well.is_finished():
+			if quest_ref.kill_geckos_at_second_well.is_objective_finished():
 				queue_free()
 
 

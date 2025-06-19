@@ -12,7 +12,7 @@ var hostile: bool = false # placeholders for future attack manager or something 
 var encountered: bool = false
 
 signal target_changed(new_target: Vector2)
-signal moved_level(level: Level)
+signal moved_level(level: Levels.LEVELS)
 signal navigation_finished(self_node: Node)
 signal dialogue_started(self_node: Node)
 signal dialogue_ended(self_node: Node)
@@ -21,7 +21,6 @@ signal dialogue_ended(self_node: Node)
 func place_at(vector: Vector2) -> void:
 	set_target(vector)
 	set_global_position.call_deferred(vector)
-
 
 
 func set_hostile(value: bool) -> void:
@@ -199,7 +198,7 @@ func _on_target_changed(new_target: Vector2) -> void:
 	target_changed.emit(new_target)
 
 
-func _on_moved_level(new_level: Level) -> void:
+func _on_moved_level(new_level: Levels.LEVELS) -> void:
 	moved_level.emit(new_level)
 
 

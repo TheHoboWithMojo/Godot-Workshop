@@ -1,3 +1,4 @@
+CompressedTexture2D
 SceneReplicationConfig
 TileSet
 AtlasTexture

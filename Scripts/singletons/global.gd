@@ -74,23 +74,14 @@ func exit_menu() -> void:
 	in_menu = false
 
 
-@onready var total_mobs: int
 func set_paused(value: bool) -> void:
-	if player and game_manager:
-		set_fast_travel_enabled(!value)
-		player.set_physics_process(!value)
-		player.can_shoot = !value
-
-		for being: Node2D in get_beings():
-			being.health_manager.set_vincible(!value)
-			being.set_paused(value)
-	if not value:
-		speed_mult = 1.0
-		mob_manager.total_mobs = total_mobs # Restores actual mob count
-		return
-	speed_mult = 0.0
-	total_mobs = game_manager.total_mobs # Store actual mob count
-	mob_manager.total_mobs = mob_manager.MOB_CAP # Sets mob count to max to stop spawning
+	set_fast_travel_enabled(!value)
+	player.set_physics_process(!value)
+	player.can_shoot = !value
+	for being: Node2D in get_beings():
+		being.health_manager.set_vincible(!value)
+		being.set_paused(value)
+	speed_mult = 0.0 if value else 1.0
 
 
 func if_do(condition: bool, method_argument_dicts: Array[Dictionary]) -> bool:
@@ -99,10 +90,10 @@ func if_do(condition: bool, method_argument_dicts: Array[Dictionary]) -> bool:
 	for method_argument_pair: Dictionary[Callable, Array] in method_argument_dicts:
 		var method: Callable = method_argument_pair.keys()[0]
 		var arguments: Array[Variant] = method_argument_pair[method]
-		if arguments:
-			method.callv(arguments)
-		else:
+		if not arguments:
 			method.call()
+			continue
+		method.callv(arguments)
 	return true
 
 
@@ -165,6 +156,7 @@ func get_rawname(scene_or_node_or_path: Variant) -> String:
 	push_warning(Debug.define_error("Input '%s' does not have a filepath property" % [scene_or_node_or_path], self))
 	return ""
 
+
 func get_tiles_with_property(tilemap: TileMapLayer, property_name: String) -> Array[Vector2]:
 	var positions: Array[Vector2] = []
 	# Get rectangle with used tiles
@@ -217,7 +209,6 @@ func delay(self_node: Node, seconds: float) -> void:
 
 func get_class_of(node: Node) -> String:
 	return node.get_script().get_global_name() if node.get_script() else node.get_class()
-
 
 
 func get_collider_global_rect(collider: Collider) -> Rect2:

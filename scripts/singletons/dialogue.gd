@@ -1,5 +1,5 @@
 extends Node
-signal dialogue_started
+signal timeline_started(timeline: TIMELINES)
 
 enum TIMELINES {UNASSIGNED, YOURE_AWAKE, PICKTAGS, SUNNY_GREETING, OFF_YOU_GO, SHOT_BOTTLES, CLEARED_FIRST_WELL_GECKOS}
 enum PROPERTIES {FINISHED, REPEATABLE, CHARACTERS, QUESTS}
@@ -63,7 +63,7 @@ func start(timeline: TIMELINES) -> bool:
 		return false
 	Data.game_data[Data.PROPERTIES.TIMELINES][timeline][PROPERTIES.FINISHED] = true
 	Dialogic.start(get_timeline_resource(timeline))
-	dialogue_started.emit()
+	timeline_started.emit(timeline)
 	return true
 
 

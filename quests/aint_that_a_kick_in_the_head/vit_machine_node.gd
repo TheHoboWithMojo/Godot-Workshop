@@ -4,7 +4,7 @@ extends StaticBody2D
 
 func _ready() -> void:
 	await Global.ready_to_start()
-	if aint_that_a_kick_in_the_head.use_the_vit.is_finished():
+	if aint_that_a_kick_in_the_head.use_the_vit.is_objective_finished():
 		event_player.set_enabled(false)
 		return
 	event_player.event_started.connect(_on_event_started)

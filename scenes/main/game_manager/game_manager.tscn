@@ -79,19 +79,12 @@ script = ExtResource("11_7ja3u")
 
 [node name="AintThatAKickInTheHead" type="Node" parent="QuestManager"]
 script = ExtResource("12_cixl3")
+print_overview_on_advance = true
 linked_quest = 1
-characters = Array[int]([1])
-timelines = Array[int]([1, 2, 4])
-levels = Array[int]([1])
 
 [node name="BackInTheSaddle" type="Node" parent="QuestManager"]
 script = ExtResource("13_cy1sf")
-debugging = true
-print_overview_on_advance = true
 linked_quest = 2
-characters = Array[int]([2])
-timelines = Array[int]([3, 5, 6])
-levels = Array[int]([3, 2])
 
 [node name="ObjectManager" type="Node" parent="."]
 script = ExtResource("14_lcbpy")

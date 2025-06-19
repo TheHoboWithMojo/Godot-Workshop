@@ -1,3 +1,4 @@
+res://scenes/main
 res://scenes/level_builders/waypoint
 res://scripts/singletons
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/data/navpoints
@@ -19,4 +20,3 @@ res://scenes
 res://dialogic/characters/DocMitchell
 res://dialogic/characters
 res://scenes/levels
-res://scripts/classes

@@ -10,12 +10,11 @@ func _ready() -> void:
 	Console.add_command("data", print_game_data, [], 0, "prints game data")
 	Console.add_command("quests", Quests.print_quests_data)
 
+
 func _process(delta: float) -> void:
 	if not loop_data.is_empty():
 		process_tracking(delta)
 
-func _get_node_key(caller: Node) -> String:
-	return "%s<%s>%d" % [caller.name, Global.get_class_of(caller), caller.get_instance_id()]
 
 func doc_loop_start(caller: Node, function_name: String, instance_id: int) -> void:
 	var key: String = _get_node_key(caller)
@@ -33,6 +32,7 @@ func doc_loop_start(caller: Node, function_name: String, instance_id: int) -> vo
 		"function_name": function_name,
 	}
 
+
 func doc_loop_end(instance_id: int) -> void:
 	if not instance_lookup.has(instance_id):
 		return
@@ -49,11 +49,13 @@ func doc_loop_end(instance_id: int) -> void:
 
 	instance_lookup.erase(instance_id)
 
+
 func process_tracking(delta: float) -> void:
 	for key: String in loop_data:
 		for fn: String in loop_data[key]:
 			for id: int in loop_data[key][fn]["instances"]:
 				loop_data[key][fn]["instances"][id]["time"] += delta
+
 
 func print_loops() -> void:
 	for key: String in loop_data:
@@ -72,33 +74,34 @@ func get_configed_debugging(parent: Node, debugging: bool, inherit_debugging: bo
 	return parent.debugging if parent and "debugging" in parent and inherit_debugging else debugging
 
 
-
 func define_error(error: String, caller: Node) -> String:
-	return ("[%s] '%s': %s" % [Global.get_class_of(caller), caller.name, error])
+	var class_nomen: String = _extract_class_name(error, caller)
+	return ("%s '%s': %s" % [class_nomen, caller.name, error])
+
+
+func _extract_class_name(message: String, caller: Node) -> String:
+	var extracted_class_nomen: String = ""
+	if message.begins_with("["):
+		message = message.trim_prefix("[")
+		for _char: String in message:
+			if _char == "]":
+				break
+			extracted_class_nomen += _char
+	return "[" + (extracted_class_nomen if extracted_class_nomen else Global.get_class_of(caller)) + "]"
 
 
 func debug(message: String, parent_caller: Node, function_name: String, child_caller: Node = null) -> void:
 	var child_debugging: bool = true
 	var inherit_debugging: bool = true
 	if child_caller:
-		assert("debugging" in child_caller)
-		assert("inherit_debugging" in child_caller)
+		assert("debugging" in child_caller, Debug.define_error("does not have a debugging variable", child_caller))
+		assert("inherit_debugging" in child_caller, Debug.define_error("does not have a debugging variable", child_caller))
 		child_debugging = child_caller.debugging
 		inherit_debugging = child_caller.inherit_debugging
 	if get_configed_debugging(parent_caller, child_debugging, inherit_debugging):
-		var class_nomen: String = "" # class override functionality
-		if message.begins_with("["):
-			for i: int in range(1, message.length()):
-				if message[i] == "]":
-					break
-				class_nomen += message[i]
-			message = message.replace("[" + class_nomen + "] ", "")
-		message = " " + message if message else ""
-		class_nomen = Global.get_class_of(parent_caller) if not class_nomen else class_nomen
-		var caller_nomen: String = parent_caller.name
-		caller_nomen = " " + caller_nomen if caller_nomen and not caller_nomen == class_nomen else ""
-		class_nomen = "[" + class_nomen + "]"
-		print("%s%s:%s (%s)" % [class_nomen, caller_nomen, message, function_name])
+		var class_nomen: String = _extract_class_name(message, parent_caller)
+		var caller_nomen: String = " " + parent_caller.name if parent_caller.name != class_nomen.trim_prefix("[").trim_suffix("]") else ""
+		print("%s%s: %s (%s)" % [class_nomen, caller_nomen, message, function_name])
 
 
 func debug_if(condition: bool, message: String, caller: Node, function_name: String) -> bool:
@@ -143,7 +146,7 @@ func frame_print(input: Variant, frame_print_delay: int) -> void:
 		print(input)
 
 
-func get_methods_completion_times(argumentless_methods: Array[Callable] = [], argument_methods: Array[Callable] = [], arguments: Array = []) -> void:
+func get_methods_ttc(argumentless_methods: Array[Callable] = [], argument_methods: Array[Callable] = [], arguments: Array = []) -> void:
 	# Process methods with arguments first
 	for i: int in range(argument_methods.size()):
 		var time1: int = Time.get_ticks_msec()
@@ -159,8 +162,10 @@ func get_methods_completion_times(argumentless_methods: Array[Callable] = [], ar
 		print(method.get_method(), " took ", time2 - time1, " msec to complete.")
 
 
-# Helper Functions:
-# Helper Functions:
+func _get_node_key(caller: Node) -> String:
+	return "%s<%s>%d" % [caller.name, Global.get_class_of(caller), caller.get_instance_id()]
+
+
 func _pretty_print_dict(dictionary: Dictionary, indent: int = 0) -> void:
 	var indent_str: String = "\t".repeat(indent)
 
