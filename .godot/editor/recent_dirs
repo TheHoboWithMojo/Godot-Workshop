@@ -1,6 +1,8 @@
+res://scenes/main/player_manager
+res://scripts/classes
+res://scripts/singletons
 res://scenes/main
 res://scenes/level_builders/waypoint
-res://scripts/singletons
 C:/Users/evanl/OneDrive/Godot/projects/rpg/Godot-Workshop/data/navpoints
 res://dialogic/timelines
 res://quests/back_in_the_saddle
@@ -18,5 +20,3 @@ res://scripts/icon_extenders
 res://scenes/levels/goodsprings
 res://scenes
 res://dialogic/characters/DocMitchell
-res://dialogic/characters
-res://scenes/levels

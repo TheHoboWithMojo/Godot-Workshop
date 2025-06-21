@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://dbbxc8xwqu2v7"]
+[gd_scene load_steps=16 format=3 uid="uid://dbbxc8xwqu2v7"]
 
 [ext_resource type="Script" uid="uid://befhc074vjbqn" path="res://scenes/main/game_manager/game_manager.gd" id="1_6rv6m"]
 [ext_resource type="PackedScene" uid="uid://dm2s4ivsjk3fh" path="res://scenes/tools/mouse_pos_printer/mouse_pos_printer.tscn" id="2_ka1ps"]
 [ext_resource type="PackedScene" uid="uid://ckmkhqqqnhrgc" path="res://scenes/main/player_manager/player_manager.tscn" id="3_1jqlk"]
 [ext_resource type="PackedScene" uid="uid://dtjqgclskvduj" path="res://scenes/main/debug_menu/debug_menu.tscn" id="4_b5ef8"]
+[ext_resource type="PackedScene" uid="uid://dctxfh7rbhxw2" path="res://scenes/main/player_manager/player_inventory.tscn" id="4_ka1ps"]
 [ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="6_1703o"]
 [ext_resource type="Script" uid="uid://c4kuc0ccp063r" path="res://scenes/main/save_manager/save_manager.gd" id="7_tl6x0"]
 [ext_resource type="Script" uid="uid://cnhbbcsw8d8b" path="res://scenes/main/npc_manager/npc_manager.gd" id="8_u1jbh"]
@@ -29,8 +30,9 @@ attack_speed = 5.0
 zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
+[node name="Inventory" parent="Player" instance=ExtResource("4_ka1ps")]
+
 [node name="DebugMenu" parent="." instance=ExtResource("4_b5ef8")]
-visible = false
 scale = Vector2(0.25, 0.25)
 
 [node name="UI" type="CanvasLayer" parent="."]

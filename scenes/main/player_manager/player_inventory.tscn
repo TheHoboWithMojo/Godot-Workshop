@@ -1,0 +1,677 @@
+[gd_scene load_steps=5 format=3 uid="uid://dctxfh7rbhxw2"]
+
+[ext_resource type="Script" uid="uid://b0x81yfo08ub2" path="res://scenes/main/player_manager/player_inventory.gd" id="1_82xvp"]
+[ext_resource type="Script" uid="uid://sxxre3b6ij8v" path="res://scripts/classes/inventory_slot.gd" id="2_5tamb"]
+[ext_resource type="Texture2D" uid="uid://hnovgjpvfvov" path="res://scenes/main/player_manager/placeholder.png" id="2_xl633"]
+[ext_resource type="FontFile" uid="uid://d4jyi708umdxp" path="res://default.ttf" id="4_xl633"]
+
+[node name="Inventory" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_82xvp")
+
+[node name="Grid" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Row1" type="HBoxContainer" parent="Grid"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SLOT1" type="TextureButton" parent="Grid/Row1" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 1
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row1/SLOT1"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT2" type="TextureButton" parent="Grid/Row1" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 2
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row1/SLOT2"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT3" type="TextureButton" parent="Grid/Row1" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 3
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row1/SLOT3"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT4" type="TextureButton" parent="Grid/Row1" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 4
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row1/SLOT4"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT5" type="TextureButton" parent="Grid/Row1" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 5
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row1/SLOT5"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Row2" type="HBoxContainer" parent="Grid"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SLOT6" type="TextureButton" parent="Grid/Row2" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 6
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row2/SLOT6"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT7" type="TextureButton" parent="Grid/Row2" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 7
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row2/SLOT7"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT8" type="TextureButton" parent="Grid/Row2" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 8
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row2/SLOT8"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT9" type="TextureButton" parent="Grid/Row2" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 9
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row2/SLOT9"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT10" type="TextureButton" parent="Grid/Row2" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 10
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row2/SLOT10"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Row3" type="HBoxContainer" parent="Grid"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SLOT11" type="TextureButton" parent="Grid/Row3" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 11
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row3/SLOT11"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT12" type="TextureButton" parent="Grid/Row3" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 12
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row3/SLOT12"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT13" type="TextureButton" parent="Grid/Row3" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 13
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row3/SLOT13"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT14" type="TextureButton" parent="Grid/Row3" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 14
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row3/SLOT14"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT15" type="TextureButton" parent="Grid/Row3" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 15
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row3/SLOT15"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Row4" type="HBoxContainer" parent="Grid"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SLOT16" type="TextureButton" parent="Grid/Row4" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 16
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row4/SLOT16"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT17" type="TextureButton" parent="Grid/Row4" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 17
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row4/SLOT17"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT18" type="TextureButton" parent="Grid/Row4" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 18
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row4/SLOT18"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT19" type="TextureButton" parent="Grid/Row4" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 19
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row4/SLOT19"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SLOT20" type="TextureButton" parent="Grid/Row4" groups=["slots"]]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_xl633")
+script = ExtResource("2_5tamb")
+slot_enum = 20
+
+[node name="CountLabel" type="RichTextLabel" parent="Grid/Row4/SLOT20"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 6.0
+offset_right = 6.0
+offset_bottom = 14.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_xl633")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SortButton" type="Button" parent="Grid"]
+layout_mode = 2
+text = "Sort"
